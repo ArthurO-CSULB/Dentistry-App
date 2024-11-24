@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 
@@ -44,16 +45,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            // The error mentions duplicate META-INF/native-image/native-image.properties files in
-            // the MongoDB libraries (mongodb-driver-core and bson). To resolve this:
-            //Solution
-            //Add the following packagingOptions block to your android section to exclude the
-            // conflicting resource files:
-            excludes += "META-INF/native-image/org.mongodb/bson/native-image.properties"
-            // Specific exclusions for MongoDB driver conflicts
-            excludes += "META-INF/native-image/native-image.properties"
-            excludes += "META-INF/native-image/org.mongodb/bson/native-image.properties"
-            excludes += "META-INF/native-image/reflect-config.json"
         }
     }
 }
@@ -68,6 +59,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.leanback:leanback:1.0.0")
+    implementation("com.github.bumptech.glide:glide:4.11.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -76,6 +69,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.2.0")
-
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-database-ktx:21.0.0")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 }
