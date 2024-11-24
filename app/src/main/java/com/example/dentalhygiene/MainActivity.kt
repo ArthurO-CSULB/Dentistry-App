@@ -12,10 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.dentalhygiene.ui.theme.DentalHygieneTheme
 
-// testing
+// testing 123
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             DentalHygieneTheme {
                 // A surface container using the 'background' color from the theme
@@ -24,6 +25,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+
+
     }
 }
 

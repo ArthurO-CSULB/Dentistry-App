@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+
 android {
     namespace = "com.example.dentalhygiene"
     compileSdk = 34
@@ -29,6 +30,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+        //isCoreLibraryDesugaringEnabled = true // Desugaring (PROBLEM TO HIGHLIGHT)
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -42,6 +44,16 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            // The error mentions duplicate META-INF/native-image/native-image.properties files in
+            // the MongoDB libraries (mongodb-driver-core and bson). To resolve this:
+            //Solution
+            //Add the following packagingOptions block to your android section to exclude the
+            // conflicting resource files:
+            excludes += "META-INF/native-image/org.mongodb/bson/native-image.properties"
+            // Specific exclusions for MongoDB driver conflicts
+            excludes += "META-INF/native-image/native-image.properties"
+            excludes += "META-INF/native-image/org.mongodb/bson/native-image.properties"
+            excludes += "META-INF/native-image/reflect-config.json"
         }
     }
 }
@@ -63,4 +75,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.2.0")
+
 }
