@@ -1,4 +1,4 @@
-package com.example.dentalhygiene
+package com.start.dentalhygiene
 
 import org.junit.Test
 

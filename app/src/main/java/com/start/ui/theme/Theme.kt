@@ -1,4 +1,4 @@
-package com.example.dentalhygiene.ui.theme
+package com.start.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -16,15 +16,15 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-        primary = com.start.ui.theme.Purple80,
-        secondary = com.start.ui.theme.PurpleGrey80,
-        tertiary = com.start.ui.theme.Pink80
+        primary = Purple80,
+        secondary = PurpleGrey80,
+        tertiary = Pink80
 )
 
 private val LightColorScheme = lightColorScheme(
-        primary = com.start.ui.theme.Purple40,
-        secondary = com.start.ui.theme.PurpleGrey40,
-        tertiary = com.start.ui.theme.Pink40
+        primary = Purple40,
+        secondary = PurpleGrey40,
+        tertiary = Pink40
 
         /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -64,7 +64,7 @@ fun DentalHygieneTheme(
 
     MaterialTheme(
             colorScheme = colorScheme,
-            typography = com.start.ui.theme.Typography,
+            typography = Typography,
             content = content
     )
 }
