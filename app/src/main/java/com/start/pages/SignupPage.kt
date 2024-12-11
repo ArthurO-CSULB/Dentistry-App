@@ -36,6 +36,14 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
         mutableStateOf("")
     }
 
+    var firstName by remember {
+        mutableStateOf("")
+    }
+
+    var lastName by remember {
+        mutableStateOf("")
+    }
+
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
 
@@ -82,11 +90,37 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
             }
         )
 
+        // First Name
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = firstName,
+            onValueChange = {
+                firstName = it
+            },
+            label = {
+                Text(text = "First Name")
+            }
+        )
+
+        // Last Name
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = lastName,
+            onValueChange = {
+                lastName = it
+            },
+            label = {
+                Text(text = "Last Name")
+            }
+        )
+
         // Login Button
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            authViewModel.signup(email, password)
+            authViewModel.signup(email, password, firstName, lastName)
         },
             enabled = authState.value != AuthState.Loading
         ) {
