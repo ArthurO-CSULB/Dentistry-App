@@ -132,10 +132,13 @@ class AuthViewModel : ViewModel() {
                                 e
                             )
                         }
-                    //
-                } else {
+
+                }
+                // If the sign-up task is not successful...
+                else {
+                    // The authentication state is an "Error" with a a message
                     _authState.value =
-                        AuthState.Error(task.exception?.message ?: "Something went wrong")
+                        AuthState.Error(task.exception?.message?: "Something went wrong")
                 }
             }
     }
