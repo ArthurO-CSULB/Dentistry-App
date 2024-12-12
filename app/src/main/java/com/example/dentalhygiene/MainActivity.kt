@@ -12,7 +12,7 @@ import com.start.ui.theme.DentalHygieneTheme
 
 import com.google.firebase.firestore.FirebaseFirestore
 
-// testing 123
+// JUST A TESTING ACTIVITY
 class MainActivity : ComponentActivity() {
     // Initialize database connection.
     private val db = FirebaseFirestore.getInstance()
