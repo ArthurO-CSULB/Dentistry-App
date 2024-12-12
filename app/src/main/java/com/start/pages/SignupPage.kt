@@ -37,12 +37,20 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @Composable
 fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
-    // We create two variables of email and password and use by remember for the data to persist
-    // across recompositions.
+    // We create four variables of email, password, first name, and last name and use by remember
+    // for the data to persist across recompositions.
     var email by remember {
         mutableStateOf("")
     }
     var password by remember {
+        mutableStateOf("")
+    }
+
+    var firstName by remember {
+        mutableStateOf("")
+    }
+
+    var lastName by remember {
         mutableStateOf("")
     }
 
@@ -106,12 +114,37 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
         )
 
         // Space
+        Spacer(modifier = Modifier.height(8.dp))
+        // First Name
+        OutlinedTextField(
+            value = firstName,
+            onValueChange = {
+                firstName = it
+            },
+            label = {
+                Text(text = "First Name")
+            }
+        )
+
+        // Last Name
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = lastName,
+            onValueChange = {
+                lastName = it
+            },
+            label = {
+                Text(text = "Last Name")
+            }
+        )
+        // Space
         Spacer(modifier = Modifier.height(16.dp))
 
         // Button for creating an account
         Button(onClick = {
             // Upon click call the signup method of authViewModel. Pass in data.
-            authViewModel.signup(email, password)
+            authViewModel.signup(email, password, firstName, lastName)
         },
             // Button enabled when the authentication state is not loading.
             enabled = authState.value != AuthState.Loading

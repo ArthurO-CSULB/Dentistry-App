@@ -17,4 +17,9 @@
     <!-- Error messages -->
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>
+    <string name="login">Login</string>
+    <string name="email">email</string>
+    <string name="Email">Email</string>
+    <string name="Password">Password</string>
+    <string name="loginButtonText">Login</string>
 </resources>

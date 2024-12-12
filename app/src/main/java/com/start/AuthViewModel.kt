@@ -1,9 +1,11 @@
 package com.start
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 /*
 We define an AuthViewModel, which is a ViewModel class to manage the authentication state
@@ -17,6 +19,7 @@ class AuthViewModel : ViewModel() {
 
     // We establish our authentication by getting an instance of the Firebase Authentication.
     private val auth : FirebaseAuth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     // We declare a data holder called "_authState". This will store data that is mutable from
     // within this ViewModel class. The data that is stored is the authentication state of the app,
@@ -80,7 +83,7 @@ class AuthViewModel : ViewModel() {
 
 
     // Method for user to sign up using email and password.
-    fun signup(email : String, password : String){
+    fun signup(email : String, password : String, firstName: String, lastName: String) {
         // If there is no email or no password that has been passed...
         if (email.isEmpty() || password.isEmpty())
         {
@@ -95,17 +98,44 @@ class AuthViewModel : ViewModel() {
         _authState.value = AuthState.Loading
         // Attempt to sign up to Firebase using the email and password.
         auth.createUserWithEmailAndPassword(email, password)
-            // Add a listener to the sign task in process.
+            // Add a listener to the sign in task in process.
             .addOnCompleteListener{task->
                 // If sign-up is successful...
-                if (task.isSuccessful){
-                    // The authentication state is "Authenticated".
+                if (task.isSuccessful) {
+                    // The authentication state is "Authenticated"
                     _authState.value = AuthState.Authenticated
-                }
-                // If the sign-up task is not successful...
-                else{
-                    // The authentication state is an "Error" with a a message
-                    _authState.value = AuthState.Error(task.exception?.message?:"Something went wrong")
+
+                    // Create hashmap of email contents containing the name of user.
+                    val userDetails = hashMapOf(
+                        "firstName" to firstName,
+                        "lastName" to lastName,
+                        "email" to email
+                    )
+
+                    // Add user details to database
+                    val user = auth.currentUser
+                    // Add user details to the database
+                    db.collection("accounts").document(user?.uid ?: "UID not found")
+                        .set(userDetails)
+                        // If writing to database is successful, output it's successful
+                        .addOnSuccessListener {
+                            Log.d(
+                                "Database Update",
+                                "Document successfully written!"
+                            )
+                        }
+                        // If failed, output it's unsuccessful
+                        .addOnFailureListener { e ->
+                            Log.w(
+                                "Database Update",
+                                "Error writing document",
+                                e
+                            )
+                        }
+                    //
+                } else {
+                    _authState.value =
+                        AuthState.Error(task.exception?.message ?: "Something went wrong")
                 }
             }
     }
