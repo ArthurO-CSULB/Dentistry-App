@@ -54,18 +54,16 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Space between top of screen and title text
+        Spacer(modifier=Modifier.height(32.dp))
+
         // Title of Home Page
         Text(
             text = "Prototype Home Page", fontSize = 32.sp
         )
-        // Text Button to sign out.
-        TextButton(onClick = {
-            authViewModel.signout()
-        }) {
-            Text(text = "Sign Out")
-        }
+
         // Space
-        Spacer(modifier=Modifier.height(8.dp))
+        Spacer(modifier=Modifier.height(16.dp))
         // Button to the timer page.
         Button(onClick={navController.navigate("timer")}) {
             Text(text = "Prototype Toothbrush Timer")
@@ -88,17 +86,28 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         Button(onClick={navController.navigate("glossary")}) {
             Text(text = "Prototype Glossary")
         }
+
         // Space
         Spacer(modifier=Modifier.height(8.dp))
         // Button to the Clinic Search page.
         Button(onClick={navController.navigate("search")}) {
             Text(text = "Prototype Clinic Search")
         }
+
         // Space
         Spacer(modifier=Modifier.height(8.dp))
         // Button to the Profile page.
         Button(onClick={navController.navigate("profile")}) {
             Text(text = "Prototype Profile")
+        }
+
+        // Space
+        Spacer(modifier=Modifier.height(350.dp))
+        // Text Button to sign out.
+        TextButton(onClick = {
+            authViewModel.signout()
+        }) {
+            Text(text = "Sign Out", fontSize = 32.sp)
         }
     }
 }
