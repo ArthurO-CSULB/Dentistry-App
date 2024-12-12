@@ -61,7 +61,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.leanback:leanback:1.0.0")
     implementation("com.github.bumptech.glide:glide:4.11.0")
-    implementation("com.google.firebase:firebase-auth:23.1.0")
+    // For navigating between pages.
     implementation("androidx.navigation:navigation-compose:2.8.4")
     implementation("androidx.test.services:storage:1.5.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.5")
@@ -73,6 +73,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    // Firebase
+    implementation("com.google.firebase:firebase-auth:23.1.0")
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-database-ktx:21.0.0")
