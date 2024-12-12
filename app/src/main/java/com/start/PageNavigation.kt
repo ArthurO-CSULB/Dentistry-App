@@ -8,6 +8,12 @@ import androidx.navigation.compose.rememberNavController
 import com.start.pages.LoginPage
 import com.start.pages.SignUpPage
 import com.start.pages.HomePage
+import com.start.pages.TimerPage
+import com.start.pages.CalendarPage
+import com.start.pages.GamesPage
+import com.start.pages.GlossaryPage
+import com.start.pages.ClinicSearchPage
+import com.start.pages.ProfilePage
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -44,6 +50,36 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
         // Home screen.
         composable("home"){
             HomePage(modifier, navController, authViewModel)
+        }
+
+        // Timer screen.
+        composable("timer"){
+            TimerPage(modifier, navController)
+        }
+
+        // Calendar screen.
+        composable("calendar"){
+            CalendarPage(modifier, navController)
+        }
+
+        // Games screen.
+        composable("games"){
+            GamesPage(modifier, navController)
+        }
+
+        // Glossary screen.
+        composable("glossary"){
+            GlossaryPage(modifier, navController)
+        }
+
+        // Search screen.
+        composable("search"){
+            ClinicSearchPage(modifier, navController)
+        }
+
+        // Profile screen.
+        composable("profile"){
+            ProfilePage(modifier, navController)
         }
     })
 }

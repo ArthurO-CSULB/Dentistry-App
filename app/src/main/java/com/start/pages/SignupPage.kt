@@ -27,7 +27,7 @@ import com.start.AuthState
 import com.start.AuthViewModel
 
 /*
-We have a composable sign up page which will handle the UI for singing in integrated with
+We have a composable sign up page which will handle the UI for signing in integrated with
 AuthViewModel. This will be called in the PageNavigation NavHost, passing in the modifier,
 NavController, and AuthViewModel.
 

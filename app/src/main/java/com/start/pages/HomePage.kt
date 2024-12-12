@@ -2,14 +2,18 @@ package com.start.pages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.start.AuthState
@@ -59,6 +63,42 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
             authViewModel.signout()
         }) {
             Text(text = "Sign Out")
+        }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the timer page.
+        Button(onClick={navController.navigate("timer")}) {
+            Text(text = "Prototype Toothbrush Timer")
+        }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Calendar page.
+        Button(onClick={navController.navigate("calendar")}) {
+            Text(text = "Prototype Calendar")
+        }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Games page.
+        Button(onClick={navController.navigate("games")}) {
+            Text(text = "Prototype Games")
+        }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Glossary page.
+        Button(onClick={navController.navigate("glossary")}) {
+            Text(text = "Prototype Glossary")
+        }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Clinic Search page.
+        Button(onClick={navController.navigate("search")}) {
+            Text(text = "Prototype Clinic Search")
+        }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Profile page.
+        Button(onClick={navController.navigate("profile")}) {
+            Text(text = "Prototype Profile")
         }
     }
 }
