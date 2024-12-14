@@ -100,9 +100,17 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         Button(onClick={navController.navigate("profile")}) {
             Text(text = "Prototype Profile")
         }
+    }
 
-        // Space
-        Spacer(modifier=Modifier.height(350.dp))
+    //Arrange another column only for Sign Out button
+    //Always stays at bottom of screen
+    Column(
+        // We fill the column to the entire screen
+        modifier = modifier.fillMaxSize(),
+        // We center the components of the column.
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
         // Text Button to sign out.
         TextButton(onClick = {
             authViewModel.signout()

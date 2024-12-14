@@ -124,7 +124,15 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        Spacer(modifier = Modifier.height(350.dp))
+
+    }
+    Column(
+        // We fill the column to the entire screen
+        modifier = modifier.fillMaxSize(),
+        // We center the components of the column.
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
         // Button to go back home.
         TextButton(onClick = {
             navController.navigate("home")
