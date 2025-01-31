@@ -40,6 +40,8 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         when (authState.value){
             // When the user is unauthenticated by singing out, navigate to the login screen.
             is AuthState.UnAuthenticated -> navController.navigate("login")
+            // When the user is unverified, navigate to verification screen.
+            is AuthState.Unverified -> navController.navigate("verification")
             // Else nothing.
             else -> Unit
         }
@@ -99,6 +101,13 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         // Button to the Profile page.
         Button(onClick={navController.navigate("profile")}) {
             Text(text = "Prototype Profile")
+        }
+
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Profile page.
+        Button(onClick={navController.navigate("verification")}) {
+            Text(text = "Prototype Verification")
         }
     }
 

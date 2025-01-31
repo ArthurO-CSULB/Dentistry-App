@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.start.pages.AuthenticationPage
+import com.start.pages.VerificationPage
 import com.start.pages.LoginPage
 import com.start.pages.SignUpPage
 import com.start.pages.HomePage
@@ -15,6 +15,7 @@ import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
 import com.start.pages.ClinicSearchPage
 import com.start.pages.ProfilePage
+import com.start.pages.VerificationPage
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -83,8 +84,8 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
             ProfilePage(modifier, navController)
         }
 
-        composable("authentication"){
-            AuthenticationPage(modifier, navController, authViewModel)
+        composable("verification"){
+            VerificationPage(modifier, navController, authViewModel)
         }
     })
 }
