@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.start.pages.AuthenticationPage
 import com.start.pages.LoginPage
 import com.start.pages.SignUpPage
 import com.start.pages.HomePage
@@ -80,6 +81,10 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
         // Profile screen.
         composable("profile"){
             ProfilePage(modifier, navController)
+        }
+
+        composable("authentication"){
+            AuthenticationPage(modifier, navController, authViewModel)
         }
     })
 }

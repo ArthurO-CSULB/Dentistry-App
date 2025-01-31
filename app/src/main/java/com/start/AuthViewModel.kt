@@ -1,10 +1,13 @@
 package com.start
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
 /*
@@ -72,6 +75,8 @@ class AuthViewModel : ViewModel() {
                 if (task.isSuccessful){
                     // The authentication state is "Authenticated"
                     _authState.value = AuthState.Authenticated
+                    // Send verification email
+                    sendVerificationEmail()
                 }
                 // If the sign-in task is not successful...
                 else{
@@ -102,6 +107,7 @@ class AuthViewModel : ViewModel() {
             .addOnCompleteListener{task->
                 // If sign-up is successful...
                 if (task.isSuccessful) {
+
                     // The authentication state is "Authenticated"
                     _authState.value = AuthState.Authenticated
 
@@ -123,6 +129,10 @@ class AuthViewModel : ViewModel() {
                                 "Database Update",
                                 "Document successfully written!"
                             )
+
+                            // If user is successfully added to database, sign them out
+                            // Then redirect to login page instead
+                            signout()
                         }
                         // If failed, output it's unsuccessful
                         .addOnFailureListener { e ->
@@ -151,6 +161,41 @@ class AuthViewModel : ViewModel() {
         _authState.value = AuthState.UnAuthenticated
 
     }
+
+    // Method for sending the verification email to user's email
+    // Fired after creating an account and every time you login
+    fun sendVerificationEmail() {
+
+        val user = auth.currentUser
+
+        //sends a verification email to user
+        user?.sendEmailVerification()
+            ?.addOnCompleteListener{ task->
+                //if task is successful, log result and sign out user
+                if (task.isSuccessful) {
+
+                    Log.d("Email Verification", "Verification Email sent")
+                    signout()
+                }
+                //otherwise, log it
+                else {
+                    Log.w("Email Verification", "Verification Email failed to send")
+                }
+            }
+    }
+
+    fun checkVerifiedEmail() {
+
+        val user = auth.currentUser
+
+        if (user?.isEmailVerified ?: false) {
+            // yippee
+        } else {
+            // if not verified, logout user
+            signout()
+        }
+    }
+
 }
 
 /*
