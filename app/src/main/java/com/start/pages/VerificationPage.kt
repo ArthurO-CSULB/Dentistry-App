@@ -1,5 +1,6 @@
 package com.start.pages
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,10 +21,10 @@ import androidx.navigation.NavController
 import com.start.AuthState
 import com.start.AuthViewModel
 
-/*
-Authentication page called after registering for an account
- */
 
+// Authentication page called after registering for an account
+// ToDo: Improve this page's UI
+// ToDo: Add a button for resending email confirmation
 @Composable
 fun VerificationPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
@@ -38,6 +39,7 @@ fun VerificationPage(modifier: Modifier = Modifier, navController: NavController
     LaunchedEffect(authState.value) {
         // Whenever the authState is a certain authentication state...
         when (authState.value){
+            // When the user already verified their email, they are sent to the home page.
             is AuthState.Authenticated -> navController.navigate("home")
             // When the user inputs incorrectly, we create a Toast message of the error.
             is AuthState.Error -> Toast.makeText(context,
@@ -67,6 +69,7 @@ fun VerificationPage(modifier: Modifier = Modifier, navController: NavController
         // Button to go back home.
         TextButton(onClick = {
             authViewModel.checkVerifiedEmail()
+            navController.navigate("home")
         }) {
             Text(text = "I am verified already")
         }

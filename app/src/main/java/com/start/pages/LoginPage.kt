@@ -75,6 +75,9 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
 
     // Login Page UI Text
     // We create a Column to arrange the UI components
+    // ToDo: 2/1/2025 Improve UI of Login Page
+    // ToDo: 2/1/2025 Make password hidden when typing
+    // ToDo: 2/1/2025 Make initial fields appear again when they are currently empty
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),

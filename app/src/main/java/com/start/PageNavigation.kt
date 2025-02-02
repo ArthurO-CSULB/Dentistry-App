@@ -84,6 +84,8 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
             ProfilePage(modifier, navController)
         }
 
+        // Verification Screen
+        // Cannot be accessed when user is already verified
         composable("verification"){
             VerificationPage(modifier, navController, authViewModel)
         }

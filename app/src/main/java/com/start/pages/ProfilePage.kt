@@ -48,6 +48,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
     var firstName by remember {mutableStateOf("")}
     var lastName by remember {mutableStateOf("")}
     var email by remember {mutableStateOf("")}
+    var experience by remember {mutableStateOf("")}
 
     // Grab user information from database
     val db = FirebaseFirestore.getInstance()
@@ -62,6 +63,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
                         firstName = document.getString("firstName") ?: "N/A"
                         lastName = document.getString("lastName") ?: "N/A"
                         email = document.getString("email") ?: "N/A"
+                        experience = document.getLong("experience").toString()
                     }
                 }
                 .addOnFailureListener {
@@ -110,7 +112,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
                 .background(color = Color.LightGray)
                 .padding(8.dp)
         ){
-        Text(text = "$firstName" + " $lastName", fontSize = 20.sp)}
+        Text(text = "$firstName $lastName", fontSize = 20.sp)}
         Spacer(modifier = Modifier.height(16.dp))
 
         // Email
@@ -120,10 +122,20 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
                 .background(color = Color.LightGray)
                 .padding(8.dp)
         ) {
-            Text(text = "$email", fontSize = 20.sp)
+            Text(text = email, fontSize = 20.sp)
             Spacer(modifier = Modifier.height(16.dp))
         }
 
+        // Experience
+        Text(text = "Experience Points: ")
+        Box(
+            modifier = Modifier
+                .background(color = Color.LightGray)
+                .padding(8.dp)
+        ) {
+            Text(text = experience, fontSize = 20.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
     }
     Column(

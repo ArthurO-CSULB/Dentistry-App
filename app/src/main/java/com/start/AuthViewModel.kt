@@ -42,18 +42,21 @@ class AuthViewModel : ViewModel() {
     // Method to check the authentication status of the user.
     fun checkAuthStatus(){
         // Check firebase. If the current user is not logged in currently...
-        if (auth.currentUser == null){
+        if (auth.currentUser == null) {
             // The authentication state is 'Unauthenticated'.
             _authState.value = AuthState.UnAuthenticated
+            Log.d("Authentication Status Check", "User is unauthenticated")
         }
         // If the current user is logged in currently...
         else{
             // The authentication state is 'Authenticated'.
             _authState.value = AuthState.Authenticated
+            Log.d("Authentication Status Check", "User is authenticated")
         }
     }
 
     // Method for user to login using email and password.
+    // ToDo: 2/1/2025 Create password rules to make passwords stronger, can be delayed so testing will be easy
     fun login(email : String, password : String){
         // If there is no email or no password that has been passed...
         if (email.isEmpty() || password.isEmpty())
@@ -73,6 +76,7 @@ class AuthViewModel : ViewModel() {
             .addOnCompleteListener {task->
                 // If the sign-in is successful...
                 if (task.isSuccessful){
+                    // check if email is verified
                     checkVerifiedEmail()
                 }
                 // If the sign-in task is not successful...
@@ -105,9 +109,6 @@ class AuthViewModel : ViewModel() {
                 // If sign-up is successful...
                 if (task.isSuccessful) {
 
-                    // The authentication state is "Authenticated"
-                    _authState.value = AuthState.Authenticated
-
                     // Create hashmap of email contents containing the name of user.
                     val userDetails = hashMapOf(
                         "firstName" to firstName,
@@ -123,7 +124,7 @@ class AuthViewModel : ViewModel() {
                         .set(userDetails)
                         // If writing to database is successful, output it's successful
                         .addOnSuccessListener {
-                            Log.d(
+                            Log.i(
                                 "Database Update",
                                 "Document successfully written!"
                             )
@@ -132,6 +133,7 @@ class AuthViewModel : ViewModel() {
                             // sign them out, then redirect to login page instead
                             sendVerificationEmail()
                             signout()
+                            _authState.value = AuthState.AccountCreated
                         }
                         // If failed, output it's unsuccessful
                         .addOnFailureListener { e ->
@@ -163,37 +165,49 @@ class AuthViewModel : ViewModel() {
 
     // Method for sending the verification email to user's email
     // Executed when a user creates an account for the first time and email is not verified
+    // Todo: 2/1/2025 Add alternative paths for edge cases
+    // Todo: 2/1/2025 Determine where else this function must be called
     fun sendVerificationEmail() {
 
-        val user = auth.currentUser
-
         //sends a verification email to user
-        user?.sendEmailVerification()
+        auth.currentUser?.sendEmailVerification()
             ?.addOnCompleteListener{ task->
-                //if task is successful, log result and sign out user
+                // if task is successful, log result and sign out user
                 if (task.isSuccessful) {
 
-                    Log.d("Email Verification", "Verification Email sent")
+                    Log.i("Email Verification", "Verification Email sent to " + auth.currentUser?.email)
                     signout()
                 }
-                //otherwise, log it
+                // otherwise, log it and try again
                 else {
                     Log.w("Email Verification", task.exception)
+
                 }
             }
     }
 
+    // Method for checking if user has validated their email
+    // Executed the first time a user tries to verify
+    // or if a user has not received a verification email and wants to resend
+    // ToDo: Add Toast messages so user can see what errors are happening
     fun checkVerifiedEmail() {
 
-        val user = auth.currentUser
+        // variable that checks whether current user is verified
+        val userEmailVerificationState = auth.currentUser?.isEmailVerified == true;
 
-        if (user?.isEmailVerified ?: false) {
+        // If current user is verified...
+        if (userEmailVerificationState) {
+            // they will be authenticated and a log message is posted
             _authState.value = AuthState.Authenticated
-            Log.w("Account Verification", "User is verified")
-        } else {
+            Log.i("Account Verification", "User is verified")
+            Log.d("Account Verification", "Current User" + auth.currentUser)
+        }
+        // If not...
+        else {
+            //They remain unverified
             _authState.value = AuthState.Unverified
-            Log.w("Account Verification", "User is not verified")
-            sendVerificationEmail()
+            Log.i("Account Verification", "User is not verified")
+            Log.d("Account Verification", "Current User" + auth.currentUser)
         }
     }
 }
@@ -211,9 +225,12 @@ sealed class AuthState {
     object UnAuthenticated : AuthState()
     // Loading State
     object Loading : AuthState()
-    // Unverified Stat
+    // Unverified State
     // Occurs when login attempt is created but email verification not completed
     object Unverified : AuthState()
+    // AccountCreated State
+    // Occurs when user has just created their account
+    object AccountCreated : AuthState()
     // Error state
     data class Error(val message : String) : AuthState()
 }

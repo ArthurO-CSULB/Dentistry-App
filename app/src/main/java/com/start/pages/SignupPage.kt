@@ -67,6 +67,8 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
         when (authState.value){
             // When the user is authenticated by signing up, navigate to the home page.
             is AuthState.Authenticated -> navController.navigate("home")
+            // When the user successfully creates their account, navigate to login page.
+            is AuthState.AccountCreated -> navController.navigate("login")
             // When the user inputs incorrectly, we create a Toast message of the error.
             is AuthState.Error -> Toast.makeText(context,
                 (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
@@ -77,6 +79,9 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
 
     // Signup Page UI
     // We create a Column to arrange the UI components
+    // ToDo: 2/1/2025 Improve UI of Registration Page
+    // ToDo: 2/1/2025 Make user confirm their password and check if they match or do not
+    // ToDo: 2/1/2025 Make password hidden when typing
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
