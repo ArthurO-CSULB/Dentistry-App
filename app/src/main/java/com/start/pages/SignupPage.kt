@@ -67,8 +67,6 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
         when (authState.value){
             // When the user is authenticated by signing up, navigate to the home page.
             is AuthState.Authenticated -> navController.navigate("home")
-            // When the user successfully creates their account, navigate to login page.
-            is AuthState.AccountCreated -> navController.navigate("login")
             // When the user inputs incorrectly, we create a Toast message of the error.
             is AuthState.Error -> Toast.makeText(context,
                 (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()

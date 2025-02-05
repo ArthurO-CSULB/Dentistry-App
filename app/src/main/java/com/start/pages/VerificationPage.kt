@@ -24,7 +24,6 @@ import com.start.AuthViewModel
 
 // Authentication page called after registering for an account
 // ToDo: Improve this page's UI
-// ToDo: Add a button for resending email confirmation
 @Composable
 fun VerificationPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
@@ -49,7 +48,7 @@ fun VerificationPage(modifier: Modifier = Modifier, navController: NavController
         }
     }
 
-    // Calendar Page UI
+    // Verification Page
     // We create a Column to arrange the UI components
     Column(
         // We fill the column to the entire screen
@@ -59,19 +58,35 @@ fun VerificationPage(modifier: Modifier = Modifier, navController: NavController
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier=Modifier.height(16.dp))
-        // Title of Calendar Page
+        // Text
         Text(
             text = "Please Verify Your Email", fontSize = 32.sp
         )
-        Text (
-            text = "You will be out of this page after you are verified", fontSize =  32.sp
-        )
-        // Button to go back home.
+
+        // Spacer
+        Spacer(modifier=Modifier.height(16.dp))
+        // Button to go back to login page
         TextButton(onClick = {
-            authViewModel.checkVerifiedEmail()
-            navController.navigate("home")
+            authViewModel.checkAuthStatus()
+            if (authState.value is AuthState.Authenticated) {
+                navController.navigate("home")
+            } else {
+                authViewModel.signout()
+                navController.navigate("login")
+            }
         }) {
             Text(text = "I am verified already")
         }
+
+        //Space
+        Spacer(modifier=Modifier.height(16.dp))
+
+        // Button to send a verification email
+        TextButton(onClick = {
+            authViewModel.sendVerificationEmail()
+        }) {
+            Text(text = "Resend verification email")
+        }
+
     }
 }

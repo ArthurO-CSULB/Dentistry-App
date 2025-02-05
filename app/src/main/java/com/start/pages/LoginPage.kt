@@ -61,7 +61,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
     LaunchedEffect(authState.value) {
         // Whenever the authState is a certain authentication state...
         when (authState.value){
-            // When user has not yet verified, navigate to verification page
+            // When the user is unverified via email, navigate to verification page
             is AuthState.Unverified -> navController.navigate("verification")
             // When the user is authenticated by login, navigate to the home page.
             is AuthState.Authenticated -> navController.navigate("home")
@@ -126,6 +126,9 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
         // Button for creating an account
         Button(onClick = {
             authViewModel.login(email, password)
+            if (authState.value == AuthState.Unverified) {
+                navController.navigate("verification")
+            }
         },
             // Button enabled when the authentication state is not loading.
             enabled = authState.value != AuthState.Loading
