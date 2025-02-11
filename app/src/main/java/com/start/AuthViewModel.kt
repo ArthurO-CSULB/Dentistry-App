@@ -52,11 +52,14 @@ class AuthViewModel : ViewModel() {
             _authState.value = AuthState.UnAuthenticated
             Log.d("Authentication Status Check", "User is unauthenticated")
         }
-        // If the current user is logged in currently...
+        // If the user is logged in but not verified...
         else if (!user.isEmailVerified) {
+            // The authentication state is 'Unverified'
             _authState.value = AuthState.Unverified
             Log.d("Authentication Status Check", "User is unverified")
-        } else {
+        }
+        // If the user is logged in with email already verified...
+        else {
             // The authentication state is 'Authenticated'.
             _authState.value = AuthState.Authenticated
             Log.d("Authentication Status Check", "User is authenticated")
@@ -83,7 +86,7 @@ class AuthViewModel : ViewModel() {
             .addOnCompleteListener { task ->
                 // If the sign-in is successful...
                 if (task.isSuccessful) {
-                    // check if email is verified
+                    // check if user can login properly
                     checkAuthStatus()
                 }
                 // If the sign-in task is not successful...

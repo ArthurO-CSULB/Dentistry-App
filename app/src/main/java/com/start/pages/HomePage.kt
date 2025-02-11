@@ -109,6 +109,13 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         Button(onClick={navController.navigate("verification")}) {
             Text(text = "Prototype Verification")
         }
+
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Profile page.
+        Button(onClick={navController.navigate("settings")}) {
+            Text(text = "Prototype Settings")
+        }
     }
 
     //Arrange another column only for Sign Out button

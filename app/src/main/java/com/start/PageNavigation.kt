@@ -5,16 +5,16 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.start.pages.VerificationPage
-import com.start.pages.LoginPage
-import com.start.pages.SignUpPage
-import com.start.pages.HomePage
-import com.start.pages.TimerPage
 import com.start.pages.CalendarPage
+import com.start.pages.ClinicSearchPage
 import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
-import com.start.pages.ClinicSearchPage
+import com.start.pages.HomePage
+import com.start.pages.LoginPage
 import com.start.pages.ProfilePage
+import com.start.pages.SettingsPage
+import com.start.pages.SignUpPage
+import com.start.pages.TimerPage
 import com.start.pages.VerificationPage
 
 /*
@@ -88,6 +88,11 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
         // Cannot be accessed when user is already verified
         composable("verification"){
             VerificationPage(modifier, navController, authViewModel)
+        }
+
+        // Settings Page
+        composable("settings"){
+            SettingsPage(modifier, navController)
         }
     })
 }
