@@ -2,20 +2,22 @@ package com.start
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.start.pages.AddEventPage
+import com.start.pages.LoginPage
+import com.start.pages.SignUpPage
+import com.start.pages.HomePage
+import com.start.pages.TimerPage
 import com.start.pages.CalendarPage
-import com.start.pages.ClinicSearchPage
+import com.start.pages.WeeklyCalendarPage
 import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
-import com.start.pages.HomePage
-import com.start.pages.LoginPage
+import com.start.pages.ClinicSearchPage
+import com.start.pages.EditEventPage
 import com.start.pages.ProfilePage
-import com.start.pages.SettingsPage
-import com.start.pages.SignUpPage
-import com.start.pages.TimerPage
-import com.start.pages.VerificationPage
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -59,10 +61,30 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
             TimerPage(modifier, navController)
         }
 
-        // Calendar screen.
+        // Monthly Calendar screen.
         composable("calendar"){
             CalendarPage(modifier, navController)
         }
+
+        // Weekly Calendar screen.
+        composable("weeklyCalendar/{startDate}/{endDate}") { backStackEntry ->
+            val startDate = backStackEntry.arguments?.getString("startDate") ?: ""
+            val endDate = backStackEntry.arguments?.getString("endDate") ?: ""
+            WeeklyCalendarPage(navController = navController, startDate = startDate, endDate = endDate)
+        }
+
+        // Add Event screen.
+        composable("addEvent/{date}") { backStackEntry ->
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            AddEventPage(navController = navController, date = date)
+        }
+
+        // Edit Event screen.
+        composable("editEvent/{eventId}") { backStackEntry ->
+            val eventID = backStackEntry.arguments?.getString("eventID") ?: ""
+            EditEventPage(navController = navController, eventID = eventID)
+        }
+
 
         // Games screen.
         composable("games"){
@@ -82,17 +104,6 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
         // Profile screen.
         composable("profile"){
             ProfilePage(modifier, navController)
-        }
-
-        // Verification Screen
-        // Cannot be accessed when user is already verified
-        composable("verification"){
-            VerificationPage(modifier, navController, authViewModel)
-        }
-
-        // Settings Page
-        composable("settings"){
-            SettingsPage(modifier, navController)
         }
     })
 }
