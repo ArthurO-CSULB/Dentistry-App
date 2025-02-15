@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -23,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -61,6 +64,8 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
     LaunchedEffect(authState.value) {
         // Whenever the authState is a certain authentication state...
         when (authState.value){
+            // When the user is unverified via email, navigate to verification page
+            is AuthState.Unverified -> navController.navigate("verification")
             // When the user is authenticated by login, navigate to the home page.
             is AuthState.Authenticated -> navController.navigate("home")
             // When the user inputs incorrectly, we create a Toast message of the error.
@@ -73,6 +78,8 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
 
     // Login Page UI Text
     // We create a Column to arrange the UI components
+    // ToDo: 2/1/2025 Improve UI of Login Page
+    // ToDo: 2/6/2025 Make use of an IME to handle certain character inputs in text boxes
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
@@ -113,7 +120,14 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
             },
             label = {
                 Text(text = "Password")
-            }
+            },
+            // Shows a keyboard when the text box is typed,
+            // keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+
+            // makes password hidden
+            // TODO: 2/6/2025 design and implement a function to toggle password visibility
+            visualTransformation = PasswordVisualTransformation()
+
         )
 
         // Space
@@ -121,6 +135,9 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
         // Button for creating an account
         Button(onClick = {
             authViewModel.login(email, password)
+            if (authState.value == AuthState.Unverified) {
+                navController.navigate("verification")
+            }
         },
             // Button enabled when the authentication state is not loading.
             enabled = authState.value != AuthState.Loading

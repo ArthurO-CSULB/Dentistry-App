@@ -19,6 +19,8 @@ import com.start.viewmodels.TimerViewModel
 import android.content.Context
 import android.os.Build
 import com.start.pages.ErrorPage
+import com.start.pages.SettingsPage
+import com.start.pages.VerificationPage
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -96,6 +98,15 @@ TimerViewModel) {
             ProfilePage(modifier, navController)
         }
 
+        // Verification Screen
+        // Cannot be accessed when user is already verified
+        composable("verification"){
+            VerificationPage(modifier, navController, authViewModel)
+        }
 
+        // Settings Page
+        composable("settings"){
+            SettingsPage(modifier, navController)
+        }
     })
 }
