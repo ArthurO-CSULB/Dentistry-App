@@ -17,6 +17,8 @@ import com.start.pages.ProfilePage
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
 import android.content.Context
+import android.os.Build
+import com.start.pages.ErrorPage
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -58,7 +60,15 @@ TimerViewModel) {
 
         // Timer screen.
         composable("timer"){
-            TimerPage(modifier, navController, timerViewModel)
+            // If the current build is at least API level 33...
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Timer Page is implemented.
+                TimerPage(modifier, navController, timerViewModel)
+            }
+            else {
+                // Else the timer will display an error page.
+                ErrorPage(modifier, navController)
+            }
         }
 
         // Calendar screen.
@@ -85,5 +95,7 @@ TimerViewModel) {
         composable("profile"){
             ProfilePage(modifier, navController)
         }
+
+
     })
 }
