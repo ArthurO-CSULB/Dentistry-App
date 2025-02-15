@@ -11,6 +11,8 @@ import kotlin.random.Random
 class TimerFunFactsRepo(private val context: Context) {
     // Variable that will store the array list of fun facts.
     private val funFacts = loadFunFacts()
+    // Initialize the prev index.
+    private var randIndexPrev = Int.MAX_VALUE
 
     // Method to load the fun facts from the raw resource text file into an array list.
     private fun loadFunFacts(): List<String> {
@@ -41,7 +43,11 @@ class TimerFunFactsRepo(private val context: Context) {
     // Method to get a random fact from the list of facts.
     fun randomFact(): String {
         // Get a random index of the list.
-        val randomIndex = Random.nextInt(0, funFacts.size)
+        var randomIndex = Random.nextInt(0, funFacts.size)
+        if (randomIndex == randIndexPrev) {
+            randomIndex = Random.nextInt(0, funFacts.size)
+        }
+        randIndexPrev = randomIndex
         // Return the random fact.
         return funFacts[randomIndex]
     }

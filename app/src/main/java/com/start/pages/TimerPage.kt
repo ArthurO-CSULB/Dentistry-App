@@ -162,6 +162,15 @@ fun TimerPage(modifier: Modifier = Modifier, navController: NavController,
         }
     }
 
+    // Button to demo the finish.
+    val demoFinishButton: @Composable () -> Unit = {
+        Button(
+            onClick = {timerViewModel.demoFinish()}
+        ) {
+            Text(text="Demo Finish")
+        }
+    }
+
     // Button to toggle the teeth.
     val toggleTeethButton: @Composable () -> Unit = {
         Button(
@@ -246,7 +255,8 @@ fun TimerPage(modifier: Modifier = Modifier, navController: NavController,
                             verticalArrangement = Arrangement.Center
                         ) {
                             Row(
-                                modifier = modifier.fillMaxWidth(),
+                                modifier = modifier
+                                    .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -278,6 +288,7 @@ fun TimerPage(modifier: Modifier = Modifier, navController: NavController,
                                 // We display the time counting down right below the tooth model.
                                 // We display the buttons to pause and cancel the timer.
                                 pauseResumeButton()
+                                demoFinishButton()
                                 // Button to cancel the timer.
                                 cancelButton()
                             }
@@ -291,7 +302,7 @@ fun TimerPage(modifier: Modifier = Modifier, navController: NavController,
                             }
                         }
                     }
-                    // When the tooth model is not appearing.
+                    // UI When the tooth model is not appearing.
                     false -> {
                         Column(
                             modifier = modifier
@@ -322,7 +333,7 @@ fun TimerPage(modifier: Modifier = Modifier, navController: NavController,
                                 // Animate the fun facts.
                                 AnimatedContent(
                                     targetState=timerFunFact.value,
-                                    transitionSpec= {slideInVertically{height -> -height} + fadeIn(animationSpec = tween(1000, 1000)) togetherWith slideOutVertically{height -> height} + fadeOut() },
+                                    transitionSpec= {slideInVertically{height -> -height} + fadeIn(animationSpec = tween(1000, 800)) togetherWith slideOutVertically{height -> height} + fadeOut() },
                                     label="Fun Fact Transitions"
                                 ) {
                                     timerFunFactState ->
@@ -349,6 +360,7 @@ fun TimerPage(modifier: Modifier = Modifier, navController: NavController,
                             ) {
                                 // Display the pauseResume button and the cancel button.
                                 pauseResumeButton()
+                                demoFinishButton()
                                 cancelButton()
                             }
                             Row(
@@ -366,38 +378,82 @@ fun TimerPage(modifier: Modifier = Modifier, navController: NavController,
             // When the timer is at the Canceled State.
             TimerState.Cancel -> {
 
-                // We create the column for the UI when timer is canceled.
+                // We create the column to display the UI when cancelled.
                 Column(
                     modifier = modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top
                 ) {
-                    Spacer(modifier = modifier.height(8.dp))
-                    // Text to congratulate.
-                    Text(
-                        text="Too bad :(",
-                        fontSize=64.sp,
-                    )
-                    // Space
-                    Spacer(modifier = modifier.height(8.dp))
-                    Text(
-                        text="You don't have to brush all your teeth - just the ones you want to keep...",
-                        fontSize=32.sp,
-                        textAlign=TextAlign.Center,
-                        lineHeight=2.5.em
-                    )
-
-                    Spacer(modifier = modifier.height(8.dp))
-                    Button(
-                        onClick = {
-                            // Un-toggle the tooth model if the it is toggled
-                            if (toggleToothModel) toggleToothModel = false
-                            // Reset the timer.
-                            timerViewModel.resetTimer()
-                        }
+                    // Row for the image.
+                    Row(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text="Go Again :)")
+                        // We display the tooth model.
+                        Image(
+                            // Using the painter Resource API we display the image.
+                            painter = painterResource(id = R.drawable.sadface_timer),
+                            contentDescription = stringResource(id = R.string.tooth_model_initial),
+                            // We crop the image to our liking.
+                            contentScale = ContentScale.Crop,
+                            modifier = modifier
+                                .size(200.dp)
+                                .clip(CircleShape)
+                        )
                     }
+                    // Row for the Message
+                    Row(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Text for message.
+                        Text(
+                            text="You don't have to brush all your teeth - just the ones you want to keep...",
+                            fontSize=24.sp,
+                            textAlign=TextAlign.Center,
+                            lineHeight=2.em,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    // Row for the points received.
+                    Row(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text="+0",
+                            fontSize=70.sp,
+                            textAlign=TextAlign.Center,
+                            lineHeight=2.em,
+                            fontWeight=FontWeight.ExtraBold,
+                            color = Color.Red
+                        )
+                    }
+                    // Row for the button to restart.
+                    Row(
+                        modifier=modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Button(
+                            onClick = {
+                                // Un-toggle the tooth model if the it is toggled
+                                if (toggleToothModel) toggleToothModel = false
+                                timerViewModel.resetTimer()
+                            }
+                        ){
+                            Text(text="Go Again :)")
+                        }
+                    }
+
                 }
             }
             // When the timer is at the Finished State.
@@ -408,30 +464,76 @@ fun TimerPage(modifier: Modifier = Modifier, navController: NavController,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top
                 ) {
-                    Spacer(modifier = modifier.height(8.dp))
-                    // Text to congratulate.
-                    Text(
-                        text="Great Job!",
-                        fontSize=64.sp,
-                    )
-                    // Space
-                    Spacer(modifier = modifier.height(8.dp))
-                    Text(
-                        text="Take care of your teeth and they'll take care of you.",
-                        fontSize=32.sp,
-                        textAlign=TextAlign.Center,
-                        lineHeight=2.5.em
-                    )
-                    Spacer(modifier = modifier.height(8.dp))
-                    Button(
-                        onClick = {
-                            // Un-toggle the tooth model if the it is toggled
-                            if (toggleToothModel) toggleToothModel = false
-                            timerViewModel.resetTimer()
-                        }
-                    ){
-                        Text(text="Go Again :)")
+                    // Row for the image.
+                    Row(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // We display the tooth model.
+                        Image(
+                            // Using the painter Resource API we display the image.
+                            painter = painterResource(id = R.drawable.smileyface_timer),
+                            contentDescription = stringResource(id = R.string.tooth_model_initial),
+                            // We crop the image to our liking.
+                            contentScale = ContentScale.Crop,
+                            modifier = modifier
+                                .size(200.dp)
+                                .clip(CircleShape)
+                        )
                     }
+                    // Row for the Message
+                    Row(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Text to congratulate.
+                        Text(
+                            text="Great Job! Take care of your teeth and they'll take care of you.",
+                            fontSize=24.sp,
+                            textAlign=TextAlign.Center,
+                            lineHeight=2.em,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    // Row for the points received.
+                    Row(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text="+100",
+                            fontSize=70.sp,
+                            textAlign=TextAlign.Center,
+                            lineHeight=2.em,
+                            fontWeight=FontWeight.ExtraBold,
+                            color = Color.Green
+                        )
+                    }
+                    // Row for the button to restart.
+                    Row(
+                        modifier=modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Button(
+                            onClick = {
+                                // Un-toggle the tooth model if the it is toggled
+                                if (toggleToothModel) toggleToothModel = false
+                                timerViewModel.resetTimer()
+                            }
+                        ){
+                            Text(text="Go Again :)")
+                        }
+                    }
+
                 }
             }
             else -> Unit

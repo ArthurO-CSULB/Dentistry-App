@@ -99,7 +99,8 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
                 if (_toothBrushTimer.value.toInt() % (ONE_SECOND_MILLI.toInt() * 10) == 0 &&
                     _toothBrushTimer.value != TWO_MINUTES_MILLI &&
                     _toothBrushTimer.value.toInt() != 0)
-                    _timerFact.update { StringBuilder(timerFunFactsRepo.randomFact()) }
+                    // Call method to change fact.
+                    changeFact()
                 // If you are not at 0, update timer by one second less.
                 _toothBrushTimer.update {it - ONE_SECOND_MILLI}
             }
