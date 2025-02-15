@@ -1,4 +1,4 @@
-package com.start
+package com.start.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -15,6 +15,7 @@ signup, and logout functionality. We have our required dependencies within our b
 Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 */
+
 class AuthViewModel : ViewModel() {
 
     // We establish our authentication by getting an instance of the Firebase Authentication.
@@ -76,7 +77,8 @@ class AuthViewModel : ViewModel() {
                 // If the sign-in task is not successful...
                 else{
                     // The authentication state is an "Error" with a a message
-                    _authState.value = AuthState.Error(task.exception?.message?:"Something went wrong")
+                    _authState.value =
+                        AuthState.Error(task.exception?.message ?: "Something went wrong")
                 }
             }
     }
@@ -138,7 +140,7 @@ class AuthViewModel : ViewModel() {
                 else {
                     // The authentication state is an "Error" with a a message
                     _authState.value =
-                        AuthState.Error(task.exception?.message?: "Something went wrong")
+                        AuthState.Error(task.exception?.message ?: "Something went wrong")
                 }
             }
     }
@@ -157,7 +159,7 @@ class AuthViewModel : ViewModel() {
     -Sealed class "AuthState" to represent different authentication states.
     -We use a sealed class to ensure that "AuthState" has these only defined states below.
     -Use sealed so that when the authState changes, the UI reacts by observing it and processing it
-        in a when expression for readability.
+        in a when expression to show what the user should see next.
  */
 sealed class AuthState {
     // Authenticated State

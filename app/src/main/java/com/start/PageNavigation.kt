@@ -14,6 +14,9 @@ import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
 import com.start.pages.ClinicSearchPage
 import com.start.pages.ProfilePage
+import com.start.viewmodels.AuthViewModel
+import com.start.viewmodels.TimerViewModel
+import android.content.Context
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -23,14 +26,15 @@ navigation flow between different composable screens. We pass in a modifier for 
 Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
+
 @Composable
-fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) {
+fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
+TimerViewModel) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
     // is consistent throughout the lifecycle of NavHost. This prevents a NavController being
     // created every time.
     val navController = rememberNavController()
-
     // We create a NavHost which defines the navigation graph and maps screens to their routes.
     // We initialize the start destination to the login screen. We then define the various
     // navigation destinations in our app.
@@ -54,7 +58,7 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
 
         // Timer screen.
         composable("timer"){
-            TimerPage(modifier, navController)
+            TimerPage(modifier, navController, timerViewModel)
         }
 
         // Calendar screen.
