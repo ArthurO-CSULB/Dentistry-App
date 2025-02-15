@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.Firebase
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -174,7 +175,6 @@ class AuthViewModel : ViewModel() {
 
     // Method for sending the verification email to user's email
     // Executed when a user creates an account for the first time and email is not verified
-    // Todo: 2/1/2025 Add alternative paths for edge cases
     fun sendVerificationEmail() {
 
         //sends a verification email to user
@@ -196,6 +196,70 @@ class AuthViewModel : ViewModel() {
                         AuthState.Error(task.exception?.message ?: "Something went wrong")
 
                 }
+            }
+    }
+
+    fun changePassword(password: String) {
+        val user = auth.currentUser
+
+        user!!.updatePassword(password).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("Password change", "User password updated.")
+            }
+            else {
+                Log.e("Password change", task.exception?.message ?: "Something went wrong")
+            }
+        }
+    }
+
+    // still doesn't work
+    fun changeEmail(email: String) {
+        val user = auth.currentUser
+
+        user!!.updateEmail(email).addOnCompleteListener {task ->
+            if (task.isSuccessful) {
+                Log.d("Email change", "User email address updated")
+            }
+            else {
+                Log.e("Email change", task.exception?.message ?: "Something went wrong")
+            }
+        }
+
+        db.collection("accounts").document(user.uid).update(
+            mapOf(
+                "email" to email
+            )
+        )
+    }
+
+    fun changeFirstName(firstName: String) {
+        val user = auth.currentUser
+
+        db.collection("accounts").document(user?.uid ?: "N/A").update(
+            mapOf(
+                "firstName" to firstName
+            )
+        )
+    }
+
+    fun changeLastName(lastName: String) {
+        val user = auth.currentUser
+
+        db.collection("accounts").document(user?.uid ?: "N/A"). update(
+            mapOf(
+                "lastName" to lastName
+            )
+        )
+    }
+
+    fun reauthenticate(email: String, password: String) {
+
+        val user = auth.currentUser!!
+        val credential = EmailAuthProvider.getCredential(email, password)
+
+        user.reauthenticate(credential)
+            .addOnCompleteListener {
+                Log.d( "User re-authentication", "User re-authenticated")
             }
     }
 }

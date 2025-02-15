@@ -1,17 +1,21 @@
 package com.start
 
+import ChangeEmailPage
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.start.pages.CalendarPage
+import com.start.pages.ChangePasswordPage
+import com.start.pages.ChangeUserDetailsPage
 import com.start.pages.ClinicSearchPage
 import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
 import com.start.pages.HomePage
 import com.start.pages.LoginPage
 import com.start.pages.ProfilePage
+import com.start.pages.ReauthenticationPage
 import com.start.pages.SettingsPage
 import com.start.pages.SignUpPage
 import com.start.pages.TimerPage
@@ -93,6 +97,22 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
         // Settings Page
         composable("settings"){
             SettingsPage(modifier, navController)
+        }
+         // Change Email Page
+        composable("changeEmail"){
+            ChangeEmailPage(modifier, navController, authViewModel)
+        }
+
+        composable("changePassword"){
+            ChangePasswordPage(modifier, navController, authViewModel)
+        }
+
+        composable("reauthentication"){
+            ReauthenticationPage(modifier, navController, authViewModel)
+        }
+
+        composable("changeUserDetails"){
+            ChangeUserDetailsPage(modifier, navController)
         }
     })
 }

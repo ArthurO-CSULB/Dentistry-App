@@ -23,8 +23,9 @@ This will be called in the PageNavigation NavHost, passing in the modifier,
 NavController.
  */
 
+//ToDo: 2/11/2025 Make functionality for user to delete their account
 @Composable
-fun SettingsPage(modifier: Modifier = Modifier, navController: NavController) {
+fun ChangeUserDetailsPage(modifier: Modifier = Modifier, navController: NavController) {
 
     // Settings Page UI
     // We create a Column to arrange the UI components
@@ -38,23 +39,30 @@ fun SettingsPage(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(modifier=Modifier.height(16.dp))
         // Title of Games Page
         Text(
-            text = "Prototype Settings Page", fontSize = 32.sp
+            text = "Prototype User Changes Page", fontSize = 32.sp
         )
 
         Spacer(modifier=Modifier.height(16.dp))
 
         // Change Email
         TextButton(onClick = {
-            navController.navigate("reauthentication")
+            navController.navigate("changeEmail")
         }) {
-            Text(text = "Change User Details")
+            Text(text = "Change Email")
+        }
+
+        // Change Password
+        TextButton(onClick = {
+            navController.navigate("changePassword")
+        }) {
+            Text(text = "Change Password")
         }
 
         // Button to go back home.
         TextButton(onClick = {
-            navController.navigate("home")
+            navController.navigate("settings")
         }) {
-            Text(text = "Home")
+            Text(text = "Go back to settings")
         }
     }
 }

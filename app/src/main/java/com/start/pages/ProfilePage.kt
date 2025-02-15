@@ -55,6 +55,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
     var user = FirebaseAuth.getInstance().currentUser
 
     // Fetch user details from Firestore
+
     LaunchedEffect(user) {
         user?.uid?.let { uid ->
             db.collection("accounts").document(uid).get()
