@@ -18,8 +18,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.start.AuthState
-import com.start.AuthViewModel
+import com.start.viewmodels.AuthState
+import com.start.viewmodels.AuthViewModel
 
 
 // Authentication page called after registering for an account
