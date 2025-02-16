@@ -18,9 +18,12 @@ import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
 import android.content.Context
 import android.os.Build
+import com.start.pages.AddEventPage
+import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.SettingsPage
 import com.start.pages.VerificationPage
+import com.start.pages.WeeklyCalendarPage
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -73,9 +76,28 @@ TimerViewModel) {
             }
         }
 
-        // Calendar screen.
+        // Monthly Calendar screen.
         composable("calendar"){
             CalendarPage(modifier, navController)
+        }
+
+        // Weekly Calendar screen.
+        composable("weeklyCalendar/{startDate}/{endDate}") { backStackEntry ->
+            val startDate = backStackEntry.arguments?.getString("startDate") ?: ""
+            val endDate = backStackEntry.arguments?.getString("endDate") ?: ""
+            WeeklyCalendarPage(navController = navController, startDate = startDate, endDate = endDate)
+        }
+
+        // Add Event screen.
+        composable("addEvent/{date}") { backStackEntry ->
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            AddEventPage(navController = navController, date = date)
+        }
+
+        // Edit Event screen.
+        composable("editEvent/{eventId}") { backStackEntry ->
+            val eventID = backStackEntry.arguments?.getString("eventID") ?: ""
+            EditEventPage(navController = navController, eventID = eventID)
         }
 
         // Games screen.

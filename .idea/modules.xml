@@ -3,6 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/DentalHygiene.iml" filepath="$PROJECT_DIR$/.idea/modules/DentalHygiene.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DentalHygiene.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DentalHygiene.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DentalHygiene.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DentalHygiene.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DentalHygiene.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DentalHygiene.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DentalHygiene.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DentalHygiene.app.unitTest.iml" />
     </modules>
   </component>
 </project>
