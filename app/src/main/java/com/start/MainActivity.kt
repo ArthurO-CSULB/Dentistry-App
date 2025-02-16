@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import com.start.ui.theme.DentalHygieneTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
+import com.google.android.libraries.places.api.Places
 
 /*
 We have our main and sole activity where the app will navigate through various composable screens
@@ -28,6 +30,11 @@ class MainActivity : ComponentActivity(){
 
         // Enable the app content to extend fully to the edges of the screen.
         enableEdgeToEdge()
+
+        //Initializes the Places API with the API key
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, MAPS_API_KEY)
+        }
         // We declare and initialize the ViewModel 'AuthViewModel', delegating its initialization
         // and lifecycle management to Jetpack's viewModels function.
         val authViewModel : AuthViewModel by viewModels()
