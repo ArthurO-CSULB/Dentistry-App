@@ -73,8 +73,6 @@ fun ReauthenticationPage(modifier: Modifier = Modifier, navController: NavContro
 
     // Login Page UI Text
     // We create a Column to arrange the UI components
-    // ToDo: 2/1/2025 Improve UI of Login Page
-    // ToDo: 2/6/2025 Make use of an IME to handle certain character inputs in text boxes
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
@@ -120,7 +118,7 @@ fun ReauthenticationPage(modifier: Modifier = Modifier, navController: NavContro
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
-        // Button for creating an account
+        // Button for reauthentication
         Button(onClick = {
             authViewModel.reauthenticate(email, password)
             navController.navigate("changeUserDetails")

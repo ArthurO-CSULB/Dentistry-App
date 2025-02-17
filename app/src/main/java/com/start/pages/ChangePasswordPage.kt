@@ -1,6 +1,5 @@
 package com.start.pages
 
-
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -45,7 +44,7 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @Composable
 fun ChangePasswordPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
-    // We create two variables of email and password and use by remember for the data to persist
+    // We create variable password and use by remember for the data to persist
     // across recompositions.
     var password by remember {
         mutableStateOf("")
@@ -70,7 +69,7 @@ fun ChangePasswordPage(modifier: Modifier = Modifier, navController: NavControll
         }
     }
 
-    // Login Page UI Text
+    // Change Password UI Text
     // We create a Column to arrange the UI components
     Column(
         // We fill the column to the entire screen
@@ -85,7 +84,7 @@ fun ChangePasswordPage(modifier: Modifier = Modifier, navController: NavControll
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
-        // TextField for user input of email. Email reference updates upon user input.
+        // TextField for user input of password. Password reference updates upon user input.
         OutlinedTextField(
             value = password,
             onValueChange = {
@@ -98,7 +97,7 @@ fun ChangePasswordPage(modifier: Modifier = Modifier, navController: NavControll
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
-        // Button for creating an account
+        // Button for changing password
         Button(onClick = {
             authViewModel.changePassword(password)
             authViewModel.checkAuthStatus()
@@ -109,7 +108,5 @@ fun ChangePasswordPage(modifier: Modifier = Modifier, navController: NavControll
         ) {
             Text(text = "Change Password")
         }
-
-
     }
 }

@@ -1,12 +1,12 @@
 package com.start
 
-import ChangeEmailPage
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.start.pages.CalendarPage
+import com.start.pages.ChangeEmailPage
 import com.start.pages.ChangePasswordPage
 import com.start.pages.ChangeUserDetailsPage
 import com.start.pages.ClinicSearchPage
@@ -103,14 +103,17 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
             ChangeEmailPage(modifier, navController, authViewModel)
         }
 
+        // Change Password Page
         composable("changePassword"){
             ChangePasswordPage(modifier, navController, authViewModel)
         }
 
+        // Reauthentication Page
         composable("reauthentication"){
             ReauthenticationPage(modifier, navController, authViewModel)
         }
 
+        // Change User Details Page
         composable("changeUserDetails"){
             ChangeUserDetailsPage(modifier, navController)
         }

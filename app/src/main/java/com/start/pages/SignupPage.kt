@@ -98,8 +98,7 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
             onValueChange = {
                 email = it
             },
-            label = {
-                Text(text = "Email")
+            label = { Text(text = "Email")
             }
         )
 

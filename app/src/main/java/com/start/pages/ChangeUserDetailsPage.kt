@@ -23,11 +23,13 @@ This will be called in the PageNavigation NavHost, passing in the modifier,
 NavController.
  */
 
+
+// A page in settings that shows which user details can be changed by the user
 //ToDo: 2/11/2025 Make functionality for user to delete their account
 @Composable
 fun ChangeUserDetailsPage(modifier: Modifier = Modifier, navController: NavController) {
 
-    // Settings Page UI
+    // Change User Details Page UI
     // We create a Column to arrange the UI components
     Column(
         // We fill the column to the entire screen
@@ -37,7 +39,7 @@ fun ChangeUserDetailsPage(modifier: Modifier = Modifier, navController: NavContr
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier=Modifier.height(16.dp))
-        // Title of Games Page
+        // Title of User Details Page
         Text(
             text = "Prototype User Changes Page", fontSize = 32.sp
         )
@@ -58,7 +60,7 @@ fun ChangeUserDetailsPage(modifier: Modifier = Modifier, navController: NavContr
             Text(text = "Change Password")
         }
 
-        // Button to go back home.
+        // Button to go back to settings.
         TextButton(onClick = {
             navController.navigate("settings")
         }) {

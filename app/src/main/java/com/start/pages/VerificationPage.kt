@@ -87,6 +87,5 @@ fun VerificationPage(modifier: Modifier = Modifier, navController: NavController
         }) {
             Text(text = "Resend verification email")
         }
-
     }
 }

@@ -36,14 +36,14 @@ fun SettingsPage(modifier: Modifier = Modifier, navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier=Modifier.height(16.dp))
-        // Title of Games Page
+        // Title of Settings Page
         Text(
             text = "Prototype Settings Page", fontSize = 32.sp
         )
 
         Spacer(modifier=Modifier.height(16.dp))
 
-        // Change Email
+        // Reauthentication before accessing user details page
         TextButton(onClick = {
             navController.navigate("reauthentication")
         }) {

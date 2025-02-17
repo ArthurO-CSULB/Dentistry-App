@@ -1,3 +1,4 @@
+package com.start.pages
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -43,7 +44,7 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @Composable
 fun ChangeEmailPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
-    // We create two variables of email and password and use by remember for the data to persist
+    // We create variable email and use by remember for the data to persist
     // across recompositions.
     var email by remember {
         mutableStateOf("")
@@ -68,7 +69,7 @@ fun ChangeEmailPage(modifier: Modifier = Modifier, navController: NavController,
         }
     }
 
-    // Login Page UI Text
+    // Change Email Page UI Text
     // We create a Column to arrange the UI components
     Column(
         // We fill the column to the entire screen
@@ -83,7 +84,7 @@ fun ChangeEmailPage(modifier: Modifier = Modifier, navController: NavController,
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
-        // TextField for user input of email. Email reference updates upon user input.
+        // TextField for user input of password. Email reference updates upon user input.
         OutlinedTextField(
             value = email,
             onValueChange = {
@@ -96,7 +97,7 @@ fun ChangeEmailPage(modifier: Modifier = Modifier, navController: NavController,
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
-        // Button for creating an account
+        // Button for changing email
         Button(onClick = {
             authViewModel.changeEmail(email)
             authViewModel.checkAuthStatus()

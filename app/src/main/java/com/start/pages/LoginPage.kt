@@ -79,7 +79,6 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
     // Login Page UI Text
     // We create a Column to arrange the UI components
     // ToDo: 2/1/2025 Improve UI of Login Page
-    // ToDo: 2/6/2025 Make use of an IME to handle certain character inputs in text boxes
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
@@ -132,7 +131,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
-        // Button for creating an account
+        // Button for logging in
         Button(onClick = {
             authViewModel.login(email, password)
             if (authState.value == AuthState.Unverified) {
