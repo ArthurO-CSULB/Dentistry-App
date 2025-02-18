@@ -9,8 +9,6 @@ import kotlin.random.Random
 /*
 Timer Notification Handler to handle the different notifications
 
-
-
 Author Referenced for structure of this code and how to make notification: Meet Patadia
 URL: https://meetpatadia9.medium.com/local-notification-in-android-with-jetpack-compose-437b430710f3
  */
@@ -40,6 +38,19 @@ class TimerNotificationHandler(private val context: Context) {
         // notify the user. Random.nextInt() generates a unique
         // identifier for the notification, ensuring that each notification is treated as a
         // separate instance.
+        notificationManager.notify(Random.nextInt(), notification)
+    }
+
+    // Overloaded method for custom notifications
+    fun timerFinishedNotification(title: String, description: String) {
+        val notification = NotificationCompat.Builder(context, notificationChannelTimer)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(title)
+            .setContentText(description)
+            .setPriority(NotificationManager.IMPORTANCE_HIGH)
+            .setAutoCancel(true)
+            .build()
+
         notificationManager.notify(Random.nextInt(), notification)
     }
 }
