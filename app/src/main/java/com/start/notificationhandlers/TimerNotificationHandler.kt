@@ -42,4 +42,18 @@ class TimerNotificationHandler(private val context: Context) {
         // separate instance.
         notificationManager.notify(Random.nextInt(), notification)
     }
+
+    // Overloaded function for notifications of events made in the calendar
+    // Overloaded method for custom notifications
+    fun timerFinishedNotification(title: String, description: String) {
+        val notification = NotificationCompat.Builder(context, notificationChannelTimer)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(title)
+            .setContentText(description)
+            .setPriority(NotificationManager.IMPORTANCE_HIGH)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(Random.nextInt(), notification)
+    }
 }
