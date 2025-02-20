@@ -22,6 +22,8 @@ android {
         buildFeatures {
             buildConfig = true
         }
+        //Allows API to be called with BuildConfig in other project files
+        buildConfigField("String", "MAPS_API_KEY", "\"${project.findProperty("MAPS_API_KEY") ?: ""}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

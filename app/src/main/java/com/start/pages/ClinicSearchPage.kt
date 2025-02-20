@@ -2,6 +2,8 @@ package com.start.pages
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.location.Location
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -55,6 +57,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
@@ -121,8 +125,16 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
 
     //Defaults the user's search radius to 5 miles
     var userRad by remember { mutableStateOf(8046)} // Default ~5 miles
+
+
+    var toothIcon: BitmapDescriptor? by remember { mutableStateOf(null) }
+    //Creates custom bitmap for tooth marker icon and loads it before map is ready
+    LaunchedEffect(Unit) {
+        toothIcon = BitmapDescriptorFactory.fromResource(R.drawable.tooth_icon)
+    }
+
     // Update camera when user location is set
-    LaunchedEffect(userLoc, userRad) {
+    LaunchedEffect(userLoc, userRad, toothIcon) {
         userLoc?.let { location ->
             googleMapInstance?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(location, 12f)
@@ -148,6 +160,7 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
                             MarkerOptions()
                                 .position(clinicLatLng)
                                 .title(clinic.name)
+                                .icon(toothIcon)
                         )
                     }
                 }
