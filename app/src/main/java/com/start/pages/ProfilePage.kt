@@ -55,7 +55,6 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
     var user = FirebaseAuth.getInstance().currentUser
 
     // Fetch user details from Firestore
-
     LaunchedEffect(user) {
         user?.uid?.let { uid ->
             db.collection("accounts").document(uid).get()
@@ -100,7 +99,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         )
 
         // Button to edit profile NOT IMPLEMENTED.
-        Button(onClick={navController.navigate("home")}) {
+        Button(onClick={navController.navigate("changeUserDetails")}) {
             Text(text = "Edit Profile")
         }
         Spacer(modifier = Modifier.height(16.dp))

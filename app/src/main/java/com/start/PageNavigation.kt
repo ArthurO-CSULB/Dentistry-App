@@ -6,7 +6,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.start.pages.CalendarPage
-import com.start.pages.ChangeEmailPage
 import com.start.pages.ChangePasswordPage
 import com.start.pages.ChangeUserDetailsPage
 import com.start.pages.ClinicSearchPage
@@ -96,11 +95,7 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
 
         // Settings Page
         composable("settings"){
-            SettingsPage(modifier, navController)
-        }
-         // Change Email Page
-        composable("changeEmail"){
-            ChangeEmailPage(modifier, navController, authViewModel)
+            SettingsPage(modifier, navController, authViewModel)
         }
 
         // Change Password Page
@@ -108,14 +103,20 @@ fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) 
             ChangePasswordPage(modifier, navController, authViewModel)
         }
 
-        // Reauthentication Page
-        composable("reauthentication"){
-            ReauthenticationPage(modifier, navController, authViewModel)
+        // Reauthentication Page Route for Password Change
+        composable("reauthenticationPasswordChange"){
+            ReauthenticationPage(modifier, navController, authViewModel, "changePassword")
         }
+
+        // Reauthentication Page Route for Account Deletion
+        composable("reauthenticationAccountDeletion"){
+            ReauthenticationPage(modifier, navController, authViewModel, "settings")
+        }
+
 
         // Change User Details Page
         composable("changeUserDetails"){
-            ChangeUserDetailsPage(modifier, navController)
+            ChangeUserDetailsPage(modifier, navController, authViewModel)
         }
     })
 }

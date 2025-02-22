@@ -50,6 +50,10 @@ fun ChangePasswordPage(modifier: Modifier = Modifier, navController: NavControll
         mutableStateOf("")
     }
 
+    var confirmPassword by remember {
+        mutableStateOf("")
+    }
+
     // From the passed in AuthViewModel, we get the authState of the authentication and use
     // observeAsState() to subscribe to the live data and track its changes.
     val authState = authViewModel.authState.observeAsState()
@@ -95,13 +99,29 @@ fun ChangePasswordPage(modifier: Modifier = Modifier, navController: NavControll
             }
         )
 
+        // TextField for user input of password. Password reference updates upon user input.
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = {
+                confirmPassword = it
+            },
+            label = {
+                Text(text = "New Password")
+            }
+        )
+
         // Space
         Spacer(modifier = Modifier.height(16.dp))
         // Button for changing password
         Button(onClick = {
-            authViewModel.changePassword(password)
-            authViewModel.checkAuthStatus()
-            navController.navigate("profile")
+            if (password == confirmPassword) {
+                authViewModel.changePassword(password)
+                authViewModel.checkAuthStatus()
+                navController.navigate("profile")
+            }
+            else {
+                Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+            }
         },
             // Button enabled when the authentication state is not loading.
             enabled = authState.value != AuthState.Loading

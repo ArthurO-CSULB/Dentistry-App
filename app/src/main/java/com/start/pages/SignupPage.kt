@@ -1,5 +1,6 @@
 package com.start.pages
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,8 +25,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.start.AuthState
 import com.start.AuthViewModel
+import com.start.AuthState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /*
 We have a composable sign up page which will handle the UI for signing in integrated with
@@ -79,7 +86,6 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
     // Signup Page UI
     // We create a Column to arrange the UI components
     // ToDo: 2/1/2025 Improve UI of Registration Page
-    // ToDo: 2/1/2025 Make user confirm their password and check if they match or do not
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
@@ -152,7 +158,19 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
         // Button for creating an account
         Button(onClick = {
             // Upon click call the signup method of authViewModel. Pass in data.
-            authViewModel.signup(email, password, firstName, lastName)
+            // If successful, send user to login page
+            (CoroutineScope(Dispatchers.Main)).launch{
+                try {
+                    val result = withContext(Main) {authViewModel.signup(email, password, firstName, lastName)}
+                    if (result) {
+                        navController.navigate("login")
+                    }
+                }
+                catch(e: Exception) {
+                    Log.e("Signup", e.message.toString())
+                }
+            }
+
         },
             // Button enabled when the authentication state is not loading.
             enabled = authState.value != AuthState.Loading

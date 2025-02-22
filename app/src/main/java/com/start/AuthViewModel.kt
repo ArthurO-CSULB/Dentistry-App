@@ -1,5 +1,6 @@
 package com.start
 
+import android.R.bool
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -11,6 +12,12 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 /*
 We define an AuthViewModel, which is a ViewModel class to manage the authentication state
@@ -101,14 +108,16 @@ class AuthViewModel : ViewModel() {
 
 
     // Method for user to sign up using email and password.
-    fun signup(email: String, password: String, firstName: String, lastName: String) {
+    suspend fun signup(email: String, password: String, firstName: String, lastName: String): Boolean {
         // If there is no email or no password that has been passed...
         if (email.isEmpty() || password.isEmpty()) {
             // The authentication state is "Error" with message.
             _authState.value = AuthState.Error("Empty email or password")
             // Sign-in method terminates.
-            return
+            return false
         }
+
+        var signUpFlag: Boolean = false;
 
         // If there is both email and password...
         // The authentication state is "Loading"
@@ -141,9 +150,10 @@ class AuthViewModel : ViewModel() {
                             )
 
                             // If user is successfully added to database, send verification email,
-                            // sign them out, then redirect to login page instead
+                            // sign them out, then set flag to true
                             sendVerificationEmail()
                             signout()
+                            signUpFlag = true;
                         }
                         // If failed, output it's unsuccessful
                         .addOnFailureListener { e ->
@@ -161,7 +171,10 @@ class AuthViewModel : ViewModel() {
                     _authState.value =
                         AuthState.Error(task.exception?.message ?: "Something went wrong")
                 }
-            }
+            }.await()
+
+        Log.d("Signup flag output", signUpFlag.toString())
+        return signUpFlag
     }
 
     // Method for user to sign-out.
@@ -204,82 +217,134 @@ class AuthViewModel : ViewModel() {
 
         user!!.updatePassword(password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Log.d("Password change", "User password updated.")
-            }
-            else {
-                Log.e("Password change", task.exception?.message ?: "Something went wrong")
+                Log.d("Password change", "User password updated successfully.")
+            } else {
+                Log.e(
+                    "Password change",
+                    task.exception?.message ?: "User password failed to update"
+                )
+                _authState.value =
+                    AuthState.Error(task.exception?.message ?: "User password update failed.")
             }
         }
     }
 
-    // still doesn't work
-    fun changeEmail(email: String) {
+    fun changeUserDetails(firstName: String, lastName: String) {
+
         val user = auth.currentUser
-
-        user!!.updateEmail(email).addOnCompleteListener {task ->
-            if (task.isSuccessful) {
-                Log.d("Email change", "User email address updated")
-            }
-            else {
-                Log.e("Email change", task.exception?.message ?: "Something went wrong")
-            }
-        }
-
-        db.collection("accounts").document(user.uid).update(
-            mapOf(
-                "email" to email
-            )
-        )
-    }
-
-    fun changeFirstName(firstName: String) {
-        val user = auth.currentUser
-
         db.collection("accounts").document(user?.uid ?: "N/A").update(
             mapOf(
-                "firstName" to firstName
-            )
-        )
-    }
-
-    fun changeLastName(lastName: String) {
-        val user = auth.currentUser
-
-        db.collection("accounts").document(user?.uid ?: "N/A"). update(
-            mapOf(
+                "firstName" to firstName,
                 "lastName" to lastName
             )
-        )
+        ).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("User Details change", "User Details Updated")
+            } else {
+                Log.e("User Details change", task.exception?.message ?: "Something went wrong")
+            }
+        }
     }
 
-    fun reauthenticate(email: String, password: String) {
+    // Reauthentication function, returns true if successful, otherwise false
+    suspend fun reauthenticate(email: String, password: String): Boolean {
 
         val user = auth.currentUser!!
         val credential = EmailAuthProvider.getCredential(email, password)
+        var isSuccess: Boolean = false;
 
-        user.reauthenticate(credential)
-            .addOnCompleteListener {
-                Log.d( "User re-authentication", "User re-authenticated")
+        try {
+                user.reauthenticate(credential).await()
+                Log.d("User re-authentication", "User re-authenticated.")
+                isSuccess = true;
+            } catch(e: Exception) {
+                Log.e("User re-authentication", e.message?: "Re-authentication failed")
             }
+        Log.d("Reauthentication flag value:" , isSuccess.toString())
+        return isSuccess;
+
+    }
+
+    // Delete account function, requires reauthentication to proceed
+    // Delete user data in Firestore first, if successful, then deletes the auth instance
+    fun deleteAccount() {
+        val user = auth.currentUser!!
+        val uid = user.uid.toString()
+
+        _authState.value = AuthState.Loading
+
+        (CoroutineScope(Dispatchers.Main).launch{
+                val firestoreDeleteStatus = withContext(IO) {deleteAccountInFirestore(uid)}
+                if (firestoreDeleteStatus) {
+                    (CoroutineScope(Dispatchers.Main).launch{(
+                    user.delete().addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("Account Deletion", "Authentication instance successfully deleted")
+                        } else {
+                            Log.e(
+                                "Account Deletion",
+                                task.exception?.message ?: "Authentication instance failed to delete"
+                            )
+                            _authState.value = AuthState.Error(
+                                task.exception?.message ?: "Authentication instance failed to delete"
+                            )
+                        }
+                    }).await()
+                    })
+                }
+                signout()
+                _authState.value == AuthState.UnAuthenticated
+            })
+        }
+
+
+
+
+    // Helper function for delete function
+    // Deletes user data from Firestore
+    // Does not delete data created by the user, only deletes the account
+    suspend private fun deleteAccountInFirestore(uid: String?): Boolean {
+
+        if (uid == null) return false;
+
+        var flag: Boolean = false;
+
+        db.collection("accounts").document(uid).delete().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("Account Deletion", "User data in Firestore successfully deleted")
+                flag = true
+            } else {
+                Log.e(
+                    "Account Deletion",
+                    task.exception?.message ?: "User data in Firestore failed to be deleted."
+                )
+            }
+        }.await()
+
+        return flag;
     }
 }
 
-/*
+    /*
     -Sealed class "AuthState" to represent different authentication states.
     -We use a sealed class to ensure that "AuthState" has these only defined states below.
     -Use sealed so that when the authState changes, the UI reacts by observing it and processing it
         in a when expression for readability.
  */
-sealed class AuthState {
-    // Authenticated State
-    object Authenticated : AuthState()
-    // Unauthenticated State
-    object UnAuthenticated : AuthState()
-    // Loading State
-    object Loading : AuthState()
-    // Unverified State
-    // Occurs when login attempt is created but email verification not completed
-    object Unverified : AuthState()
-    // Error state
-    data class Error(val message : String) : AuthState()
-}
+    sealed class AuthState {
+        // Authenticated State
+        object Authenticated : AuthState()
+
+        // Unauthenticated State
+        object UnAuthenticated : AuthState()
+
+        // Loading State
+        object Loading : AuthState()
+
+        // Unverified State
+        // Occurs when login attempt is created but email verification not completed
+        object Unverified : AuthState()
+
+        // Error state
+        data class Error(val message: String) : AuthState()
+    }

@@ -1,5 +1,7 @@
 package com.start.pages
 
+import android.app.AlertDialog
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,16 +25,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dentalhygiene.R
 import com.start.AuthState
 import com.start.AuthViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /*
 We have a composable login page which will handle the UI for login integrated with
@@ -42,7 +52,7 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 @Composable
-fun ReauthenticationPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
+fun ReauthenticationPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel, destinationString: String) {
 
     // We create two variables of email and password and use by remember for the data to persist
     // across recompositions.
@@ -71,7 +81,7 @@ fun ReauthenticationPage(modifier: Modifier = Modifier, navController: NavContro
         }
     }
 
-    // Login Page UI Text
+    // Reauthentication Page UI Text
     // We create a Column to arrange the UI components
     Column(
         // We fill the column to the entire screen
@@ -81,7 +91,7 @@ fun ReauthenticationPage(modifier: Modifier = Modifier, navController: NavContro
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Create the title of the page.
-        Text(text = "Please reauthenticate your credentials", fontSize = 32.sp)
+        Text(text = "Please reauthenticate your credentials before proceeding with this operation", fontSize = 30.sp)
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
@@ -120,14 +130,21 @@ fun ReauthenticationPage(modifier: Modifier = Modifier, navController: NavContro
         Spacer(modifier = Modifier.height(16.dp))
         // Button for reauthentication
         Button(onClick = {
-            authViewModel.reauthenticate(email, password)
-            navController.navigate("changeUserDetails")
+            (CoroutineScope(Dispatchers.Main).launch{
+                try {
+                    val result = withContext(IO) { authViewModel.reauthenticate(email, password)}
+                    if (result) {
+                        navController.navigate(destinationString)
+                    }
+                } catch(e: Exception) {
+                    Log.e("Reauthentication", e.message.toString())
+                }
+            })
         },
             // Button enabled when the authentication state is not loading.
             enabled = authState.value != AuthState.Loading
         ) {
             Text(text = "Login")
         }
-
     }
 }

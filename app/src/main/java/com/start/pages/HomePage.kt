@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.start.AuthState
 import com.start.AuthViewModel
+import com.start.AuthState
 
 /*
 We have a composable home page which will handle the UI for choosing different features of the app.
