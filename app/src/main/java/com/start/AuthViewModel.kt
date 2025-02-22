@@ -117,7 +117,7 @@ class AuthViewModel : ViewModel() {
             return false
         }
 
-        var signUpFlag: Boolean = false;
+        var signUpFlag: Boolean = false
 
         // If there is both email and password...
         // The authentication state is "Loading"
@@ -212,6 +212,8 @@ class AuthViewModel : ViewModel() {
             }
     }
 
+    // Changes the user's password through Firebase Authentication
+    // Requies a re-authentication before doing it
     fun changePassword(password: String) {
         val user = auth.currentUser
 
@@ -267,6 +269,7 @@ class AuthViewModel : ViewModel() {
 
     // Delete account function, requires reauthentication to proceed
     // Delete user data in Firestore first, if successful, then deletes the auth instance
+    //TODO: Must delete auth instance firt before Firestore Data since latter data lingers
     fun deleteAccount() {
         val user = auth.currentUser!!
         val uid = user.uid.toString()
@@ -293,7 +296,7 @@ class AuthViewModel : ViewModel() {
                     })
                 }
                 signout()
-                _authState.value == AuthState.UnAuthenticated
+                checkAuthStatus()
             })
         }
 

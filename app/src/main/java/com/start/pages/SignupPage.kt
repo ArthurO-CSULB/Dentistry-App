@@ -159,7 +159,7 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
         Button(onClick = {
             // Upon click call the signup method of authViewModel. Pass in data.
             // If successful, send user to login page
-            (CoroutineScope(Dispatchers.Main)).launch{
+            (CoroutineScope(Main)).launch{
                 try {
                     val result = withContext(Main) {authViewModel.signup(email, password, firstName, lastName)}
                     if (result) {

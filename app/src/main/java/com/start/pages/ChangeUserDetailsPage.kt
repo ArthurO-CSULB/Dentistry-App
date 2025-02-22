@@ -86,7 +86,7 @@ fun ChangeUserDetailsPage(modifier: Modifier = Modifier, navController: NavContr
 
         TextButton(onClick = {
             authViewModel.changeUserDetails(firstName, lastName)
-            navController.navigate("home")
+            navController.navigate("profile")
         }) {
             Text(text = "Change User Details")
         }
