@@ -32,12 +32,15 @@ class MainActivity : ComponentActivity(){
 
         // Enable the app content to extend fully to the edges of the screen.
         enableEdgeToEdge()
+
+        // Gabriel Villanueva
         // We create our repositories, passing in the Context for app resources.
         val funFactsRepo = TimerFunFactsRepo(applicationContext)
 
         // We declare and initialize the view-models, delegating their initialization
         // and lifecycle management to Jetpack's viewModels function.
         val authViewModel : AuthViewModel by viewModels()
+        // Gabriel Villanueva
         val timerViewModel: TimerViewModel by viewModels() {
             // Use factory to create view model to pass in the fun facts repository
             TimerViewModel.TimerViewModelFactory(funFactsRepo)
