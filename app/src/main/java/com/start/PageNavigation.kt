@@ -8,7 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.start.pages.LoginPage
 import com.start.pages.SignUpPage
 import com.start.pages.HomePage
-import com.start.pages.TimerPage
+import com.start.pages.TimerPages.TimerPage
 import com.start.pages.CalendarPage
 import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
@@ -16,15 +16,21 @@ import com.start.pages.ClinicSearchPage
 import com.start.pages.ProfilePage
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import com.start.pages.AddEventPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.SettingsPage
+import com.start.pages.TimerPages.TimerPageBegin
+import com.start.pages.TimerPages.TimerPageCancel
+import com.start.pages.TimerPages.TimerPageCountingModel
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
+import com.start.pages.TimerPages.TimerPageCounting
+import com.start.pages.TimerPages.TimerPageFinish
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -62,7 +68,7 @@ TimerViewModel) {
         }
         // Home screen.
         composable("home"){
-            HomePage(modifier, navController, authViewModel)
+            HomePage(modifier, navController, authViewModel, timerViewModel)
         }
 
         // Timer screen.
@@ -76,6 +82,31 @@ TimerViewModel) {
                 // Else the timer will display an error page.
                 ErrorPage(modifier, navController)
             }
+        }
+
+        composable("timer_begin") {
+            TimerPageBegin(modifier, navController, timerViewModel)
+        }
+
+        composable(
+            route = "timer_counting"
+        ) {
+            TimerPageCounting(modifier, navController, timerViewModel)
+        }
+
+        composable(
+            route = "timer_counting_model"
+        ) {
+            TimerPageCountingModel(modifier, navController, timerViewModel)
+
+        }
+
+        composable("timer_cancel") {
+            TimerPageCancel(modifier, navController, timerViewModel)
+        }
+
+        composable("timer_finish") {
+            TimerPageFinish(modifier, navController, timerViewModel)
         }
 
         // Monthly Calendar screen.

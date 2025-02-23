@@ -63,8 +63,13 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
     // We declare a public state flow int that the UI will observe.
     val toothBrushTimer: StateFlow<Long> = _toothBrushTimer
 
+    // Store the fun facts in a state flow for the UI to read.
     private val _timerFact = MutableStateFlow<StringBuilder>(StringBuilder(timerFunFactsRepo.randomFact()))
     val timerFact = _timerFact
+
+    // Store whether or not the timer model has been toggled.
+    private val _timerModelEnabled = MutableStateFlow<Boolean>(false)
+    val timerModelEnabled = _timerModelEnabled
 
     // The coroutine that will run the timer concurrently with the main thread.
     private var timerRun: kotlinx.coroutines.Job? = null
@@ -126,6 +131,7 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
     fun resetTimer() {
         timerRun?.cancel()
         _timerState.value = TimerState.Begin
+        _timerModelEnabled.value = false
         _toothBrushTimer.update {TWO_MINUTES_MILLI}
     }
 
@@ -137,9 +143,15 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
 
     // Demo finish.
     fun demoFinish() {
-        _toothBrushTimer.update {ZERO }
+        _toothBrushTimer.update {ZERO}
         timerRun?.cancel()
         _timerState.value = TimerState.Finished
+    }
+
+    // Method to toggle the tooth model.
+    fun toggleTeeth() {
+        // Flip the value of the timerModelEnabled
+        _timerModelEnabled.value = !_timerModelEnabled.value
     }
 
     // Reference:
