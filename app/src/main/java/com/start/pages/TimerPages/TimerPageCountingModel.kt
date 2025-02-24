@@ -1,38 +1,25 @@
 package com.start.pages.TimerPages
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.dentalhygiene.R
-import com.start.notificationhandlers.TimerNotificationHandler
+
 import com.start.viewmodels.TimerState
 import com.start.viewmodels.TimerViewModel
 
@@ -54,6 +41,11 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
     BackHandler {
         // Navigate back to the home screen when the system back button is pressed
         navController.popBackStack("home", inclusive = false)
+    }
+
+    // We get the toothModelViewerScreen to display the tooth model.
+    val toothModel: @Composable () -> Unit = {
+        ToothModelViewerScreen()
     }
 
     // From the passed in TimerViewModel, we get the state flow timerState of the timer and use
@@ -151,17 +143,21 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
 
     // We create the column for the timer.
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Row(
             modifier = modifier
-                .fillMaxWidth(),
+                .wrapContentWidth(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             // We display the tooth model.
+            toothModel()
+            /*
+
             Image(
                 // Using the painter Resource API we display the image.
                 painter = painterResource(id = R.drawable.toothmodel_3_adobestock),
@@ -172,6 +168,7 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
                     .size(250.dp)
                     .clip(CircleShape)
             )
+            */
         }
         Row(
             modifier = modifier.fillMaxWidth(),
@@ -203,3 +200,8 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         }
     }
 }
+
+
+
+
+

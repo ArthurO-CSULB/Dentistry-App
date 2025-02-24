@@ -20,6 +20,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import com.start.pages.AddEventPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
@@ -89,16 +91,18 @@ TimerViewModel) {
         }
 
         composable(
-            route = "timer_counting"
+            route = "timer_counting",
         ) {
             TimerPageCounting(modifier, navController, timerViewModel)
         }
 
         composable(
-            route = "timer_counting_model"
+            route = "timer_counting_model",
+            enterTransition = {
+                fadeIn(animationSpec=tween(1500, 750))
+            }
         ) {
             TimerPageCountingModel(modifier, navController, timerViewModel)
-
         }
 
         composable("timer_cancel") {
@@ -165,3 +169,4 @@ TimerViewModel) {
         }
     })
 }
+
