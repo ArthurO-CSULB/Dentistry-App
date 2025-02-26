@@ -11,13 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.start.viewmodels.AuthState
 import com.start.viewmodels.AuthViewModel
+import com.start.viewmodels.TimerState
+import com.start.viewmodels.TimerViewModel
 
 /*
 We have a composable home page which will handle the UI for choosing different features of the app.
@@ -28,11 +32,13 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 @Composable
-fun HomePage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
+fun HomePage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel, timerViewModel: TimerViewModel) {
 
     // From the passed in AuthViewModel, we get the authState of the authentication and use
     // observeAsState() to subscribe to the live data and track its changes.
     val authState = authViewModel.authState.observeAsState()
+    // We get the timer state.
+    val timerState = timerViewModel.timerState.collectAsState()
 
     // We create a launched effect that passes in the value of the authentication state. Upon
     // the value changing when calling authViewModel methods, the block of code will execute.
@@ -67,7 +73,16 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         // Space
         Spacer(modifier=Modifier.height(16.dp))
         // Button to the timer page.
-        Button(onClick={navController.navigate("timer")}) {
+        Button(onClick={
+            when(timerState.value) {
+                is TimerState.Begin -> navController.navigate("timer_begin")
+                is TimerState.Counting -> navController.navigate("timer_counting")
+                is TimerState.Cancel -> navController.navigate("timer_cancel")
+                is TimerState.Finished -> navController.navigate("timer_finish")
+                else -> Unit
+            }
+            navController.navigate("timer_begin")
+        }) {
             Text(text = "Prototype Toothbrush Timer")
         }
         // Space

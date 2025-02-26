@@ -43,6 +43,8 @@ class TimerNotificationHandler(private val context: Context) {
         notificationManager.notify(Random.nextInt(), notification)
     }
 
+
+
     // Overloaded function for notifications of events made in the calendar
     // Overloaded method for custom notifications
     fun timerFinishedNotification(title: String, description: String) {

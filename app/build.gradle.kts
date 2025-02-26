@@ -116,6 +116,15 @@ dependencies {
     // for requesting permissions. Will be used for the timer and may be used for other features.
     implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
 
+    // Sync
+    // Filament dependencies for rendering a tooth model.
+    //implementation("com.google.android.filament:filament-android:1.36.0")
+    //implementation("com.google.android.filament:gltfio-android:1.36.0") // Loads GLB models
+    //implementation("com.google.android.filament:filamat-android:1.36.0") // Material management
+
+    // Webkit to work with modern WebView APIs. This is to for the teeth model.
+    implementation("androidx.webkit:webkit:1.12.1")
+
     // Maps SDK for Android
     // Google Maps Compose library
     val mapsComposeVersion = "4.4.1"
