@@ -10,6 +10,11 @@ import androidx.compose.ui.Modifier
 import com.start.ui.theme.DentalHygieneTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.lifecycle.viewmodel.MutableCreationExtras
+import com.start.repos.TimerFunFactsRepo
+//import com.start.repos.TimerFunFactsRepo
+import com.start.viewmodels.AuthViewModel
+import com.start.viewmodels.TimerViewModel
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
 
@@ -36,8 +41,16 @@ class MainActivity : ComponentActivity(){
             Places.initialize(applicationContext, MAPS_API_KEY)
         }
         // We declare and initialize the ViewModel 'AuthViewModel', delegating its initialization
+        // We create our repositories, passing in the Context for app resources.
+        val funFactsRepo = TimerFunFactsRepo(applicationContext)
+
+        // We declare and initialize the view-models, delegating their initialization
         // and lifecycle management to Jetpack's viewModels function.
         val authViewModel : AuthViewModel by viewModels()
+        val timerViewModel: TimerViewModel by viewModels() {
+            // Use factory to create view model to pass in the fun facts repository
+            TimerViewModel.TimerViewModelFactory(funFactsRepo)
+        }
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
             DentalHygieneTheme {
@@ -46,7 +59,8 @@ class MainActivity : ComponentActivity(){
                     // The page navigation is the main content of the scaffold. Modifier assigned
                     // inner padding to ensure page navigation respects the reserved space, as well
                     // as passing in the ViewModels.
-                    PageNavigation(modifier = Modifier.padding(innerPadding), authViewModel = authViewModel)
+                    PageNavigation(modifier = Modifier.padding(innerPadding),
+                        authViewModel = authViewModel, timerViewModel = timerViewModel)
                 }
             }
         }

@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.start.AuthState
-import com.start.AuthViewModel
+import com.start.viewmodels.AuthState
+import com.start.viewmodels.AuthViewModel
 
 /*
 We have a composable home page which will handle the UI for choosing different features of the app.
@@ -40,6 +40,8 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         when (authState.value){
             // When the user is unauthenticated by singing out, navigate to the login screen.
             is AuthState.UnAuthenticated -> navController.navigate("login")
+            // When the user is unverified, navigate to verification screen.
+            is AuthState.Unverified -> navController.navigate("verification")
             // Else nothing.
             else -> Unit
         }
@@ -99,6 +101,20 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         // Button to the Profile page.
         Button(onClick={navController.navigate("profile")}) {
             Text(text = "Prototype Profile")
+        }
+
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Profile page.
+        Button(onClick={navController.navigate("verification")}) {
+            Text(text = "Prototype Verification")
+        }
+
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Profile page.
+        Button(onClick={navController.navigate("settings")}) {
+            Text(text = "Prototype Settings")
         }
     }
 

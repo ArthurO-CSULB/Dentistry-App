@@ -29,7 +29,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
     }
 
     buildTypes {
@@ -85,8 +84,10 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.leanback:leanback:1.0.0")
     implementation("com.github.bumptech.glide:glide:4.11.0")
+
     // For navigating between pages.
     implementation("androidx.navigation:navigation-compose:2.8.4")
+
     implementation("androidx.test.services:storage:1.5.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.5")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -106,6 +107,14 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-database-ktx:21.0.0")
     implementation("com.google.firebase:firebase-firestore-ktx")
+
+    // Coroutines to help manage long-running tasks that may block the main thread and cause
+    // the app to become unresponsive.
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // APIs for handling runtime permissions in Jetpack Compose, which streamlines the process
+    // for requesting permissions. Will be used for the timer and may be used for other features.
+    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
 
     // Maps SDK for Android
     // Google Maps Compose library

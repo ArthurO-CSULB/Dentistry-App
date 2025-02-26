@@ -20,11 +20,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.start.AuthState
-import com.start.AuthViewModel
+import com.start.viewmodels.AuthState
+import com.start.viewmodels.AuthViewModel
 
 /*
 We have a composable sign up page which will handle the UI for signing in integrated with
@@ -77,6 +78,8 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
 
     // Signup Page UI
     // We create a Column to arrange the UI components
+    // ToDo: 2/1/2025 Improve UI of Registration Page
+    // ToDo: 2/1/2025 Make user confirm their password and check if they match or do not
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
@@ -110,7 +113,13 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
             },
             label = {
                 Text(text = "Password")
-            }
+            },
+            // Shows a keyboard when the text box is typed,
+            // keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+
+            // makes password hidden
+            // TODO: 2/6/2025 design and implement a function to toggle password visibility
+            visualTransformation = PasswordVisualTransformation()
         )
 
         // Space
