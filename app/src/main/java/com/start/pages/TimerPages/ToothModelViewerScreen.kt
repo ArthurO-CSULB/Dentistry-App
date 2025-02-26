@@ -31,7 +31,8 @@ References:
 We have a composable that displays a 3d glb model inside a WebView. We do this by converting the
 GLB model into a Base64-encoded string, embedding it inside an HTML string, and loading it into the
 web view. The <model-viewer> web component is used to provide a JavaScript API to control, interact with, and
-customize the behavior of the 3d viewer.
+customize the behavior of the 3d viewer. We use the web rendering engine 'WebKit' which allows us render
+web content in android, in this case the model is embedded in the HTML aka web content.
  */
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -52,7 +53,6 @@ fun ToothModelViewerScreen() {
                 //settings.allowFileAccess = true
                 //settings.allowContentAccess = true
                 //loadUrl("file:///android_asset/tooth_model_viewer.html")
-
                 // We have dynamically created our HTML which contains the <model-viewer> to render
                 // the 3D model, which we will pass our Base64-encoded .glb model as the src.
                 loadDataWithBaseURL(null, getHtmlContent(base64Model), "text/html", "UTF-8", null)
@@ -76,6 +76,8 @@ loadUrl("file:///android_asset/tooth_model_viewer.html")
 Now the new approach is loading the GLB file as a Base64-encoded string.
  */
 
+// Method to encode the tooth model into a string of base64 which will be embedded in the html
+// that the WebView will load to show the tooth model.
 fun loadGlbAsBase64(context: Context, assetFileName: String): String {
     // Put the opened .glb file from our assets folder into input stream.
     val inputStream: InputStream = context.assets.open(assetFileName)
