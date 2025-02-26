@@ -30,6 +30,7 @@ class DentalApplication : Application() {
         // is a unique identifier for the channel. Notification name is the display name of the
         // channel.
 
+        // Gabriel Villanueva
         // Notification channel for the timer.
         val timerNotificationChannel = NotificationChannel(
             "notification_channel_timer",
