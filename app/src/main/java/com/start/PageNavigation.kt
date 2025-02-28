@@ -10,10 +10,14 @@ import com.start.pages.SignUpPage
 import com.start.pages.HomePage
 import com.start.pages.TimerPages.TimerPage
 import com.start.pages.CalendarPage
+import com.start.pages.ChangePasswordPage
+import com.start.pages.ChangeUserDetailsPage
+import com.start.pages.ClinicSearchPage
 import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
 import com.start.pages.ClinicSearchPage
 import com.start.pages.ProfilePage
+import com.start.pages.ReauthenticationPage
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
 import android.os.Build
@@ -165,8 +169,28 @@ TimerViewModel) {
 
         // Settings Page
         composable("settings"){
-            SettingsPage(modifier, navController)
+            SettingsPage(modifier, navController, authViewModel)
+        }
+
+        // Change Password Page
+        composable("changePassword"){
+            ChangePasswordPage(modifier, navController, authViewModel)
+        }
+
+        // Reauthentication Page Route for Password Change
+        composable("reauthenticationPasswordChange"){
+            ReauthenticationPage(modifier, navController, authViewModel, "changePassword")
+        }
+
+        // Reauthentication Page Route for Account Deletion
+        composable("reauthenticationAccountDeletion"){
+            ReauthenticationPage(modifier, navController, authViewModel, "settings")
+        }
+
+
+        // Change User Details Page
+        composable("changeUserDetails"){
+            ChangeUserDetailsPage(modifier, navController, authViewModel)
         }
     })
 }
-

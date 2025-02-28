@@ -42,14 +42,15 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 @Composable
-fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
+fun ChangePasswordPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
-    // We create two variables of email and password and use by remember for the data to persist
+    // We create variable password and use by remember for the data to persist
     // across recompositions.
-    var email by remember {
+    var password by remember {
         mutableStateOf("")
     }
-    var password by remember {
+
+    var confirmPassword by remember {
         mutableStateOf("")
     }
 
@@ -64,10 +65,6 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
     LaunchedEffect(authState.value) {
         // Whenever the authState is a certain authentication state...
         when (authState.value){
-            // When the user is unverified via email, navigate to verification page
-            is AuthState.Unverified -> navController.navigate("verification")
-            // When the user is authenticated by login, navigate to the home page.
-            is AuthState.Authenticated -> navController.navigate("home")
             // When the user inputs incorrectly, we create a Toast message of the error.
             is AuthState.Error -> Toast.makeText(context,
                 (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
@@ -76,9 +73,8 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
         }
     }
 
-    // Login Page UI Text
+    // Change Password UI Text
     // We create a Column to arrange the UI components
-    // ToDo: 2/1/2025 Improve UI of Login Page
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
@@ -87,30 +83,11 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Create the title of the page.
-        Text(text = "Welcome to", fontSize = 32.sp)
+        Text(text = "Change Password", fontSize = 32.sp)
 
-        // mOral Logo
-        Image(
-            painter = painterResource(id = R.drawable.moral_logo),
-            contentDescription = "Profile Picture",
-            modifier = Modifier.size(200.dp)
-        )
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
-        // TextField for user input of email. Email reference updates upon user input.
-        OutlinedTextField(
-            value = email,
-            onValueChange = {
-                email = it
-            },
-            label = {
-                Text(text = "Email")
-            }
-        )
-
-        // Space
-        Spacer(modifier = Modifier.height(8.dp))
         // TextField for user input of password. Password reference updates upon user input.
         OutlinedTextField(
             value = password,
@@ -118,39 +95,38 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
                 password = it
             },
             label = {
-                Text(text = "Password")
+                Text(text = "New Password")
+            }
+        )
+
+        // TextField for user input of password. Password reference updates upon user input.
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = {
+                confirmPassword = it
             },
-            // Shows a keyboard when the text box is typed,
-            // keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-
-            // makes password hidden
-            // TODO: 2/6/2025 design and implement a function to toggle password visibility
-            visualTransformation = PasswordVisualTransformation()
-
+            label = {
+                Text(text = "New Password")
+            }
         )
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
-        // Button for logging in
+        // Button for changing password
         Button(onClick = {
-            authViewModel.login(email, password)
-            if (authState.value == AuthState.Unverified) {
-                navController.navigate("verification")
+            if (password == confirmPassword) {
+                authViewModel.changePassword(password)
+                authViewModel.checkAuthStatus()
+                navController.navigate("profile")
+            }
+            else {
+                Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
             }
         },
             // Button enabled when the authentication state is not loading.
             enabled = authState.value != AuthState.Loading
         ) {
-            Text(text = "Login")
-        }
-
-        // Space
-        Spacer(modifier = Modifier.height(8.dp))
-        // Button to navigate to login.
-        TextButton(onClick = {
-            navController.navigate("signup")
-        }) {
-            Text(text = "Don't have an account? Sign up!")
+            Text(text = "Change Password")
         }
     }
 }

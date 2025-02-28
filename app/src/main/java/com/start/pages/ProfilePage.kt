@@ -96,7 +96,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         )
 
         // Button to edit profile NOT IMPLEMENTED.
-        Button(onClick={navController.navigate("home")}) {
+        Button(onClick={navController.navigate("changeUserDetails")}) {
             Text(text = "Edit Profile")
         }
         Spacer(modifier = Modifier.height(16.dp))
