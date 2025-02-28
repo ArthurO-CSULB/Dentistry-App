@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.oAuthProvider
-import com.start.AuthViewModel
+import com.start.viewmodels.AuthViewModel
 
 /*
 We have a composable settings page which will handle the UI for settings
