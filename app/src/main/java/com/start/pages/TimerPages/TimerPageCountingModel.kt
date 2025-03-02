@@ -1,6 +1,10 @@
 package com.start.pages.TimerPages
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,11 +20,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 import com.start.viewmodels.TimerState
+import com.start.viewmodels.TimerModelState
 import com.start.viewmodels.TimerViewModel
 
 /*
@@ -43,10 +50,6 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         navController.popBackStack("home", inclusive = false)
     }
 
-    // We get the toothModelViewerScreen to display the tooth model.
-    val toothModel: @Composable () -> Unit = {
-        ToothModelViewerScreen()
-    }
 
     // From the passed in TimerViewModel, we get the state flow timerState of the timer and use
     // collectAsState() to subscribe to the state flow and track its changes. page recomposes
@@ -60,6 +63,9 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
 
     // State of whether toggle button for tooth model.
     val timerModelEnabled = timerViewModel.timerModelEnabled.collectAsState()
+
+    // State of the tooth model.
+    val timerModelState = timerViewModel.timerModelState.collectAsState()
 
     // Launched effect to check when timer is canceled or finished.
     LaunchedEffect(timerState.value) {
@@ -79,6 +85,22 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
     val timerTextModel: @Composable () -> Unit = {
         Text(formatLongToMmSs(toothBrushTimer.value), fontSize = 64.sp, fontWeight = FontWeight.Bold)
     }
+
+    // Text that displays the text of the tooth model, whether to brush top teeth, bottom teeth or
+    // tongue.
+
+    val timerTextToothModel: @Composable () -> Unit = {
+        when(timerModelState.value) {
+            is TimerModelState.Upper -> Text("Brush Upper Teeth!", fontSize = 32.sp,
+                fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic)
+            is TimerModelState.Lower -> Text("Brush Lower Teeth!", fontSize = 32.sp,
+                fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic)
+            is TimerModelState.Tongue -> Text("Brush Tongue!", fontSize = 32.sp,
+                fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic)
+            else -> Unit
+        }
+    }
+
     // Button to pause and resume the timer.
     val pauseResumeButton: @Composable () -> Unit = {
         Button(
@@ -148,6 +170,29 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Row for the tooth model text.
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Display the text for the tooth model to tell the user what to brush.
+            // Animate the text.
+            AnimatedContent(
+                targetState=timerModelState.value,
+                transitionSpec = { slideInVertically{ height -> -height} togetherWith slideOutVertically{ height -> height}},
+                label="Tooth Model Text Transitions"
+            ) {
+                // No matter what the state is we display the text with animation.
+                timerModelStateValue ->
+                when(timerModelStateValue) {
+                    is TimerModelState.Upper -> timerTextToothModel()
+                    else -> timerTextToothModel()
+                }
+            }
+        }
+        // Row for the tooth model.
         Row(
             modifier = modifier
                 .wrapContentWidth(),
@@ -155,7 +200,7 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
             verticalAlignment = Alignment.CenterVertically
         ) {
             // We display the tooth model.
-            toothModel()
+            ToothModelViewerScreen(LocalContext.current, timerViewModel)
             /*
 
             Image(
