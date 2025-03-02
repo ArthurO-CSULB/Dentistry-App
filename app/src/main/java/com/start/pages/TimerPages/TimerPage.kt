@@ -251,17 +251,3 @@ fun TimerPage(modifier: Modifier = Modifier, navController: NavController,
 
 
 }
-
-// Method to format the timer from Long to m:ss
-// Referenced from https://www.baeldung.com/java-ms-to-hhmmss
-fun formatLongToMmSs(timeInMillis: Long): String {
-    // Convert milliseconds to total seconds.
-    val totalSeconds = timeInMillis / 1000
-    // Convert total seconds to total amount of minutes.
-    val minutes = totalSeconds / 60
-    // Get the remaining seconds from the total minutes.
-    val seconds = totalSeconds % 60
-
-    // Format to m:ss.
-    return String.format("%01d:%02d", minutes, seconds)
-}
