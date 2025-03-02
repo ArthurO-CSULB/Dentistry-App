@@ -36,8 +36,10 @@ Author Referenced for overall structure of code: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 */
 
-// The number of milliseconds in two minutes for the toothbrush timer
+// The number of milliseconds in two minutes, 10 seconds, and one second, and zero seconds
+// for the toothbrush timer.
 const val TWO_MINUTES_MILLI : Long = 120000
+const val TEN_SECONDS_MILLI : Long = 10000
 const val ONE_SECOND_MILLI : Long = 1000
 const val ZERO : Long = 0
 class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewModel() {
@@ -71,6 +73,10 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
     private val _timerModelEnabled = MutableStateFlow<Boolean>(false)
     val timerModelEnabled = _timerModelEnabled
 
+    // Store the state of the tooth model.
+    private val _timerModelState = MutableStateFlow<TimerModelState>(TimerModelState.Upper)
+    val timerModelState = _timerModelState
+
     // The coroutine that will run the timer concurrently with the main thread.
     private var timerRun: kotlinx.coroutines.Job? = null
 
@@ -101,11 +107,17 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
                 }
                 // If the timer passes 15 seconds, change the fun fact to be displayed.
                 // Don't change the fun fact if the timer is at 2 minutes or at zero.
+                // Also change the state of the tooth model.
                 if (_toothBrushTimer.value.toInt() % (ONE_SECOND_MILLI.toInt() * 10) == 0 &&
                     _toothBrushTimer.value != TWO_MINUTES_MILLI &&
-                    _toothBrushTimer.value.toInt() != 0)
+                    _toothBrushTimer.value.toInt() != 0) {
                     // Call method to change fact.
                     changeFact()
+                    // Call method to change the teeth.
+                    changeTeeth()
+                }
+                // If the timer has 10 seconds left, we change the state of the tooth model to tongue.
+                if (_toothBrushTimer.value <= TEN_SECONDS_MILLI) changeTongue()
                 // If you are not at 0, update timer by one second less.
                 _toothBrushTimer.update {it - ONE_SECOND_MILLI}
             }
@@ -129,9 +141,13 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
 
     // Method to reset the timer.
     fun resetTimer() {
+        // Cancel the coroutine
         timerRun?.cancel()
+        // Initialize the states to their beginning states.
         _timerState.value = TimerState.Begin
+        _timerModelState.value = TimerModelState.Upper
         _timerModelEnabled.value = false
+        // Set the timer to two minutes.
         _toothBrushTimer.update {TWO_MINUTES_MILLI}
     }
 
@@ -143,8 +159,11 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
 
     // Demo finish.
     fun demoFinish() {
+        // Timer set to zero.
         _toothBrushTimer.update {ZERO}
+        // Coroutine canceled.
         timerRun?.cancel()
+        // Timer state set to finished.
         _timerState.value = TimerState.Finished
     }
 
@@ -152,6 +171,17 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
     fun toggleTeeth() {
         // Flip the value of the timerModelEnabled
         _timerModelEnabled.value = !_timerModelEnabled.value
+    }
+
+    // Method to change the state of the teeth from upper to lower and vice versa.
+    private fun changeTeeth() {
+        if (timerModelState.value == TimerModelState.Upper) _timerModelState.value = TimerModelState.Lower
+        else if (timerModelState.value == TimerModelState.Lower) _timerModelState.value = TimerModelState.Upper
+    }
+
+    // Method to change the state of the teeth for the tongue.
+    private fun changeTongue() {
+        _timerModelState.value = TimerModelState.Tongue
     }
 
     // Reference:
@@ -197,4 +227,20 @@ sealed class TimerState {
     // Finished State
     data object Finished: TimerState()
 
+}
+
+/*
+    -Sealed class "TimerModelState" to represent different tooth model states.
+    -We use a sealed class to ensure that "TimerModelState" has these only defined states below.
+    -Use sealed so that when the TimerModelState changes, the UI reacts by observing it and processing it
+        in a when expression to show what the user should see next.
+ */
+
+sealed class TimerModelState {
+    // Upper Teeth State
+    data object Upper : TimerModelState()
+    // Lower Teeth State
+    data object Lower : TimerModelState()
+    // Tongue State
+    data object Tongue : TimerModelState()
 }

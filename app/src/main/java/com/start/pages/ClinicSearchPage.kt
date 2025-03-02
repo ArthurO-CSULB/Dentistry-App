@@ -147,6 +147,7 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
                     userRad,
                     MAPS_API_KEY
                 )
+                //Log.d("ClinicSearch", "Clinics fetched: ${clinics.size}")
                 dentalClinics = clinics
 
                 // Add markers for clinics on the map
