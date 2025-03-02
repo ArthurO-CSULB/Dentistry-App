@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "DentalHygiene"
 include(":app")
+

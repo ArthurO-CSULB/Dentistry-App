@@ -1,0 +1,462 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 2153,
+      "max": [
+        4.681066036224365,
+        3.0816650390625,
+        8.474407196044922
+      ],
+      "min": [
+        -4.681066036224365,
+        0.5764309763908386,
+        1.1180249452590942
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 25836,
+      "componentType": 5126,
+      "count": 2153,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 2153,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 5520,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 51672,
+      "componentType": 5126,
+      "count": 577,
+      "max": [
+        3.172765016555786,
+        3.016465902328491,
+        7.608315944671631
+      ],
+      "min": [
+        -3.172765016555786,
+        0.4328939914703369,
+        0.11163700371980667
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 58596,
+      "componentType": 5126,
+      "count": 577,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 17224,
+      "componentType": 5126,
+      "count": 577,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 22080,
+      "componentType": 5125,
+      "count": 2880,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 65520,
+      "componentType": 5126,
+      "count": 460,
+      "max": [
+        4.960789203643799,
+        6.459667205810547,
+        8.817216873168945
+      ],
+      "min": [
+        -4.960446834564209,
+        3.907252073287964,
+        1.2684910297393799
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 71040,
+      "componentType": 5126,
+      "count": 460,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 21840,
+      "componentType": 5126,
+      "count": 460,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 33600,
+      "componentType": 5125,
+      "count": 2016,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 76560,
+      "componentType": 5126,
+      "count": 416,
+      "max": [
+        4.960618019104004,
+        2.4147820472717285,
+        8.544437408447266
+      ],
+      "min": [
+        -4.960618019104004,
+        -0.061948999762535095,
+        0.9465789794921875
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 81552,
+      "componentType": 5126,
+      "count": 416,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 25520,
+      "componentType": 5126,
+      "count": 416,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 41664,
+      "componentType": 5125,
+      "count": 1848,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 86544,
+      "componentType": 5126,
+      "count": 2153,
+      "max": [
+        4.681065082550049,
+        5.8013129234313965,
+        8.734903335571289
+      ],
+      "min": [
+        -4.681066036224365,
+        3.123823881149292,
+        1.3713819980621338
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 112380,
+      "componentType": 5126,
+      "count": 2153,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 28848,
+      "componentType": 5126,
+      "count": 2153,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 49056,
+      "componentType": 5125,
+      "count": 5520,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "generator": "fab-model-conversion",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 71136,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 46072,
+      "byteOffset": 71136,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 138216,
+      "byteOffset": 117208,
+      "byteStride": 12,
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 255424,
+      "uri": "tooth_cartoon.bin"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Teeth",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Tongue",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1.0,
+          0.19413198274092805,
+          0.19413198274092805,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Gums",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1.0,
+          0.4467292081272397,
+          0.4467292081272397,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "teeth_OBJ1:polySurface31_Teeth_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "teeth_OBJ1:Henry_GEO_GRPtonguemouth_GRPHead_GRP_Tongue_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 4,
+            "TEXCOORD_0": 6
+          },
+          "indices": 7,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "polySurface1_Gums_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 9,
+            "POSITION": 8,
+            "TEXCOORD_0": 10
+          },
+          "indices": 11,
+          "material": 2,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "teeth_OBJ1:Henry_GEO_GRPmouth_GRPHead_GRPlwr_gums_Gums_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 13,
+            "POSITION": 12,
+            "TEXCOORD_0": 14
+          },
+          "indices": 15,
+          "material": 2,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "polySurface3_Teeth_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 17,
+            "POSITION": 16,
+            "TEXCOORD_0": 18
+          },
+          "indices": 19,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "matrix": [
+        0.009999999776482582,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.009999999776482582,
+        0.0,
+        0.0,
+        -0.009999999776482582,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "teeth1.fbx"
+    },
+    {
+      "children": [
+        3,
+        5,
+        7,
+        10,
+        12
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "name": "teeth_OBJ1:polySurface31"
+    },
+    {
+      "mesh": 0,
+      "name": "teeth_OBJ1:polySurface31_Teeth_0"
+    },
+    {
+      "children": [
+        6
+      ],
+      "name": "teeth_OBJ1:Henry_GEO_GRPtonguemouth_GRPHead_GRP"
+    },
+    {
+      "mesh": 1,
+      "name": "teeth_OBJ1:Henry_GEO_GRPtonguemouth_GRPHead_GRP_Tongue_0"
+    },
+    {
+      "children": [
+        8
+      ],
+      "name": "teeth_OBJ1:Henry_GEO_GRPmouth_GRPHead_GRPupr_gums1"
+    },
+    {
+      "children": [
+        9
+      ],
+      "name": "polySurface1"
+    },
+    {
+      "mesh": 2,
+      "name": "polySurface1_Gums_0"
+    },
+    {
+      "children": [
+        11
+      ],
+      "name": "teeth_OBJ1:Henry_GEO_GRPmouth_GRPHead_GRPlwr_gums"
+    },
+    {
+      "mesh": 3,
+      "name": "teeth_OBJ1:Henry_GEO_GRPmouth_GRPHead_GRPlwr_gums_Gums_0"
+    },
+    {
+      "children": [
+        13
+      ],
+      "name": "polySurface3"
+    },
+    {
+      "mesh": 4,
+      "name": "polySurface3_Teeth_0"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}

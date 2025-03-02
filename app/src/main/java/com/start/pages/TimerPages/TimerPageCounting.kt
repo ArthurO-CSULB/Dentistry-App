@@ -73,6 +73,7 @@ fun TimerPageCounting(modifier: Modifier, navController: NavController, timerVie
     // State of whether toggle button for tooth model.
     val timerModelEnabled = timerViewModel.timerModelEnabled.collectAsState()
 
+
     // Launched Effect to check if timer is canceled or finished.
     LaunchedEffect(timerState.value) {
         when(timerState.value) {
@@ -143,7 +144,7 @@ fun TimerPageCounting(modifier: Modifier, navController: NavController, timerVie
     // Button to toggle the teeth.
     val toggleTeethButton: @Composable () -> Unit = {
         Button(
-            onClick = {timerViewModel.timerModelEnabled.value = !timerViewModel.timerModelEnabled.value},
+            onClick = {timerViewModel.toggleTeeth()},
             colors= ButtonDefaults.buttonColors(containerColor = Color.Blue)
         ) {
             Text(text="Toggle Teeth")
@@ -184,10 +185,11 @@ fun TimerPageCounting(modifier: Modifier, navController: NavController, timerVie
             // Animate the fun facts.
             AnimatedContent(
                 targetState=timerFunFact.value,
-                transitionSpec= { slideInVertically{ height -> -height} + fadeIn(animationSpec = tween(1000, 800)) togetherWith slideOutVertically{ height -> height} + fadeOut() },
+                // slideInVertically{ height -> -height} +
+                transitionSpec= { fadeIn(animationSpec = tween(1000, 800)) togetherWith slideOutVertically{ height -> height} + fadeOut() },
                 label="Fun Fact Transitions"
             ) {
-                    timerFunFactState ->
+                timerFunFactState ->
                 // Display fun facts. When the fun fact changes from the
                 // view model, we display a new one animated.
                 Text(
