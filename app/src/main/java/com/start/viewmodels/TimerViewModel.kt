@@ -17,6 +17,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dentalhygiene.R
 import com.start.repos.TimerFunFactsRepo
+import kotlinx.coroutines.Dispatchers
 // import com.start.repos.TimerFunFactsRepo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,7 +89,8 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
         // Else it is counting.
         else _timerState.value = TimerState.Counting
         // Asynchronously run the counting down of the timer to avoid blocking the main thread.
-        timerRun = viewModelScope.launch {
+        // runs coroutines on a background thread pool via Dispatchers.Default
+        timerRun = viewModelScope.launch(Dispatchers.Default) {
             // Loop for counting down for two minutes until state changes.
             while (true) {
                 // Wait one second
