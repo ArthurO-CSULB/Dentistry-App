@@ -61,23 +61,13 @@ fun ToothModelViewerScreen(context: Context, timerViewModel: TimerViewModel) {
                 //settings.allowContentAccess = true
                 //loadUrl("file:///android_asset/tooth_model_viewer.html")
 
-
-
-                // We have dynamically created our HTML which contains the <model-viewer> to render
-                // the 3D model, which we will pass our Base64-encoded .glb model as the src.
-                loadDataWithBaseURL(null, getHtmlContent(base64Model), "text/html", "UTF-8", null)
-
-                // We create a web view client to handle certain events during the lifecycle of the
-                // web view.
+                // Web client to override functions that execute on the lifecycle of the web view.
                 webViewClient = object : WebViewClient() {
-                    // We override the onPageFinished method so that when the page is finished loading,
-                    // we assign the model loaded boolean to true so that this composable screen
-                    // knows when to make changes to the model only when the model has been fully loaded.
-                    override fun onPageFinished(view: WebView?, url: String?) {
+                    // When page is finished loading, we set modelLoaded value to true.
+                    override fun onPageFinished(view: WebView, url: String) {
                         modelLoaded.value = true
                     }
                 }
-
             }
         },
         // Wrap the content and have it in a circular shape
@@ -85,21 +75,25 @@ fun ToothModelViewerScreen(context: Context, timerViewModel: TimerViewModel) {
             .wrapContentSize()
             .clip(CircleShape),
     )
+
     // Store the state of the timer.
     val timerModelState = timerViewModel.timerModelState.collectAsState()
+
     // Launched effect to check the model state.
     LaunchedEffect(timerModelState.value) {
 
-        // Wait for the model to load.
-        while (!modelLoaded.value) {
-            println("Waiting for the tooth model to load...")
-            // Check every half second.
-            delay(500)
+        // If the model is not loaded we load the model.
+        if (!modelLoaded.value) {
+            // Print that the model is not loaded and is currently loading.
+            println("Model not loaded. Loading the model.")
+            // We have dynamically created our HTML which contains the <model-viewer> to render
+            // the 3D model, which we will pass our Base64-encoded .glb model as the src.
+            webView.value.loadDataWithBaseURL(null, getHtmlContent(base64Model), "text/html", "UTF-8", null)
+            // Wait 1.5 seconds to ensure that everything is loaded so that we can call the
+            // javascript functions that manipulate the teeth properly
+            delay(1500)
+            println("Model has been loaded.")
         }
-
-        // Display that the model is loaded.
-        println("The tooth model has loaded.")
-
         // Depending on the model state...
         when (timerModelState.value) {
             // When upper, highlight upper teeth.
@@ -198,9 +192,10 @@ fun getHtmlContent(base64Model: String): String {
                     viewer.model.materials[3].pbrMetallicRoughness.setBaseColorFactor(originalBaseColorTeeth);
                 }
                 
-                // Code to run when the model is loading.
-                document.getElementById("viewer").addEventListener("load", () => {
-                    console.log("I am here");
+                // Code to run when the model is loaded.
+                document.getElementById("viewer").addEventListener("scene-graph-ready", () => {
+                    console.log("Model is ready to interact with.");
+                    
                     // Store the original baseColorFactor for the teeth and tongue.
                     originalBaseColorTongue = viewer.model.materials[2].pbrMetallicRoughness.baseColorFactor;
                   
