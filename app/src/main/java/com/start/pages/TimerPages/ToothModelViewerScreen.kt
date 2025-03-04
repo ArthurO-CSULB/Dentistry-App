@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,17 +43,17 @@ web content in android, in this case the model is embedded in the HTML aka web c
 @Composable
 fun ToothModelViewerScreen(context: Context, timerViewModel: TimerViewModel) {
     // Load and convert teeth_cartoon.glb from assets into a Base64 string.
-    val base64Model = loadGlbAsBase64(context, "teeth_cartoon_edited.glb")
+    val base64Model = remember{loadGlbAsBase64(context, "teeth_cartoon_edited.glb")}
     // Create a WebView inside jetpack compose using android view that will persist across recompositions.
-    val webView = remember {mutableStateOf(WebView(context))}
+    val webView = remember {WebView(context)}
     // Boolean to store whether the model has been fully loaded that will persist across recompositions.
     val modelLoaded = remember {mutableStateOf(false)}
 
-    // We create an android view which will be a web view to display the model.
-    AndroidView(
-        factory = {
+    // Run to check if the model is loaded every recomposition.
+    LaunchedEffect(Unit) {
+        if (!modelLoaded.value) {
             // We configure the web view.
-            webView.value.apply {
+            webView.apply {
                 // Configure the web view settings.
 
                 // Enable javascript for the <model-viewer> component
@@ -61,51 +62,53 @@ fun ToothModelViewerScreen(context: Context, timerViewModel: TimerViewModel) {
                 //settings.allowContentAccess = true
                 //loadUrl("file:///android_asset/tooth_model_viewer.html")
 
+                // Print that the model is not loaded and is currently loading.
+                println("Model not loaded. Loading the model.")
+                // We have dynamically created our HTML which contains the <model-viewer> to render
+                // the 3D model, which we will pass our Base64-encoded .glb model as the src.
+                webView.loadDataWithBaseURL(null, getHtmlContent(base64Model), "text/html", "UTF-8", null)
+                // Wait some time to ensure that everything is loaded and that model is scene-graph-ready
+                // javascript functions that manipulate the teeth properly
+
                 // Web client to override functions that execute on the lifecycle of the web view.
                 webViewClient = object : WebViewClient() {
                     // When page is finished loading, we set modelLoaded value to true.
                     override fun onPageFinished(view: WebView, url: String) {
                         modelLoaded.value = true
+                        println("Model has been loaded.")
                     }
                 }
             }
-        },
-        // Wrap the content and have it in a circular shape
-        modifier = Modifier
-            .wrapContentSize()
-            .clip(CircleShape),
-    )
-
-    // Store the state of the timer.
-    val timerModelState = timerViewModel.timerModelState.collectAsState()
-
-    // Launched effect to check the model state.
-    LaunchedEffect(timerModelState.value) {
-
-        // If the model is not loaded we load the model.
-        if (!modelLoaded.value) {
-            // Print that the model is not loaded and is currently loading.
-            println("Model not loaded. Loading the model.")
-            // We have dynamically created our HTML which contains the <model-viewer> to render
-            // the 3D model, which we will pass our Base64-encoded .glb model as the src.
-            webView.value.loadDataWithBaseURL(null, getHtmlContent(base64Model), "text/html", "UTF-8", null)
-            // Wait 1.5 seconds to ensure that everything is loaded so that we can call the
-            // javascript functions that manipulate the teeth properly
-            delay(1500)
-            println("Model has been loaded.")
-        }
-        // Depending on the model state...
-        when (timerModelState.value) {
-            // When upper, highlight upper teeth.
-            TimerModelState.Upper -> webView.value.evaluateJavascript("highlightUpperTeeth()", null)
-            // When lower highlight lower teeth.
-            TimerModelState.Lower -> webView.value.evaluateJavascript("highlightLowerTeeth()", null)
-            // When tongue, highlight tongue.
-            TimerModelState.Tongue -> webView.value.evaluateJavascript("highlightTongue()", null)
-            // Else do nothing.
-            else -> Unit
         }
     }
+
+    // Recomposes upon model state change
+    val timerModelState = timerViewModel.timerModelState.collectAsState()
+
+    // Side effect to highlight teeth upon recomposition.
+    SideEffect {
+        // If the model is not loaded we load the model.
+        if (modelLoaded.value) {
+            // Depending on the model state...
+            when (timerModelState.value) {
+                // When upper, highlight upper teeth.
+                TimerModelState.Upper -> webView.evaluateJavascript("highlightUpperTeeth()", null)
+                // When lower highlight lower teeth.
+                TimerModelState.Lower -> webView.evaluateJavascript("highlightLowerTeeth()", null)
+                // When tongue, highlight tongue.
+                TimerModelState.Tongue -> webView.evaluateJavascript("highlightTongue()", null)
+                // Else do nothing.
+                else -> Unit
+            }
+        }
+    }
+    // Display the web view.
+    AndroidView(
+        factory = {webView},
+        modifier = Modifier
+            .wrapContentSize()
+            .clip(CircleShape)
+    )
 }
 /*
 

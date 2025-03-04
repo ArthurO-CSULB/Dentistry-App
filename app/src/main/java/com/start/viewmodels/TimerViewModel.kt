@@ -107,7 +107,7 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
                     // Break from the loop since you are at 0.
                     break
                 }
-                // If the timer passes 15 seconds, change the fun fact to be displayed.
+                // If the timer passes 10 seconds, change the fun fact to be displayed.
                 // Don't change the fun fact if the timer is at 2 minutes or at zero.
                 // Also change the state of the tooth model.
                 if (_toothBrushTimer.value.toInt() % (ONE_SECOND_MILLI.toInt() * 10) == 0 &&
