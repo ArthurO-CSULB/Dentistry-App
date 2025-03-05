@@ -1,11 +1,15 @@
 package com.start.pages
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.location.Location
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.TextView
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -68,6 +72,8 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.start.PlacesApiService
+import com.start.model.Geometry
+import com.start.model.LocationLatLng
 import com.start.model.PlaceResult
 import kotlinx.coroutines.launch
 
@@ -78,6 +84,7 @@ NavController.
  */
 
 
+@SuppressLint("PotentialBehaviorOverride")
 @Composable
 fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController) {
     val context = LocalContext.current
@@ -133,6 +140,7 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
         toothIcon = BitmapDescriptorFactory.fromResource(R.drawable.tooth_icon)
     }
 
+    var lastClickedPlaceId by remember { mutableStateOf<String?>(null) }
     // Update camera when user location is set
     LaunchedEffect(userLoc, userRad, toothIcon) {
         userLoc?.let { location ->
@@ -156,15 +164,44 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
                     clinics.forEach { clinic ->
                         val clinicLatLng =
                             LatLng(clinic.geometry.location.lat, clinic.geometry.location.lng)
-                        map.addMarker(
+                        val marker = map.addMarker(
                             MarkerOptions()
                                 .position(clinicLatLng)
                                 .title(clinic.name)
-                                .icon(toothIcon)
                         )
+                        marker?.tag = clinic.placeId
                     }
                 }
+                //Marker tap listener to switch to clinic details page upon double-click
+                googleMapInstance?.setOnMarkerClickListener { marker ->
+                    Log.d("MarkerClick", "Clicked on marker: ${marker.title}")
+                    val clickedPlaceId = marker.tag as? String
+
+                    if (clickedPlaceId != null) {
+                        if (lastClickedPlaceId == clickedPlaceId) {
+                            // Navigate to details page on second click
+                            navController.navigate("clinicDetails/$clickedPlaceId")
+                            lastClickedPlaceId = null // Reset after navigation
+                        } else {
+                            // Store the first click for reference
+                            lastClickedPlaceId = clickedPlaceId
+                            marker.showInfoWindow() // Show marker info like normal
+                        }
+                    }
+
+                    false // Return true to consume the click event
+                }
             }
+            //googleMapInstance?.setOnMarkerClickListener { marker ->
+            //    val clickedClinic = dentalClinics.find {
+            //        it.name == marker.title
+            //    }
+            //    clickedClinic?.let { clinic ->
+            //        Log.d("ClinicNavigation", "Navigating to details page with ID: ${clinic.placeId}")
+            //        navController.navigate("clinicDetails/${clinic.placeId}")
+            //    }
+            //    true
+            //}
         }
     }
 
@@ -198,9 +235,10 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
             }
 
             // Test: Adds a marker for CSULB
-            val location = LatLng(33.7838, -118.1141)
-            googleMap.addMarker(MarkerOptions().position(location).title("CSULB"))
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 12f))
+            //val location = LatLng(33.7838, -118.1141)
+            //googleMap.addMarker(MarkerOptions().position(location).title("CSULB"))
+            //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 12f))
+
         }
     }
 

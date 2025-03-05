@@ -20,6 +20,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.start.pages.AddEventPage
+import com.start.pages.ClinicDetailsPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.SettingsPage
@@ -114,7 +115,12 @@ TimerViewModel) {
 
         // Search screen.
         composable("search"){
-            ClinicSearchPage(modifier, navController)
+            ClinicSearchPage(modifier, navController = navController)
+        }
+        composable("clinicDetails/{placeId}") {backStackEntry ->
+            ClinicDetailsPage(
+                placeId = backStackEntry.arguments?.getString("placeId"),
+                navController = navController)
         }
 
         // Profile screen.
