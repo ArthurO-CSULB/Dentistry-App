@@ -134,7 +134,9 @@ fun WeeklyCalendarPage(modifier: Modifier = Modifier, navController: NavControll
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(text = day, fontSize = 14.sp, color = Color.Black)
-                        val dayEvents = events.filter { it.date == day }
+                        // val dayEvents = events.filter { it.date == day }
+                        val dayEvents = events.filter { it.date.startsWith("" +
+                                "${currentWeek.get(Calendar.YEAR)}-${currentWeek.get(Calendar.MONTH) + 1}-$day") }
                         if (dayEvents.isNotEmpty()) {
                             Text(text = "${dayEvents.size} events", fontSize = 12.sp, color = Color.Red)
                         }
@@ -144,31 +146,48 @@ fun WeeklyCalendarPage(modifier: Modifier = Modifier, navController: NavControll
         }
 
         // Display selected date's events
-        selectedDate?.let { date ->
+        selectedDate?.let { day ->
+            val selectedCalendar = (currentWeek.clone() as Calendar).apply {
+                set(Calendar.DAY_OF_MONTH, day.toInt())
+            }
+            val formattedSelectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedCalendar.time)
+
             Column (horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = Modifier.height(18.dp))
-                Text("Selected Date: $date", fontSize = 18.sp, color = Color.Black)
-                Button(onClick = { navController.navigate("addEvent/$date") }) {
+                Text("Selected Date: $formattedSelectedDate", fontSize = 18.sp, color = Color.Black)
+                Button(onClick = { navController.navigate("addEvent/$formattedSelectedDate") }) {
                     Text("Add Event")
                 }
                 // Option to modify selected date's event
-                val dayEvents = events.filter { it.date == date }
-                dayEvents.forEach { event ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(event.title, fontSize = 16.sp)
-                        Row {
-                            TextButton(onClick = { navController.navigate("editEvent/${event.eventID}") }) {
-                                Text("Edit")
-                            }
-                            TextButton(onClick = { eventViewModel.deleteEvent(event.eventID) }) {
-                                Text("Delete", color = Color.Red)
+                val dayEvents = events.filter { it.date.startsWith(formattedSelectedDate) }
+                LazyVerticalGrid(columns = GridCells.Fixed(1), modifier = Modifier.fillMaxWidth()) {
+                    items(dayEvents) { event ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .background(Color.LightGray)
+                                .clickable { navController.navigate("editEvent/${event.eventID}") }
+                        ) {
+                            Column(modifier = Modifier.padding(8.dp)) {
+                                Text(event.title, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                                Text(event.time, fontSize = 14.sp, color = Color.DarkGray)
+                                Row(
+                                    horizontalArrangement = Arrangement.End,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    TextButton(onClick = { navController.navigate("editEvent/${event.eventID}") }) {
+                                        Text("Edit")
+                                    }
+                                    TextButton(onClick = { eventViewModel.deleteEvent(event.eventID) }) {
+                                        Text("Delete", color = Color.Red)
+                                    }
+                                }
                             }
                         }
                     }
                 }
+
             }
         }
 
