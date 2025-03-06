@@ -302,7 +302,7 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
-        SearchBar(placesClient) { latLng ->
+        SearchBar(placesClient, googleMapInstance) { latLng ->
             googleMapInstance?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
         Text("Select Search Radius")
@@ -328,7 +328,7 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
 
 //Composable for the search bar with autocomplete
 @Composable
-fun SearchBar(placesClient: PlacesClient, onPlaceSelected: (LatLng) -> Unit) {
+fun SearchBar(placesClient: PlacesClient, googleMapInstance: GoogleMap?, onPlaceSelected: (LatLng) -> Unit) {
     var query by remember { mutableStateOf("") }
     var predictions by remember { mutableStateOf<List<AutocompletePrediction>>(emptyList()) }
 
@@ -351,10 +351,13 @@ fun SearchBar(placesClient: PlacesClient, onPlaceSelected: (LatLng) -> Unit) {
 
         predictions.forEach { prediction ->
             TextButton(onClick = {
-                fetchPlaceDetails(prediction.placeId, placesClient) { latLng ->
-                    onPlaceSelected(latLng)
-                    query = prediction.getPrimaryText(null).toString()
-                    predictions = emptyList()
+                googleMapInstance?.let {map ->
+                    fetchPlaceDetails(prediction.placeId, placesClient, map) { latLng ->
+                        onPlaceSelected(latLng)
+                        query = prediction.getPrimaryText(null).toString()
+                        predictions = emptyList()
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f)) // Moves map to the place searched
+                    }
                 }
             }) {
                 Text(prediction.getPrimaryText(null).toString())
@@ -377,12 +380,23 @@ fun fetchPlaceSuggestions(query: String, placesClient: PlacesClient, onResult: (
         }
 }
 // Gets the place's details like name and address
-fun fetchPlaceDetails(placeId: String, placesClient: PlacesClient, onResult: (LatLng) -> Unit) {
-    val request = FetchPlaceRequest.builder(placeId, listOf(Place.Field.LAT_LNG)).build()
+fun fetchPlaceDetails(placeId: String, placesClient: PlacesClient, googleMap: GoogleMap, onResult: (LatLng) -> Unit) {
+    val request = FetchPlaceRequest.builder(placeId, listOf(Place.Field.LAT_LNG, Place.Field.NAME)).build()
 
     placesClient.fetchPlace(request)
         .addOnSuccessListener { response ->
-            response.place.latLng?.let { onResult(it) }
+            response.place.latLng?.let { latlng ->
+                onResult(latlng)
+
+                // Adds a marker when a place is searched
+                val marker = googleMap.addMarker(
+                    MarkerOptions()
+                        .position(latlng)
+                        .title(response.place.name)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))// Blue marker for searched places
+                )
+                marker?.tag = placeId
+            }
         }
         .addOnFailureListener { exception ->
             Log.e("PlacesAPI", "Place details request failed", exception)
