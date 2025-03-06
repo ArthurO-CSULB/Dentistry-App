@@ -1,4 +1,4 @@
-package com.start.pages.TimerPages
+package com.start.pages.timer_pages
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,9 +29,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dentalhygiene.R
-import com.start.notificationhandlers.TimerNotificationHandler
-import com.start.viewmodels.TimerState
 import com.start.viewmodels.TimerViewModel
+import com.start.viewmodels.TimerState
 
 /*
 We have a composable timer page which will handle the UI the toothbrush timer.
@@ -46,7 +44,8 @@ URL: https://meetpatadia9.medium.com/local-notification-in-android-with-jetpack-
  */
 
 @Composable
-fun TimerPageFinish(modifier: Modifier, navController: NavController, timerViewModel: TimerViewModel) {
+fun TimerPageCancel(modifier: Modifier, navController: NavController, timerViewModel: TimerViewModel) {
+
     // Use BackHandler to intercept the system back button and navigate to the home screen.
     BackHandler {
         // Navigate back to the home screen when the system back button is pressed
@@ -58,18 +57,16 @@ fun TimerPageFinish(modifier: Modifier, navController: NavController, timerViewM
     // everytime data changes.
     val timerState = timerViewModel.timerState.collectAsState()
 
-    val timerNotifications = TimerNotificationHandler(LocalContext.current)
 
-    // Launched effect when timer state changes to navigate to beginning.
+    // Launched Effect for navigating back to the beginning.
     LaunchedEffect(timerState.value) {
         when(timerState.value) {
             is TimerState.Begin -> navController.navigate("timer_begin")
-            is TimerState.Finished -> timerNotifications.timerFinishedNotification()
             else -> Unit
         }
     }
 
-    // We create the column to display the UI when finished.
+    // We create the column to display the UI when cancelled.
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,7 +82,7 @@ fun TimerPageFinish(modifier: Modifier, navController: NavController, timerViewM
             // We display the tooth model.
             Image(
                 // Using the painter Resource API we display the image.
-                painter = painterResource(id = R.drawable.smileyface_timer),
+                painter = painterResource(id = R.drawable.sadface_timer),
                 contentDescription = stringResource(id = R.string.tooth_model_initial),
                 // We crop the image to our liking.
                 contentScale = ContentScale.Crop,
@@ -102,9 +99,9 @@ fun TimerPageFinish(modifier: Modifier, navController: NavController, timerViewM
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Text to congratulate.
+            // Text for message.
             Text(
-                text="Great Job! Take care of your teeth and they'll take care of you.",
+                text="You don't have to brush all your teeth - just the ones you want to keep...",
                 fontSize=24.sp,
                 textAlign= TextAlign.Center,
                 lineHeight=2.em,
@@ -119,12 +116,12 @@ fun TimerPageFinish(modifier: Modifier, navController: NavController, timerViewM
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text="+100",
+                text="+0",
                 fontSize=70.sp,
                 textAlign= TextAlign.Center,
                 lineHeight=2.em,
                 fontWeight= FontWeight.ExtraBold,
-                color = Color.Green
+                color = Color.Red
             )
         }
         // Row for the button to restart.

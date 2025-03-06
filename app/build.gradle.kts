@@ -126,6 +126,9 @@ dependencies {
     // Webkit to work with modern WebView APIs. This is to for the teeth model.
     implementation("androidx.webkit:webkit:1.12.1")
 
+    // Gson to parse JSON data for the dental hygiene trivia.
+    implementation("com.google.code.gson:gson:2.10.1")
+
     // Maps SDK for Android
     // Google Maps Compose library
     val mapsComposeVersion = "4.4.1"

@@ -1,4 +1,4 @@
-package com.start.pages.TimerPages
+package com.start.pages.timer_pages
 
 import android.Manifest
 import android.os.Build

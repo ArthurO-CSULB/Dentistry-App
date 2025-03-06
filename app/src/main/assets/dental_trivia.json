@@ -1,0 +1,132 @@
+[
+  {
+    "question": "How many times a day should you brush your teeth?",
+    "choices": ["Once", "Twice", "Three times", "Whenever you want!"],
+    "answer": "Twice"
+  },
+  {
+    "question": "What is the main mineral that strengthens tooth enamel?",
+    "choices": ["Calcium", "Iron", "Fluoride", "Magnesium"],
+    "answer": "Fluoride"
+  },
+  {
+    "question": "Which of the following is bad for your teeth?",
+    "choices": ["Drinking water", "Eating sugar", "Using fluoride toothpaste", "Brushing twice a day"],
+    "answer": "Eating sugar"
+  },
+  {
+    "question": "How often should you replace your toothbrush?",
+    "choices": ["Every month", "Every 3-4 months", "Once a year", "Never"],
+    "answer": "Every 3-4 months"
+  },
+  {
+    "question": "What is plaque?",
+    "choices": [
+      "A type of toothpaste",
+      "A sticky film of bacteria",
+      "A dental procedure",
+      "A type of toothbrush"
+    ],
+    "answer": "A sticky film of bacteria"
+  },
+  {
+    "question": "What pH level in the mouth starts to cause tooth enamel to demineralize?",
+    "choices": ["7.0 (Neutral)", "6.5", "5.5", "3.0"],
+    "answer": "5.5"
+  },
+  {
+    "question": "What is the recommended duration for brushing your teeth to ensure thorough cleaning?",
+    "choices": ["30 seconds", "1 minute", "2 minutes", "5 minutes"],
+    "answer": "2 minutes"
+  },
+  {
+    "question": "What type of bacteria is primarily responsible for causing cavities?",
+    "choices": ["Streptococcus mutans", "Lactobacillus acidophilus", "Escherichia coli", "Staphylococcus aureus"],
+    "answer": "Streptococcus mutans"
+  },
+  {
+    "question": "How does fluoride help protect your teeth?",
+    "choices": ["It kills all bacteria in the mouth", "It strengthens enamel and makes it more resistant to acid", "It removes plaque instantly", "It replaces lost teeth minerals permanently"],
+    "answer": "It strengthens enamel and makes it more resistant to acid"
+  },
+  {
+    "question": "Why is it recommended to avoid brushing immediately after eating acidic foods?",
+    "choices": ["Brushing spreads the acid around your teeth", "Your teeth are softer and brushing can wear down enamel", "Toothpaste neutralizes acid, making it ineffective", "There is no real reason"],
+    "answer": "Your teeth are softer and brushing can wear down enamel"
+  },
+  {
+    "question": "What is the purpose of interdental cleaning (flossing)?",
+    "choices": ["To remove bacteria from the tongue", "To clean between teeth where a toothbrush can't reach", "To make teeth look whiter", "To strengthen gums"],
+    "answer": "To clean between teeth where a toothbrush can't reach"
+  },
+  {
+    "question": "What is the main function of saliva in protecting teeth?",
+    "choices": ["Breaking down food for digestion", "Neutralizing acids and remineralizing enamel", "Washing away bacteria completely", "Making it easier to swallow food"],
+    "answer": "Neutralizing acids and remineralizing enamel"
+  },
+  {
+    "question": "Which type of toothbrush bristles are generally recommended by dentists?",
+    "choices": ["Hard bristles", "Medium bristles", "Soft bristles", "Extra-hard bristles"],
+    "answer": "Soft bristles"
+  },
+  {
+    "question": "What is the purpose of an antimicrobial mouthwash?",
+    "choices": ["To freshen breath only", "To kill bacteria that cause plaque and gum disease", "To whiten teeth instantly", "To replace brushing and flossing"],
+    "answer": "To kill bacteria that cause plaque and gum disease"
+  },
+  {
+    "question": "Why is chewing sugar-free gum after meals beneficial for dental health?",
+    "choices": ["It strengthens the jaw muscles", "It increases saliva production, which helps neutralize acids", "It removes plaque like a toothbrush", "It replaces the need to brush your teeth"],
+    "answer": "It increases saliva production, which helps neutralize acids"
+  },
+  {
+    "question": "Who is known as the 'Father of Modern Dentistry'?",
+    "choices": ["Pierre Fauchard", "Hippocrates", "Thomas Edison", "Louis Pasteur"],
+    "answer": "Pierre Fauchard"
+  },
+  {
+    "question": "What ancient civilization is believed to have used the first toothbrush-like tool?",
+    "choices": ["Romans", "Egyptians", "Chinese", "Greeks"],
+    "answer": "Egyptians"
+  },
+  {
+    "question": "What material were the first mass-produced toothbrush bristles made from?",
+    "choices": ["Horsehair", "Plastic", "Metal wires", "Cotton"],
+    "answer": "Horsehair"
+  },
+  {
+    "question": "When was fluoride first added to public drinking water in the United States?",
+    "choices": ["1801", "1901", "1945", "2000"],
+    "answer": "1945"
+  },
+  {
+    "question": "What was toothpaste originally made of in ancient times?",
+    "choices": ["Baking soda and mint", "Crushed bones and oyster shells", "Sugar and herbs", "Honey and flowers"],
+    "answer": "Crushed bones and oyster shells"
+  },
+  {
+    "question": "When was the first electric toothbrush invented?",
+    "choices": ["1920", "1954", "1980", "2005"],
+    "answer": "1954"
+  },
+  {
+    "question": "Which country is credited with inventing the first modern dental fillings?",
+    "choices": ["China", "France", "United States", "Germany"],
+    "answer": "China"
+  },
+  {
+    "question": "What year did the American Dental Association (ADA) start approving toothpaste?",
+    "choices": ["1850", "1931", "1960", "1995"],
+    "answer": "1931"
+  },
+  {
+    "question": "Before toothpaste, what common household ingredient was often used to clean teeth?",
+    "choices": ["Vinegar", "Baking soda", "Olive oil", "Sugar"],
+    "answer": "Baking soda"
+  },
+  {
+    "question": "Who introduced the first toothpaste in a tube, similar to what we use today?",
+    "choices": ["Colgate", "Crest", "Sensodyne", "Oral-B"],
+    "answer": "Colgate"
+  }
+]
