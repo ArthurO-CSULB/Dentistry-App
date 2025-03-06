@@ -1,6 +1,6 @@
 package com.start.model
 
-//Data class that is needed to parse the response from the Google Places API when getting the
+// Data class file that is needed to parse the response from the Google Places API when fetching the
 //clinic details
 import com.google.gson.annotations.SerializedName
 

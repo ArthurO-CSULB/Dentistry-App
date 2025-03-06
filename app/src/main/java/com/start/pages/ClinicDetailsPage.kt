@@ -25,18 +25,18 @@ import com.start.model.PlaceDetails
 
 @Composable
 fun ClinicDetailsPage(
-    placeId: String?,
+    placeId: String?,// Place ID that is taken from one of the clinics in the Clinic Search Page
     navController: NavController
 ) {
     val context = LocalContext.current
     var clinicDetails by remember { mutableStateOf<PlaceDetails?>(null) }
 
-    //Gets details about the clinic when the page loads
+    // Gets details about the clinic when the page loads
     LaunchedEffect(placeId) {
         placeId?.let {
             clinicDetails = PlacesApiService.getPlaceDetails(it, MAPS_API_KEY)
         }
-        Log.d("ClinicDetails", "Received clinicId: $placeId")
+        Log.d("ClinicDetails", "Received clinicId: $placeId") // For testing purposes
     }
     Column(
         modifier = Modifier
@@ -50,11 +50,10 @@ fun ClinicDetailsPage(
         }
 
         clinicDetails?.let { clinic ->
-            Text(text = clinic.name, fontSize = 24.sp,
-                fontWeight = FontWeight.Bold)
+            Text(text = clinic.name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
             Text(text = "Address: ${clinic.address}")
             Text(text = "Phone: ${clinic.phoneNumber ?: "N/A"}")
-            Text(text = "Rating: ${clinic.rating} ⭐")
-        } ?: Text("Loading clinic details...")
+        }
+            ?: Text("Loading clinic details...") //If details are null, shows this
     }
 }

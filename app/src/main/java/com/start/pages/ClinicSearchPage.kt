@@ -135,12 +135,14 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
 
 
     var toothIcon: BitmapDescriptor? by remember { mutableStateOf(null) }
-    //Creates custom bitmap for tooth marker icon and loads it before map is ready
+    // Creates custom bitmap for tooth marker icon and loads it before map is ready
     LaunchedEffect(Unit) {
         toothIcon = BitmapDescriptorFactory.fromResource(R.drawable.tooth_icon)
     }
 
+    // Variable for the double click feature
     var lastClickedPlaceId by remember { mutableStateOf<String?>(null) }
+
     // Update camera when user location is set
     LaunchedEffect(userLoc, userRad, toothIcon) {
         userLoc?.let { location ->
@@ -157,9 +159,9 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
                 )
                 dentalClinics = clinics
 
-                // Add markers for clinics on the map
+                // Add markers for each clinic on the map
                 googleMapInstance?.let { map ->
-                    //clear previous markers in case of radius change
+                    // Clear previous markers in case of radius change
                     map.clear()
                     clinics.forEach { clinic ->
                         val clinicLatLng =
@@ -168,16 +170,18 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
                             MarkerOptions()
                                 .position(clinicLatLng)
                                 .title(clinic.name)
+                                //.icon(toothIcon)
                         )
-                        marker?.tag = clinic.placeId
+                        marker?.tag = clinic.placeId // Sets the place_id as the tag of the marker
                     }
                 }
-                //Marker tap listener to switch to clinic details page upon double-click
+                // Marker tap listener to switch to clinic details page upon double-click
                 googleMapInstance?.setOnMarkerClickListener { marker ->
-                    Log.d("MarkerClick", "Clicked on marker: ${marker.title}")
+                    Log.d("MarkerClick", "Clicked on marker: ${marker.title}") // For testing purposes
                     val clickedPlaceId = marker.tag as? String
 
                     if (clickedPlaceId != null) {
+                        // If place was already clicked previously
                         if (lastClickedPlaceId == clickedPlaceId) {
                             // Navigate to details page on second click
                             navController.navigate("clinicDetails/$clickedPlaceId")
@@ -188,10 +192,10 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
                             marker.showInfoWindow() // Show marker info like normal
                         }
                     }
-
-                    false // Return true to consume the click event
+                    false // Return false to revert back to default single click
                 }
             }
+            // For single click detail navigation
             //googleMapInstance?.setOnMarkerClickListener { marker ->
             //    val clickedClinic = dentalClinics.find {
             //        it.name == marker.title
@@ -372,7 +376,7 @@ fun fetchPlaceSuggestions(query: String, placesClient: PlacesClient, onResult: (
             Log.e("PlacesAPI", "Autocomplete request failed", exception)
         }
 }
-//Gets the place's details like name and address
+// Gets the place's details like name and address
 fun fetchPlaceDetails(placeId: String, placesClient: PlacesClient, onResult: (LatLng) -> Unit) {
     val request = FetchPlaceRequest.builder(placeId, listOf(Place.Field.LAT_LNG)).build()
 
