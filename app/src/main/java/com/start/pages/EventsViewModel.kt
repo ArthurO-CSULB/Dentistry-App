@@ -1,10 +1,11 @@
-package com.start
+package com.start.pages
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.start.Event
 import java.util.UUID
 
 class EventViewModel : ViewModel() {
