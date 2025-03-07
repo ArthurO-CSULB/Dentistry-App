@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -59,16 +61,29 @@ fun ClinicDetailsPage(
         }
             ?: Text("Loading clinic details...") //If details are null, shows this
 
+        // A row designated for the
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Button(onClick = { navController.popBackStack()}) {
+            Button(
+                onClick = { navController.navigate("ratingsPage/$placeId,${clinicDetails?.name}")},
+                modifier = Modifier.padding(16.dp)) {
                 Text("Make a Rating")
             }
-            Button(onClick = { navController.popBackStack()}) {
-                Text("Bookmark Clinic")
+            Button(
+                onClick = { navController.popBackStack()},
+                modifier = Modifier.padding(16.dp)) {
+                Text("Bookmark")
             }
         }
+
+        Spacer( modifier = Modifier.height(24.dp))
+
+        // Place that details the clinic's recent reviews
+        Text(text = "Recent Reviews:",
+            fontSize =  24.sp,
+            fontWeight = FontWeight.Bold)
+
     }
 }

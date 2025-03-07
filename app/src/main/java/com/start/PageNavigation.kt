@@ -23,9 +23,11 @@ import com.start.pages.AddEventPage
 import com.start.pages.ClinicDetailsPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
+import com.start.pages.RatingsPage
 import com.start.pages.SettingsPage
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
+import com.start.viewmodels.RatingViewModel
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -39,7 +41,7 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel) {
+TimerViewModel, ratingViewModel: RatingViewModel) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
     // is consistent throughout the lifecycle of NavHost. This prevents a NavController being
@@ -121,6 +123,15 @@ TimerViewModel) {
             ClinicDetailsPage(
                 placeId = backStackEntry.arguments?.getString("placeId"),
                 navController = navController)
+        }
+
+        composable("ratingsPage/{placeID},{clinicName}") {backStackEntry ->
+            RatingsPage(
+                navController = navController,
+                ratingViewModel = ratingViewModel,
+                clinicID = backStackEntry.arguments?.getString("placeID").toString(),
+                clinicName = backStackEntry.arguments?.getString("clinicName").toString()
+            )
         }
 
         // Profile screen.
