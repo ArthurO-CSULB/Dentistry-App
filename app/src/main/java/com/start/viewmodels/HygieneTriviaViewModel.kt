@@ -1,5 +1,6 @@
 package com.start.viewmodels
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.start.repos.HygieneTriviaRepo
@@ -15,9 +16,15 @@ class HygieneTriviaViewModel(private val hygieneTriviaRepo: HygieneTriviaRepo) :
     // Store the index of where the user is in the trivia.
     private val _triviaIndex = MutableStateFlow<Int>(0)
     val triviaIndex = _triviaIndex
-    // Store the questions that were randomly given by the repository.
+    // Store the questions that were randomly given by the repository, five random questions.
     private var _questions: List<HygieneTriviaRepo.DentalTriviaQnA> = hygieneTriviaRepo.randomQuestions()
     var questions = _questions
+    // Store the answers to the randomly given questions.
+    private val _answers: List<String> = questions.map { it.answer }
+    val answers = _answers
+    // Store the indexes of the user's answers.
+    private val _userAnswersIndex = mutableStateListOf<Int>()
+    val userAnswersIndex = _userAnswersIndex
 
     // Method to begin the trivia.
     fun beginTrivia() {
@@ -36,6 +43,16 @@ class HygieneTriviaViewModel(private val hygieneTriviaRepo: HygieneTriviaRepo) :
         _hygieneTriviaState.value = HygieneTriviaState.Begin
         _triviaIndex.value = 0
         _questions = hygieneTriviaRepo.randomQuestions()
+    }
+
+    // Reset the index to zero.
+    fun resetIndex() {
+        _triviaIndex.value = 0
+    }
+
+    // Function to store the user's index answers.
+    fun storeAnswer(index: Int) {
+        _userAnswersIndex.add(index)
     }
 
     // We create this view model with a factory so that it can pass in arguments to specific repos.
@@ -57,6 +74,7 @@ class HygieneTriviaViewModel(private val hygieneTriviaRepo: HygieneTriviaRepo) :
 
 }
 
+// Sealed class to represent the state of the hygiene trivia.
 sealed class HygieneTriviaState {
     // State when the trivia is just beginning.
     data object Begin: HygieneTriviaState()

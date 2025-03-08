@@ -127,7 +127,12 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel
             HygieneTriviaPageTrivia(modifier, navController, hygieneTriviaViewModel)
         }
 
-        composable("trivia_finish") {
+        composable(
+            route ="trivia_finish",
+            enterTransition = {
+                fadeIn(animationSpec=tween(800, 750))
+            }
+        ) {
             HygieneTriviaPageFinished(modifier, navController, hygieneTriviaViewModel)
         }
 

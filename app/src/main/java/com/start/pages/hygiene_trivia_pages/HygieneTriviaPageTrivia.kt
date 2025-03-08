@@ -1,6 +1,16 @@
 package com.start.pages.hygiene_trivia_pages
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.with
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -52,8 +62,6 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
     val question: String = hygieneTriviaViewModel.questions[triviaIndex.value].question
     val choices: List<String> = hygieneTriviaViewModel.questions[triviaIndex.value].choices
     val answer: String = hygieneTriviaViewModel.questions[triviaIndex.value].answer
-    // Store the index of the correct answer that the user inputted.
-    val userAnswers = remember { mutableStateListOf<Int>() }
 
     // When the state is finished, go to the finished page.
     LaunchedEffect(hygieneTriviaState.value) {
@@ -64,151 +72,179 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
     }
 
     // Column for the trivia page to fill the entire screen.
-    Column(
+    val triviaUI = @Composable {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                //.border(1.dp, Color.Black)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Row for the question/time.
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    //.border(1.dp, Color.Black)
+                    .padding(start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                // Text for the question and the timer counting down from 30 seconds.
+                Text("Question ${triviaIndex.value + 1}:\n$question", textAlign = TextAlign.Center,
+                    lineHeight = 2.em, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            }
+            // Row for the choices columns/rows.
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    //.border(1.dp, Color.Black)
+                    .weight(2f),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ){
+
+                // Column for the choices A and C, each in their respective rows.
+                Column(
+                    modifier = modifier
+                        .weight(1f)
+                ) {
+                    // Button for choice A.
+                    Button(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .aspectRatio(1f)
+                            .weight(1f),
+                        // Store the user's answer in userAnswers then go to the next question.
+                        onClick =
+                        {
+                            hygieneTriviaViewModel.storeAnswer(0)
+                            // If on last question, reset the index and finish the trivia. Else go to next question.
+                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) {
+                                hygieneTriviaViewModel.resetIndex()
+                                hygieneTriviaViewModel.finishTrivia()
+                            }
+                            else hygieneTriviaViewModel.nextQuestion()
+                        },
+                        shape = RoundedCornerShape(0.dp),
+                        // Kahoot Red.
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(255,39,77))
+                    ) {
+                        Text(text = "▲\n${choices[0]}", textAlign = TextAlign.Center)
+                    }
+                    Spacer(modifier = modifier.height(1.dp))
+                    // Button for choice C
+                    Button(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .aspectRatio(1f)
+                            .weight(1f),
+                        // Store the user's answer in userAnswers then go to the next question.
+                        onClick =
+                        {
+                            hygieneTriviaViewModel.storeAnswer(2)
+                            // If on last question, reset the index and finish the trivia. Else go to next question.
+                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) {
+                                hygieneTriviaViewModel.resetIndex()
+                                hygieneTriviaViewModel.finishTrivia()
+                            }
+                            else hygieneTriviaViewModel.nextQuestion()
+                        },
+                        shape = RoundedCornerShape(0.dp),
+                        // Kahoot Yellow
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(255, 181, 52))
+                    ) {
+                        Text(text = "●\n${choices[2]}", textAlign = TextAlign.Center)
+                    }
+                }
+
+                // Column for the a space
+                Column(
+                    modifier = modifier
+                        .weight(.10f)
+                        .fillMaxHeight()
+                ){}
+
+                // Column for the choices B and D, each in their respective rows.
+                Column(
+                    modifier = modifier
+                        .weight(1f)
+                ) {
+                    // Button for choice B.
+                    Button(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .aspectRatio(1f)
+                            .weight(1f),
+                        // Store the user's answer in userAnswers then go to the next question.
+                        onClick =
+                        {
+                            hygieneTriviaViewModel.storeAnswer(1)
+                            // If on last question, reset the index and finish the trivia. Else go to next question.
+                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) {
+                                hygieneTriviaViewModel.resetIndex()
+                                hygieneTriviaViewModel.finishTrivia()
+                            }
+                            else hygieneTriviaViewModel.nextQuestion()
+                        },
+                        shape = RoundedCornerShape(0.dp),
+                        // Kahoot Blue
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(15, 84, 219))
+                    ) {
+                        Text(text = "◆\n${choices[1]}", textAlign = TextAlign.Center)
+                    }
+                    Spacer(modifier = modifier.height(1.dp))
+                    // Button for choice D.
+                    Button(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .aspectRatio(1f)
+                            .weight(1f),
+                        // Store the user's answer in userAnswers then go to the next question.
+                        onClick =
+                        {
+                            hygieneTriviaViewModel.storeAnswer(3)
+                            // If on last question, reset the index and finish the trivia. Else go to next question.
+                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) {
+                                hygieneTriviaViewModel.resetIndex()
+                                hygieneTriviaViewModel.finishTrivia()
+                            }
+                            else hygieneTriviaViewModel.nextQuestion()
+                        },
+                        shape = RoundedCornerShape(0.dp),
+                        // Kahoot Green
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0, 184, 95))
+                    ) {
+                        Text(text = "■\n${choices[3]}", textAlign = TextAlign.Center)
+                    }
+                }
+            }
+
+            /*
+            // Row for the button to go to the next question.
+            Row(
+                modifier = modifier
+                    //.border(1.dp, Color.Black)
+            ) {
+                Button(onClick = {hygieneTriviaViewModel.nextQuestion()}, enabled = false) {
+                    Text(text="Next Question", textAlign = TextAlign.Center)
+                }
+            }
+
+             */
+        }
+    }
+
+    // Animate when the user selects an answer.
+    AnimatedContent(
+        // Animate based off of the current question.
+        targetState = triviaIndex.value,
+        transitionSpec = { slideInHorizontally(tween(durationMillis = 200, delayMillis = 800))
+        {width -> -width} togetherWith fadeOut() + slideOutHorizontally{ width -> width}},
         modifier = modifier
-            .fillMaxSize()
-            //.border(1.dp, Color.Black)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Row for the question/time.
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                //.border(1.dp, Color.Black)
-                .padding(start = 16.dp, end = 16.dp),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            // Text for the question and the timer counting down from 30 seconds.
-            Text("Question ${triviaIndex.value + 1}:\n$question", textAlign = TextAlign.Center,
-                lineHeight = 2.em, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+    ) { targetIndex ->
+        // Animation whenever the user selects an answer.
+        when(targetIndex) {
+            else -> triviaUI()
         }
-        // Row for the choices columns/rows.
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                //.border(1.dp, Color.Black)
-                .weight(2f),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ){
-
-            // Column for the choices A and C, each in their respective rows.
-            Column(
-                modifier = modifier
-                    .weight(1f)
-            ) {
-                // Button for choice A.
-                Button(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .aspectRatio(1f)
-                        .weight(1f),
-                    // Store the user's answer in userAnswers then go to the next question.
-                    onClick =
-                    {
-                        userAnswers.add(0)
-                        // If on last question, finish the trivia. Else go to next question.
-                        if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) hygieneTriviaViewModel.finishTrivia()
-                        else hygieneTriviaViewModel.nextQuestion()
-                    },
-                    shape = RoundedCornerShape(0.dp),
-                    // Kahoot Red.
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(255,39,77))
-                ) {
-                    Text(text = "▲\n${choices[0]}", textAlign = TextAlign.Center)
-                }
-                Spacer(modifier = modifier.height(1.dp))
-                // Button for choice C
-                Button(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .aspectRatio(1f)
-                        .weight(1f),
-                    // Store the user's answer in userAnswers then go to the next question.
-                    onClick =
-                    {
-                        userAnswers.add(2)
-                        // If on last question, finish the trivia. Else go to next question.
-                        if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) hygieneTriviaViewModel.finishTrivia()
-                        else hygieneTriviaViewModel.nextQuestion()
-                    },
-                    shape = RoundedCornerShape(0.dp),
-                    // Kahoot Yellow
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(255, 181, 52))
-                ) {
-                    Text(text = "●\n${choices[2]}", textAlign = TextAlign.Center)
-                }
-            }
-
-            // Column for the a space
-            Column(
-                modifier = modifier
-                    .weight(.10f)
-                    .fillMaxHeight()
-            ){}
-
-            // Column for the choices B and D, each in their respective rows.
-            Column(
-                modifier = modifier
-                    .weight(1f)
-            ) {
-                // Button for choice B.
-                Button(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .aspectRatio(1f)
-                        .weight(1f),
-                    // Store the user's answer in userAnswers then go to the next question.
-                    onClick =
-                    {
-                        userAnswers.add(1)
-                        // If on last question, finish the trivia. Else go to next question.
-                        if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) hygieneTriviaViewModel.finishTrivia()
-                        else hygieneTriviaViewModel.nextQuestion()
-                    },
-                    shape = RoundedCornerShape(0.dp),
-                    // Kahoot Blue
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(15, 84, 219))
-                ) {
-                    Text(text = "◆\n${choices[1]}", textAlign = TextAlign.Center)
-                }
-                Spacer(modifier = modifier.height(1.dp))
-                // Button for choice D.
-                Button(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .aspectRatio(1f)
-                        .weight(1f),
-                    // Store the user's answer in userAnswers then go to the next question.
-                    onClick =
-                    {
-                        userAnswers.add(3)
-                        // If on last question, finish the trivia. Else go to next question.
-                        if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) hygieneTriviaViewModel.finishTrivia()
-                        else hygieneTriviaViewModel.nextQuestion()
-                    },
-                    shape = RoundedCornerShape(0.dp),
-                    // Kahoot Green
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0, 184, 95))
-                ) {
-                    Text(text = "■\n${choices[3]}", textAlign = TextAlign.Center)
-                }
-            }
-        }
-
-        /*
-        // Row for the button to go to the next question.
-        Row(
-            modifier = modifier
-                //.border(1.dp, Color.Black)
-        ) {
-            Button(onClick = {hygieneTriviaViewModel.nextQuestion()}, enabled = false) {
-                Text(text="Next Question", textAlign = TextAlign.Center)
-            }
-        }
-
-         */
     }
 }

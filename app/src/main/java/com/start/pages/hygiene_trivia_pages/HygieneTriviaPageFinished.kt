@@ -1,12 +1,19 @@
 package com.start.pages.hygiene_trivia_pages
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.start.viewmodels.HygieneTriviaViewModel
 
@@ -19,16 +26,58 @@ fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController, 
         navController.popBackStack("home", inclusive = false)
     }
 
+    // Collect the index, state of the trivia. Recompose when it changes.
+    val triviaIndex = hygieneTriviaViewModel.triviaIndex.collectAsState()
+
+    // List of questions 1-5 asked.
+    val questions: List<String> = hygieneTriviaViewModel.questions.map {it.question}
+    // List of answers 1-5
+    val answers: List<String> = hygieneTriviaViewModel.questions.map {it.answer}
+    // Choices 1-5 with same indexed the same as questions.
+    val choices: List<List<String>> = hygieneTriviaViewModel.questions.map {it.choices}
+    // Get the indexes of the user's answers.
+    val userAnswers = hygieneTriviaViewModel.userAnswersIndex
+
+    // Text to display whether the user got the question right or wrong.
+    val resultText: @Composable (questionIndex: Int, userAnswerIndex: Int) -> Unit = { questionIndex, userAnswerIndex ->
+        // Display the question for the particular question passed in.
+        Text(text = "Question ${questionIndex + 1}:\n${questions[questionIndex]}", textAlign = TextAlign.Center)
+
+        // We compare the correct answers with the user's answers and display the result of if
+        // they got it wrong or right. Display the correct answer for the question if they got it
+        // wrong.
+        if (answers[questionIndex] == choices[questionIndex][userAnswerIndex]) {
+            Text(text = "✅ Your Answer: ${choices[questionIndex][userAnswerIndex]}", textAlign = TextAlign.Center)
+        }
+        // Else we display that the user did not get the question right.
+        else {
+            Text(text = "❌ Your Answer: ${choices[questionIndex][userAnswerIndex]}\n" +
+                    "✅ Correct Answer: ${answers[questionIndex]}", textAlign = TextAlign.Center)
+        }
+    }
+
 
 
     // Column for the trivia page.
     Column(
         modifier = modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+            .fillMaxSize()
+            .border(1.dp, Color.Black),
+        verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-
+        Text("Results!")
+        when(triviaIndex.value) {
+            0 -> resultText(0, userAnswers[0])
+            1 -> resultText(1, userAnswers[1])
+            2 -> resultText(2, userAnswers[2])
+            3 -> resultText(3, userAnswers[3])
+            4 -> resultText(4, userAnswers[4])
+        }
+        Button(onClick = {
+            hygieneTriviaViewModel.nextQuestion()
+        }) {
+            Text("Next Question")
+        }
     }
 }
