@@ -91,7 +91,7 @@ dependencies {
     implementation("androidx.test.services:storage:1.5.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.5")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
     testImplementation("junit:junit:4.13.2")
