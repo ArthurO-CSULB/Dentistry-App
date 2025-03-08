@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.start.repos.HygieneTriviaRepo
 import com.start.repos.TimerFunFactsRepo
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import java.lang.IllegalArgumentException
 
 // View model to control the state of the hygiene trivia.
@@ -16,11 +17,14 @@ class HygieneTriviaViewModel(private val hygieneTriviaRepo: HygieneTriviaRepo) :
     // Store the index of where the user is in the trivia.
     private val _triviaIndex = MutableStateFlow<Int>(0)
     val triviaIndex = _triviaIndex
-    // Store the questions that were randomly given by the repository, five random questions.
-    private var _questions: List<HygieneTriviaRepo.DentalTriviaQnA> = hygieneTriviaRepo.randomQuestions()
+    // Store the index of where the user is in the results.
+    private val _resultsIndex = MutableStateFlow<Int>(0)
+    val resultsIndex = _resultsIndex
+    // Store the questions that were randomly given by the repository, five random questions. List<HygieneTriviaRepo.DentalTriviaQnA>
+    private var _questions = MutableStateFlow<List<HygieneTriviaRepo.DentalTriviaQnA>>(hygieneTriviaRepo.randomQuestions())
     var questions = _questions
     // Store the answers to the randomly given questions.
-    private val _answers: List<String> = questions.map { it.answer }
+    private val _answers: List<String> = questions.value.map { it.answer }
     val answers = _answers
     // Store the indexes of the user's answers.
     private val _userAnswersIndex = mutableStateListOf<Int>()
@@ -34,20 +38,30 @@ class HygieneTriviaViewModel(private val hygieneTriviaRepo: HygieneTriviaRepo) :
     fun nextQuestion() {
         _triviaIndex.value++
     }
+    fun nextResult() {
+        _resultsIndex.value++
+    }
     // Method to finish the trivia.
     fun finishTrivia() {
         _hygieneTriviaState.value = HygieneTriviaState.Finished
     }
-    // Reset the trivia to beginning state, reset the index, and get a new set of questions.
+    // Reset the trivia to beginning state, reset the index, reset the answers list, and get a new
+    // set of questions.
     fun resetTrivia() {
         _hygieneTriviaState.value = HygieneTriviaState.Begin
-        _triviaIndex.value = 0
-        _questions = hygieneTriviaRepo.randomQuestions()
+        resetTriviaIndex()
+        resetResultsIndex()
+        _userAnswersIndex.clear()
+        _questions.update {hygieneTriviaRepo.randomQuestions()}
     }
 
     // Reset the index to zero.
-    fun resetIndex() {
+    fun resetTriviaIndex() {
         _triviaIndex.value = 0
+    }
+
+    fun resetResultsIndex() {
+        _resultsIndex.value = 0
     }
 
     // Function to store the user's index answers.

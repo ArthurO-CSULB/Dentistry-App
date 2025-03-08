@@ -8,13 +8,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.start.viewmodels.HygieneTriviaState
 import com.start.viewmodels.HygieneTriviaViewModel
 
 @Composable
@@ -27,16 +30,20 @@ fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController, 
     }
 
     // Collect the index, state of the trivia. Recompose when it changes.
-    val triviaIndex = hygieneTriviaViewModel.triviaIndex.collectAsState()
+    val resultsIndex = hygieneTriviaViewModel.resultsIndex.collectAsState()
+
+    val hygieneTriviaQuestions = hygieneTriviaViewModel.questions.collectAsState()
 
     // List of questions 1-5 asked.
-    val questions: List<String> = hygieneTriviaViewModel.questions.map {it.question}
+    val questions: List<String> = hygieneTriviaQuestions.value.map {it.question}
     // List of answers 1-5
-    val answers: List<String> = hygieneTriviaViewModel.questions.map {it.answer}
+    val answers: List<String> = hygieneTriviaQuestions.value.map {it.answer}
     // Choices 1-5 with same indexed the same as questions.
-    val choices: List<List<String>> = hygieneTriviaViewModel.questions.map {it.choices}
+    val choices: List<List<String>> = hygieneTriviaQuestions.value.map {it.choices}
     // Get the indexes of the user's answers.
     val userAnswers = hygieneTriviaViewModel.userAnswersIndex
+    // Store the state of the trivia.
+    val hygieneTriviaState = hygieneTriviaViewModel.hygieneTriviaState.collectAsState()
 
     // Text to display whether the user got the question right or wrong.
     val resultText: @Composable (questionIndex: Int, userAnswerIndex: Int) -> Unit = { questionIndex, userAnswerIndex ->
@@ -58,6 +65,15 @@ fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController, 
 
 
 
+    LaunchedEffect(hygieneTriviaState.value) {
+        when(hygieneTriviaState.value) {
+            is HygieneTriviaState.Begin -> navController.navigate("home")
+            else -> Unit
+        }
+    }
+
+
+
     // Column for the trivia page.
     Column(
         modifier = modifier
@@ -66,18 +82,39 @@ fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController, 
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Results!")
-        when(triviaIndex.value) {
-            0 -> resultText(0, userAnswers[0])
-            1 -> resultText(1, userAnswers[1])
-            2 -> resultText(2, userAnswers[2])
-            3 -> resultText(3, userAnswers[3])
-            4 -> resultText(4, userAnswers[4])
+        if (!userAnswers.isEmpty()) Text("Results!")
+        when(resultsIndex.value) {
+
+            0 -> if (!userAnswers.isEmpty()) resultText(0, userAnswers[0])
+            1 -> if (!userAnswers.isEmpty()) resultText(1, userAnswers[1])
+            2 -> if (!userAnswers.isEmpty()) resultText(2, userAnswers[2])
+            3 -> if (!userAnswers.isEmpty()) resultText(3, userAnswers[3])
+            4 -> if (!userAnswers.isEmpty()) resultText(4, userAnswers[4])
+            else -> Unit
         }
-        Button(onClick = {
-            hygieneTriviaViewModel.nextQuestion()
-        }) {
-            Text("Next Question")
+
+        when(resultsIndex.value){
+            // When on the last result, display button to go home.
+            4 -> {
+                Button(onClick = {
+                    hygieneTriviaViewModel.resetTrivia()
+                }) {
+                    Text("Go Home")
+                }
+            }
+            else -> {
+                if (userAnswers.isEmpty()) {}
+                else {
+                    Button(onClick = {
+                        hygieneTriviaViewModel.nextResult()
+                    }) {
+                        Text("Next Result")
+                    }
+                }
+
+            }
         }
+
+
     }
 }

@@ -58,10 +58,16 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
     // Collect the index, state of the trivia.
     val triviaIndex = hygieneTriviaViewModel.triviaIndex.collectAsState()
     val hygieneTriviaState = hygieneTriviaViewModel.hygieneTriviaState.collectAsState()
+    // Collect the List of DentalTriviaQnA
+    val questions = hygieneTriviaViewModel.questions.collectAsState()
+
     // Store the specific question, answer, and choices for the specific trivia question.
-    val question: String = hygieneTriviaViewModel.questions[triviaIndex.value].question
-    val choices: List<String> = hygieneTriviaViewModel.questions[triviaIndex.value].choices
-    val answer: String = hygieneTriviaViewModel.questions[triviaIndex.value].answer
+    val question: String = questions.value[triviaIndex.value].question
+    //val question: String = hygieneTriviaViewModel.questions[triviaIndex.value].question
+    val choices: List<String> = questions.value[triviaIndex.value].choices
+    //val choices: List<String> = hygieneTriviaViewModel.questions[triviaIndex.value].choices
+    val answer: String = questions.value[triviaIndex.value].answer
+    //val answer: String = hygieneTriviaViewModel.questions[triviaIndex.value].answer
 
     // When the state is finished, go to the finished page.
     LaunchedEffect(hygieneTriviaState.value) {
@@ -119,8 +125,8 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
                         {
                             hygieneTriviaViewModel.storeAnswer(0)
                             // If on last question, reset the index and finish the trivia. Else go to next question.
-                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) {
-                                hygieneTriviaViewModel.resetIndex()
+                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.value.size - 1) {
+                                //hygieneTriviaViewModel.resetIndex()
                                 hygieneTriviaViewModel.finishTrivia()
                             }
                             else hygieneTriviaViewModel.nextQuestion()
@@ -143,8 +149,8 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
                         {
                             hygieneTriviaViewModel.storeAnswer(2)
                             // If on last question, reset the index and finish the trivia. Else go to next question.
-                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) {
-                                hygieneTriviaViewModel.resetIndex()
+                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.value.size - 1) {
+                                //hygieneTriviaViewModel.resetIndex()
                                 hygieneTriviaViewModel.finishTrivia()
                             }
                             else hygieneTriviaViewModel.nextQuestion()
@@ -180,8 +186,8 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
                         {
                             hygieneTriviaViewModel.storeAnswer(1)
                             // If on last question, reset the index and finish the trivia. Else go to next question.
-                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) {
-                                hygieneTriviaViewModel.resetIndex()
+                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.value.size - 1) {
+                                //hygieneTriviaViewModel.resetIndex()
                                 hygieneTriviaViewModel.finishTrivia()
                             }
                             else hygieneTriviaViewModel.nextQuestion()
@@ -204,8 +210,8 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
                         {
                             hygieneTriviaViewModel.storeAnswer(3)
                             // If on last question, reset the index and finish the trivia. Else go to next question.
-                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.size - 1) {
-                                hygieneTriviaViewModel.resetIndex()
+                            if (triviaIndex.value >= hygieneTriviaViewModel.questions.value.size - 1) {
+                                //hygieneTriviaViewModel.resetIndex()
                                 hygieneTriviaViewModel.finishTrivia()
                             }
                             else hygieneTriviaViewModel.nextQuestion()
