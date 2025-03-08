@@ -122,7 +122,8 @@ TimerViewModel, ratingViewModel: RatingViewModel) {
         composable("clinicDetails/{placeId}") {backStackEntry ->
             ClinicDetailsPage(
                 placeId = backStackEntry.arguments?.getString("placeId"),
-                navController = navController)
+                navController = navController,
+                ratingViewModel = ratingViewModel)
         }
 
         composable("ratingsPage/{placeID},{clinicName}") {backStackEntry ->

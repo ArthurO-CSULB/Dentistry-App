@@ -1,6 +1,7 @@
 package com.start.pages
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +19,9 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.start.viewmodels.RatingState
 import com.start.viewmodels.RatingViewModel
 
 
@@ -41,6 +45,22 @@ fun RatingsPage(navController: NavController, ratingViewModel: RatingViewModel, 
     // Declaration, initialization of user input handlers
     var rating by remember {mutableIntStateOf(0)}
     var reviewInput by remember {mutableStateOf("")}
+
+    var ratingState = ratingViewModel.ratingState.observeAsState()
+
+    LaunchedEffect(ratingState.value) {
+        val context = null
+        when (ratingState.value) {
+            is RatingState.CreatingARating -> Unit
+            is RatingState.Idle -> navController.popBackStack()
+            is RatingState.UpdatingEntries -> Unit
+            is RatingState.Error -> Toast.makeText(context,
+                (ratingState.value as RatingState.Error).message, Toast.LENGTH_SHORT).show()
+            is RatingState.Success -> Toast.makeText(context,
+                (ratingState.value as RatingState.Error).message, Toast.LENGTH_SHORT).show()
+            else -> Unit
+        }
+    }
 
     // Creation of Column that holds all buttons in program
     Column (modifier = Modifier
@@ -55,6 +75,7 @@ fun RatingsPage(navController: NavController, ratingViewModel: RatingViewModel, 
             // Back button details
             Button (onClick = {
                 // go back to previous page
+                ratingViewModel.ratingCreationExit()
                 navController.popBackStack()}
             ) {
                 Text("Go back to clinic details")
@@ -104,7 +125,7 @@ fun RatingsPage(navController: NavController, ratingViewModel: RatingViewModel, 
                     clinicID = clinicID,
                     clinicName = clinicName
                 )
-            }
+            },
         ) {
             Text("Submit Rating")
         }
