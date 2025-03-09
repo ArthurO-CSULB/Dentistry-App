@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.start.EventViewModel
+import com.start.notificationhandlers.NotificationHelper
 import com.start.notificationhandlers.TimerNotificationHandler
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -99,7 +100,14 @@ fun AddEventPage(navController: NavController, date: String, eventViewModel: Eve
 
             // Schedule notification
             val notificationTime = parseDateTime(formattedDate, time)
-            TimerNotificationHandler(context).scheduleNotification(
+            Log.d("NotificationTime", "Notification scheduled at: ${notificationTime.timeInMillis}")
+            val currentTimeMillis = System.currentTimeMillis()
+
+            // Log the current time in milliseconds
+            Log.d("CurrentTime", "Current time in milliseconds: $currentTimeMillis")
+
+
+            NotificationHelper(context).scheduleNotification(
                 eventID,
                 notificationTime.timeInMillis,
                 title,
@@ -169,15 +177,16 @@ fun EditEventPage(navController: NavController, date:String, eventID: String, ev
             eventViewModel.updateEvent(eventID, title, description, formattedDate, time)
 
             // Cancel previously-made notifications
-            TimerNotificationHandler(context).cancelScheduledNotification(eventID)
+            NotificationHelper(context).cancelScheduledNotification(eventID)
 
             // Schedule notification
             val notificationTime = parseDateTime(date, time)
-            TimerNotificationHandler(context).scheduleNotification(
+            NotificationHelper(context).scheduleNotification(
                 eventID,
                 notificationTime.timeInMillis,
                 title,
-                description)
+                description
+            )
             navController.popBackStack()
         }) { Text("Save Changes") }
 
@@ -247,16 +256,4 @@ fun parseDateTime(date: String, time: String): Calendar {
     Log.d("DateTime", "Date received: $date")
 
     return calendar
-}
-
-// Receive broadcast and send notification at scheduled time
-class NotificationReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
-        val title = intent.getStringExtra("title") ?: "Reminder"
-        val description = intent.getStringExtra("description") ?: "An event you scheduled is soon."
-
-        // Display the notification
-        val notificationHandler = TimerNotificationHandler(context)
-        notificationHandler.timerFinishedNotification(title, description)
-    }
 }
