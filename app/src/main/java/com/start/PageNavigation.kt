@@ -126,6 +126,7 @@ TimerViewModel, ratingViewModel: RatingViewModel) {
                 ratingViewModel = ratingViewModel)
         }
 
+        // rating page navigation
         composable("ratingsPage/{placeID},{clinicName}") {backStackEntry ->
             RatingsPage(
                 navController = navController,

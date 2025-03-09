@@ -20,15 +20,16 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,115 +38,126 @@ import com.start.viewmodels.RatingState
 import com.start.viewmodels.RatingViewModel
 
 
-// Page for user review creation
+// Function that handles the UI components of the page
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RatingsPage(navController: NavController, ratingViewModel: RatingViewModel, clinicID: String, clinicName: String) {
 
-    // Declaration, initialization of user input handlers
-    var rating by remember {mutableIntStateOf(0)}
-    var reviewInput by remember {mutableStateOf("")}
+    // initialization values used to hold the rating details
+    var rating by remember { mutableIntStateOf(0) }
+    var reviewInput by remember { mutableStateOf("") }
 
-    var ratingState = ratingViewModel.ratingState.observeAsState()
+    // state and context values needed for state changes and Toast messages respectively
+    val ratingState by ratingViewModel.ratingState.collectAsState()
+    val context = LocalContext.current
 
-    LaunchedEffect(ratingState.value) {
-        val context = null
-        when (ratingState.value) {
+    // Specifies action states to be taken on certain states
+    LaunchedEffect(ratingState) {
+        when (ratingState) {
+            // Do nothing on these states
             is RatingState.CreatingARating -> Unit
-            is RatingState.Idle -> navController.popBackStack()
+            is RatingState.Idle -> Unit
             is RatingState.UpdatingEntries -> Unit
-            is RatingState.Error -> Toast.makeText(context,
-                (ratingState.value as RatingState.Error).message, Toast.LENGTH_SHORT).show()
-            is RatingState.Success -> Toast.makeText(context,
-                (ratingState.value as RatingState.Error).message, Toast.LENGTH_SHORT).show()
+
+            // Display error message on this state
+            is RatingState.Error -> {
+                Toast.makeText(context,
+                    (ratingState as RatingState.Error).message, Toast.LENGTH_SHORT).show()
+            }
+            // Display success rating on this state then go back to previous page
+            is RatingState.Success -> {
+                Toast.makeText(context,
+                    (ratingState as RatingState.Success).message, Toast.LENGTH_SHORT).show()
+                // Navigate back to the previous page after showing the success message
+                navController.popBackStack()
+            }
             else -> Unit
         }
     }
 
-    // Creation of Column that holds all buttons in program
-    Column (modifier = Modifier
-        .fillMaxSize()
-        .padding(24.dp),
+    // Main composable function that holds the page UI
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
-        // Row that handles the back button in case user does not want to proceed
-        Row(Modifier.fillMaxWidth()
-        ) {
-            // Back button details
-            Button (onClick = {
-                // go back to previous page
-                ratingViewModel.ratingCreationExit()
-                navController.popBackStack()}
-            ) {
+    ) {
+        // UI elements and logic for the back button
+        Row(Modifier.fillMaxWidth()) {
+            Button(onClick = { navController.popBackStack() }) {
                 Text("Go back to clinic details")
             }
         }
 
-        // Extra space
-        Spacer(
-            modifier = Modifier.height(32.dp)
-        )
+        // Extra Space
+        Spacer(modifier = Modifier.height(32.dp))
 
-        // Rating Question
+        // Rating question text
         Text("How would you rate this clinic?", fontSize = 20.sp)
 
-        // Rating Bar that lets user designate between 1 - 5 stars to a clinic
+        // Creation for a user-interactive rating bar
         RatingBar(
             rating = rating,
-            onRatingChanged = {rating = it},
+            onRatingChanged = { rating = it },
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         // Extra Space
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Review Question
+        // Review Question Text
         Text("What is your review on this clinic?", fontSize = 20.sp)
 
-        // Text Box that handles user input
+        // Text box for review input
         OutlinedTextField(
             value = reviewInput,
-            onValueChange = {reviewInput = it},
-            label = { Text("Enter review here...")},
+            onValueChange = { reviewInput = it },
+            label = { Text("Enter review here...") },
         )
 
         // Extra Space
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Submit Rating Button
+        // Button on rating creation
         Button(
-            // When the button is pressed by the user...
-            onClick =
-            {
-                // The rating is created
-                ratingViewModel.createRating(
-                    rating = rating,
-                    review = reviewInput,
-                    clinicID = clinicID,
-                    clinicName = clinicName
-                )
-            },
+            onClick = {
+                // reviews are required
+                // if review box is empty, prompt user to try again
+                if (reviewInput.isBlank()) {
+                    Toast.makeText(context, "Please enter a review", Toast.LENGTH_SHORT).show()
+                }
+                // if not, create the rating
+                else {
+                    ratingViewModel.createRating(
+                        rating = rating,
+                        review = reviewInput,
+                        clinicID = clinicID,
+                        clinicName = clinicName
+                    )
+                }
+            }
         ) {
             Text("Submit Rating")
         }
     }
 }
 
-// Implementation of a Rating Bar that handles the rating value
+// Creation of the rating bar
 @Composable
 fun RatingBar(rating: Int, onRatingChanged: (Int) -> Unit, modifier: Modifier = Modifier) {
     Row(modifier = modifier) {
+        // declare 5 stars
         for (i in 1..5) {
+            // logic for handling the rating changes
             IconToggleButton(
                 checked = i <= rating,
-                onCheckedChange = { if (it) onRatingChanged(i) else onRatingChanged(i-1)},
+                onCheckedChange = { if (it) onRatingChanged(i) else onRatingChanged(i - 1) },
                 modifier = Modifier.size(48.dp)
-            )
-            {
+            ) {
+                // logic for the star icons
                 Icon(
                     imageVector = Icons.Filled.Star,
-                    contentDescription = if (i<= rating) "Rated $i stars" else "Rate $i stars",
+                    contentDescription = if (i <= rating) "Rated $i stars" else "Rate $i stars",
                     tint = if (i <= rating) Color.Yellow else Color.Gray
                 )
             }
@@ -153,7 +165,7 @@ fun RatingBar(rating: Int, onRatingChanged: (Int) -> Unit, modifier: Modifier = 
     }
 }
 
-// Test Rating Page for editing frontend
+// Test function for checking this page's UI
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
