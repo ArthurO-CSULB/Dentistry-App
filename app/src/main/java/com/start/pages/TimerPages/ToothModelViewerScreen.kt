@@ -3,6 +3,7 @@ package com.start.pages.TimerPages
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Base64
+import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.wrapContentSize
@@ -42,8 +43,6 @@ web content in android, in this case the model is embedded in the HTML aka web c
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun ToothModelViewerScreen(context: Context, timerViewModel: TimerViewModel) {
-    // Load and convert teeth_cartoon.glb from assets into a Base64 string.
-    val base64Model = remember{loadGlbAsBase64(context, "teeth_cartoon_edited.glb")}
     // Create a WebView inside jetpack compose using android view that will persist across recompositions.
     val webView = remember {WebView(context)}
     // Boolean to store whether the model has been fully loaded that will persist across recompositions.
@@ -66,9 +65,10 @@ fun ToothModelViewerScreen(context: Context, timerViewModel: TimerViewModel) {
                 println("Model not loaded. Loading the model.")
                 // We have dynamically created our HTML which contains the <model-viewer> to render
                 // the 3D model, which we will pass our Base64-encoded .glb model as the src.
-                webView.loadDataWithBaseURL(null, getHtmlContent(base64Model), "text/html", "UTF-8", null)
+                webView.loadDataWithBaseURL(null, getHtmlContent(loadGlbAsBase64(context, "teeth_cartoon_edited.glb")), "text/html", "UTF-8", null)
                 // Wait some time to ensure that everything is loaded and that model is scene-graph-ready
                 // javascript functions that manipulate the teeth properly
+                println("After")
 
                 // Web client to override functions that execute on the lifecycle of the web view.
                 webViewClient = object : WebViewClient() {
@@ -87,6 +87,7 @@ fun ToothModelViewerScreen(context: Context, timerViewModel: TimerViewModel) {
 
     // Side effect to highlight teeth upon recomposition.
     SideEffect {
+        //Log.d("ToothModelViewerScreen", "Recomposing...")
         // If the model is not loaded we load the model.
         if (modelLoaded.value) {
             // Depending on the model state...
