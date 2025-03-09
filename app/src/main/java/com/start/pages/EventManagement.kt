@@ -106,7 +106,6 @@ fun AddEventPage(navController: NavController, date: String, eventViewModel: Eve
             // Log the current time in milliseconds
             Log.d("CurrentTime", "Current time in milliseconds: $currentTimeMillis")
 
-
             NotificationHelper(context).scheduleNotification(
                 eventID,
                 notificationTime.timeInMillis,

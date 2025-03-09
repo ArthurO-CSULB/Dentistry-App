@@ -27,6 +27,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import com.start.pages.AddEventPage
+import com.start.pages.BookmarkPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.SettingsPage
@@ -160,6 +161,11 @@ TimerViewModel) {
         // Profile screen.
         composable("profile"){
             ProfilePage(modifier, navController)
+        }
+
+        // Bookmark screen.
+        composable("bookmark"){
+            BookmarkPage(modifier, navController)
         }
 
         // Verification Screen
