@@ -122,6 +122,12 @@ class HygieneTriviaViewModel(private val hygieneTriviaRepo: HygieneTriviaRepo) :
         _hygieneTriviaTimer.value = THIRTY_SECONDS_MILLI
     }
 
+    // Demo when the trivia is failed. Cancel trivia and fail user.
+    fun demoFailed() {
+        cancelTriviaTimer()
+        failTrivia()
+    }
+
     // We create this view model with a factory so that it can pass in arguments to specific repos.
     // The trivia view model will pass in a repository with the trivia.
     class HygieneTriviaViewModelFactory(private val hygieneTriviaRepo: HygieneTriviaRepo) : ViewModelProvider.Factory {

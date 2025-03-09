@@ -29,6 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -243,16 +244,30 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
              */
         }
     }
-    Row(
+    // Column for the timer and demo button.
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top=24.dp),
-        horizontalArrangement = Arrangement.Center
+            .padding(top=8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Bottom
     ) {
+
         // Timer will be above the animated content..
         Text(text = "${hygieneTriviaTimer.value / 1000}s", textAlign = TextAlign.Center,
             fontWeight= FontWeight.Bold, fontSize = 28.sp)
+        // Button to demo when the timer reaches zero.
+        TextButton(
+            onClick = {
+                hygieneTriviaViewModel.demoFailed()
+            }
+        ) {
+            Text("Demo Fail")
+        }
+
     }
+
+
     // Animate when the user selects an answer.
     AnimatedContent(
         // Animate based off of the current question.
@@ -266,4 +281,5 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
             else -> triviaUI()
         }
     }
+
 }

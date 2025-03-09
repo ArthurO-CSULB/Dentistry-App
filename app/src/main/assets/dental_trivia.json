@@ -128,5 +128,997 @@
     "question": "Who introduced the first toothpaste in a tube, similar to what we use today?",
     "choices": ["Colgate", "Crest", "Sensodyne", "Oral-B"],
     "answer": "Colgate"
+  },
+  {
+    "question": "What is the most common dental disease worldwide?",
+    "choices": ["Gingivitis", "Cavities (Tooth Decay)", "Oral Cancer", "Periodontitis"],
+    "answer": "Cavities (Tooth Decay)"
+  },
+  {
+    "question": "What is gingivitis?",
+    "choices": ["A type of toothpaste", "A mild form of gum disease that causes inflammation",
+      "A bacterial infection that damages tooth enamel", "A type of mouth sore caused by spicy foods"],
+    "answer": "A mild form of gum disease that causes inflammation"
+  },
+  {
+    "question": "What is the primary cause of periodontitis?",
+    "choices": ["Excessive brushing", "Untreated gingivitis and plaque buildup",
+      "Too much fluoride in toothpaste", "Drinking sugary drinks"],
+    "answer": "Untreated gingivitis and plaque buildup"
+  },
+  {
+    "question": "Which symptom is commonly associated with gum disease?",
+    "choices": ["Tooth sensitivity", "Bleeding gums", "Jaw pain", "Bad breath only after eating"],
+    "answer": "Bleeding gums"
+  },
+  {
+    "question": "Which bacteria is primarily responsible for tooth decay?",
+    "choices": ["Streptococcus mutans", "Escherichia coli", "Lactobacillus acidophilus", "Staphylococcus aureus"],
+    "answer": "Streptococcus mutans"
+  },
+  {
+    "question": "Which of the following habits increases the risk of gum disease?",
+    "choices": ["Brushing twice a day", "Flossing regularly", "Smoking tobacco", "Drinking water"],
+    "answer": "Smoking tobacco"
+  },
+  {
+    "question": "What is an early sign of oral cancer?",
+    "choices": ["Bleeding gums", "Persistent mouth sores", "Yellow teeth", "Sensitivity to cold"],
+    "answer": "Persistent mouth sores"
+  },
+  {
+    "question": "Which of the following conditions can result from untreated gum disease?",
+    "choices": ["Heart disease", "High blood pressure", "Asthma", "Skin rash"],
+    "answer": "Heart disease"
+  },
+  {
+    "question": "Which vitamin deficiency can contribute to gum disease?",
+    "choices": ["Vitamin A", "Vitamin C", "Vitamin D", "Vitamin K"],
+    "answer": "Vitamin C"
+  },
+  {
+    "question": "What is halitosis?",
+    "choices": ["A type of gum infection", "A condition that causes bad breath",
+      "A type of mouth ulcer", "A bacterial infection in the throat"],
+    "answer": "A condition that causes bad breath"
+  },
+  {
+    "question": "Which degree is required to become a licensed dentist in the United States?",
+    "choices": ["Doctor of Dental Medicine (DMD) or Doctor of Dental Surgery (DDS)",
+      "Bachelor of Dental Science (BDS)", "Doctor of Philosophy (PhD)",
+      "Master of Public Health (MPH)"],
+    "answer": "Doctor of Dental Medicine (DMD) or Doctor of Dental Surgery (DDS)"
+  },
+  {
+    "question": "What is the branch of dentistry that focuses on straightening teeth?",
+    "choices": ["Endodontics", "Periodontics", "Orthodontics", "Prosthodontics"],
+    "answer": "Orthodontics"
+  },
+  {
+    "question": "Which tool do dentists commonly use to examine and clean teeth?",
+    "choices": ["Ultrasound scanner", "Dental scaler", "MRI machine", "Otoscope"],
+    "answer": "Dental scaler"
+  },
+  {
+    "question": "How many years of education does it typically take to become a dentist in the U.S.?",
+    "choices": ["4 years", "6 years", "8 years", "10 years"],
+    "answer": "8 years"
+  },
+  {
+    "question": "What is the purpose of a dental X-ray?",
+    "choices": ["To check for cavities and bone issues", "To whiten teeth",
+      "To strengthen enamel", "To remove plaque"],
+    "answer": "To check for cavities and bone issues"
+  },
+  {
+    "question": "Which of the following is a specialty in dentistry?",
+    "choices": ["Cardiology", "Neurology", "Pediatrics", "Endodontics"],
+    "answer": "Endodontics"
+  },
+  {
+    "question": "Which ancient civilization is believed to have had the first recorded dental practitioners?",
+    "choices": ["Greeks", "Egyptians", "Chinese", "Romans"],
+    "answer": "Egyptians"
+  },
+  {
+    "question": "What do periodontists specialize in?",
+    "choices": ["Root canals", "Gum diseases and dental implants", "Braces and aligners", "Teeth whitening"],
+    "answer": "Gum diseases and dental implants"
+  },
+  {
+    "question": "What does an oral surgeon do?",
+    "choices": ["Perform routine cleanings", "Extract teeth and perform jaw surgeries",
+      "Make dentures", "Whiten teeth"],
+    "answer": "Extract teeth and perform jaw surgeries"
+  },
+  {
+    "question": "Which type of toothpaste is best for preventing cavities?",
+    "choices": ["Charcoal toothpaste", "Fluoride toothpaste", "Herbal toothpaste", "Whitening toothpaste"],
+    "answer": "Fluoride toothpaste"
+  },
+  {
+    "question": "What type of toothbrush is recommended for most people?",
+    "choices": ["Hard-bristled", "Soft-bristled", "Medium-bristled", "Electric toothbrush only"],
+    "answer": "Soft-bristled"
+  },
+  {
+    "question": "How often should you replace an electric toothbrush head?",
+    "choices": ["Every 6 months", "Once a year", "Every 3 months", "Only when bristles wear out"],
+    "answer": "Every 3 months"
+  },
+  {
+    "question": "What ingredient in mouthwash helps fight bacteria and bad breath?",
+    "choices": ["Alcohol", "Fluoride", "Chlorhexidine", "Hydrogen peroxide"],
+    "answer": "Chlorhexidine"
+  },
+  {
+    "question": "Which dental product is best for cleaning between teeth?",
+    "choices": ["Toothbrush", "Mouthwash", "Floss", "Chewing gum"],
+    "answer": "Floss"
+  },
+  {
+    "question": "What is the main advantage of using an electric toothbrush over a manual one?",
+    "choices": ["It whitens teeth faster", "It vibrates, making it more fun", "It removes plaque more effectively", "It doesn’t require toothpaste"],
+    "answer": "It removes plaque more effectively"
+  },
+  {
+    "question": "Which type of dental floss is best for people with tight spaces between their teeth?",
+    "choices": ["Waxed floss", "Unwaxed floss", "Dental tape", "Water flosser"],
+    "answer": "Waxed floss"
+  },
+  {
+    "question": "What ingredient in some toothpaste can help whiten teeth?",
+    "choices": ["Fluoride", "Baking soda", "Charcoal", "Hydrogen peroxide"],
+    "answer": "Hydrogen peroxide"
+  },
+  {
+    "question": "Which of these dental products is designed to reduce gum inflammation?",
+    "choices": ["Whitening strips", "Antimicrobial mouthwash", "Sugar-free gum", "Electric toothbrush"],
+    "answer": "Antimicrobial mouthwash"
+  },
+  {
+    "question": "What is the purpose of a tongue scraper?",
+    "choices": ["To make your tongue pinker", "To remove bacteria and bad breath-causing compounds", "To help you taste food better", "To strengthen your gums"],
+    "answer": "To remove bacteria and bad breath-causing compounds"
+  },
+  {
+    "question": "What animal has the most teeth?",
+    "choices": ["Shark", "Snail", "Crocodile", "Elephant"],
+    "answer": "Snail"
+  },
+  {
+    "question": "Which food is surprisingly good for your teeth?",
+    "choices": ["Chocolate", "Cheese", "Soda", "Potato chips"],
+    "answer": "Cheese"
+  },
+  {
+    "question": "How many sets of teeth do humans have in their lifetime?",
+    "choices": ["1", "2", "3", "4"],
+    "answer": "2"
+  },
+  {
+    "question": "Which cartoon character is famous for having a big toothy grin?",
+    "choices": ["Mickey Mouse", "SpongeBob SquarePants", "Bugs Bunny", "Scooby-Doo"],
+    "answer": "Bugs Bunny"
+  },
+  {
+    "question": "Which country is famous for the myth of the Tooth Fairy?",
+    "choices": ["United States", "Japan", "France", "Brazil"],
+    "answer": "United States"
+  },
+  {
+    "question": "What is the hardest substance in the human body?",
+    "choices": ["Bone", "Tooth enamel", "Cartilage", "Nails"],
+    "answer": "Tooth enamel"
+  },
+  {
+    "question": "What did people in ancient times use to clean their teeth before toothbrushes were invented?",
+    "choices": ["Sticks", "Salt and charcoal", "Bones", "All of the above"],
+    "answer": "All of the above"
+  },
+  {
+    "question": "What do dentists and vampires have in common?",
+    "choices": ["They both love teeth", "They both work at night", "They both hate garlic", "They both live forever"],
+    "answer": "They both love teeth"
+  },
+  {
+    "question": "Which famous scientist lost a tooth and turned it into a scientific experiment?",
+    "choices": ["Albert Einstein", "Isaac Newton", "Nikola Tesla", "Galileo Galilei"],
+    "answer": "Isaac Newton"
+  },
+  {
+    "question": "How long does the average person spend brushing their teeth in a lifetime?",
+    "choices": ["30 days", "38.5 days", "50 days", "100 days"],
+    "answer": "38.5 days"
+  },
+  {
+    "question": "Which celebrity is known for their famous million-dollar smile?",
+    "choices": ["Tom Cruise", "Julia Roberts", "Dwayne 'The Rock' Johnson", "Johnny Depp"],
+    "answer": "Julia Roberts"
+  },
+  {
+    "question": "What do sharks do with their teeth?",
+    "choices": ["Never lose them", "Grow new ones constantly", "Use them for defense only", "Sharpen them daily"],
+    "answer": "Grow new ones constantly"
+  },
+  {
+    "question": "Which of these animals has teeth that never stop growing?",
+    "choices": ["Dogs", "Horses", "Rabbits", "Cats"],
+    "answer": "Rabbits"
+  },
+  {
+    "question": "What did ancient Egyptians use as toothpaste?",
+    "choices": ["Honey and herbs", "Crushed eggshells and ashes", "Mint leaves", "Saltwater"],
+    "answer": "Crushed eggshells and ashes"
+  },
+  {
+    "question": "What happens if you put a lost baby tooth in a glass of soda overnight?",
+    "choices": ["It turns blue", "It dissolves", "It grows back", "It becomes softer"],
+    "answer": "It dissolves"
+  },
+  {
+    "question": "What color were the first mass-produced toothbrush bristles?",
+    "choices": ["Black", "White", "Red", "Blue"],
+    "answer": "Black"
+  },
+  {
+    "question": "What is the world record for the most teeth in a human mouth?",
+    "choices": ["32", "35", "37", "40"],
+    "answer": "37"
+  },
+  {
+    "question": "How did people in medieval times clean their teeth?",
+    "choices": ["With sticks and cloth", "With salt and wine", "With ashes and herbs", "All of the above"],
+    "answer": "All of the above"
+  },
+  {
+    "question": "Which country started the tradition of putting lost teeth under a pillow for a reward?",
+    "choices": ["United States", "France", "Spain", "United Kingdom"],
+    "answer": "Spain"
+  },
+  {
+    "question": "What is a dentist’s favorite time of day?",
+    "choices": ["Tooth-thirty", "Midnight", "Lunchtime", "Morning rush"],
+    "answer": "Tooth-thirty"
+  },
+  {
+    "question": "Which type of food helps clean your teeth naturally?",
+    "choices": ["Sticky candies", "Crunchy fruits and vegetables", "Soft bread", "Pasta"],
+    "answer": "Crunchy fruits and vegetables"
+  },
+  {
+    "question": "Which vitamin found in citrus fruits helps keep gums healthy?",
+    "choices": ["Vitamin A", "Vitamin B12", "Vitamin C", "Vitamin D"],
+    "answer": "Vitamin C"
+  },
+  {
+    "question": "What kind of food can stain your teeth the most?",
+    "choices": ["Milk", "Green tea", "Tomato sauce", "Water"],
+    "answer": "Tomato sauce"
+  },
+  {
+    "question": "Which beverage is the best choice for maintaining good oral health?",
+    "choices": ["Soda", "Coffee", "Water", "Energy drinks"],
+    "answer": "Water"
+  },
+  {
+    "question": "What type of sugar is most harmful to teeth?",
+    "choices": ["Natural sugar in fruits", "Refined sugar in candies and soda", "Lactose in milk", "Honey"],
+    "answer": "Refined sugar in candies and soda"
+  },
+  {
+    "question": "Which food can naturally help whiten teeth?",
+    "choices": ["Strawberries", "Blueberries", "Dark chocolate", "Pickles"],
+    "answer": "Strawberries"
+  },
+  {
+    "question": "Which snack is least likely to cause cavities?",
+    "choices": ["Hard candies", "Potato chips", "Sugar-free gum", "Dried fruit"],
+    "answer": "Sugar-free gum"
+  },
+  {
+    "question": "Why is drinking milk good for your teeth?",
+    "choices": ["It strengthens enamel with calcium", "It cleans bacteria instantly", "It replaces lost teeth", "It makes your gums pink"],
+    "answer": "It strengthens enamel with calcium"
+  },
+  {
+    "question": "What is the worst time to eat sugary foods for your teeth?",
+    "choices": ["During meals", "Before bed without brushing", "In the morning", "Right after brushing"],
+    "answer": "Before bed without brushing"
+  },
+  {
+    "question": "How many teeth does a healthy adult human typically have, including wisdom teeth?",
+    "choices": ["28", "30", "32", "34"],
+    "answer": "32"
+  },
+  {
+    "question": "Which part of the tooth contains nerves and blood vessels?",
+    "choices": ["Enamel", "Dentin", "Pulp", "Cementum"],
+    "answer": "Pulp"
+  },
+  {
+    "question": "What is the primary cause of yellowing teeth over time?",
+    "choices": ["Fluoride use", "Aging and enamel wear", "Excessive brushing", "Drinking cold water"],
+    "answer": "Aging and enamel wear"
+  },
+  {
+    "question": "Which of these animals does not have teeth?",
+    "choices": ["Dolphin", "Turtle", "Shark", "Crocodile"],
+    "answer": "Turtle"
+  },
+  {
+    "question": "How long does it take for plaque to start forming on teeth after eating?",
+    "choices": ["5 minutes", "20 minutes", "1 hour", "3 hours"],
+    "answer": "20 minutes"
+  },
+  {
+    "question": "Which ancient civilization is credited with inventing the first metal dental fillings?",
+    "choices": ["Chinese", "Romans", "Egyptians", "Greeks"],
+    "answer": "Chinese"
+  },
+  {
+    "question": "Which of these dental tools was first used in the 1800s?",
+    "choices": ["Electric toothbrush", "Dental drill", "Braces", "Floss"],
+    "answer": "Dental drill"
+  },
+  {
+    "question": "What is the name of the professional who specializes in making dentures and dental prosthetics?",
+    "choices": ["Periodontist", "Prosthodontist", "Endodontist", "Orthodontist"],
+    "answer": "Prosthodontist"
+  },
+  {
+    "question": "How can drinking through a straw help protect your teeth?",
+    "choices": ["Prevents tooth grinding", "Keeps sugar away from teeth", "Increases saliva production", "Makes brushing unnecessary"],
+    "answer": "Keeps sugar away from teeth"
+  },
+  {
+    "question": "Which fruit contains natural enzymes that help break down plaque on teeth?",
+    "choices": ["Banana", "Pineapple", "Apple", "Grapes"],
+    "answer": "Pineapple"
+  },
+  {
+    "question": "During which war did the U.S. military first require soldiers to have at least six opposing teeth for proper biting?",
+    "choices": ["World War I", "World War II", "American Civil War", "Vietnam War"],
+    "answer": "World War I"
+  },
+  {
+    "question": "Which war led to significant advancements in maxillofacial surgery due to severe facial injuries?",
+    "choices": ["World War I", "World War II", "Korean War", "Gulf War"],
+    "answer": "World War I"
+  },
+  {
+    "question": "How did George Washington's dental problems affect his military leadership?",
+    "choices": ["He used wooden dentures", "He frequently suffered from severe pain", "He avoided speaking in public", "He retired early"],
+    "answer": "He frequently suffered from severe pain"
+  },
+  {
+    "question": "Which military branch was the first to establish an official dental corps?",
+    "choices": ["U.S. Army", "U.S. Navy", "U.S. Air Force", "U.S. Marines"],
+    "answer": "U.S. Army"
+  },
+  {
+    "question": "What material was commonly used for false teeth in soldiers during the 18th and 19th centuries?",
+    "choices": ["Gold", "Ivory", "Lead", "Porcelain"],
+    "answer": "Ivory"
+  },
+  {
+    "question": "How did World War II impact the field of dentistry?",
+    "choices": ["Developed the first dental implants", "Increased awareness of oral hygiene in soldiers", "Made toothbrushes mandatory", "Banned sugary rations"],
+    "answer": "Increased awareness of oral hygiene in soldiers"
+  },
+  {
+    "question": "Why did some soldiers in World War I have their teeth removed before going to war?",
+    "choices": ["To prevent dental infections in the field", "To fit gas masks better", "To avoid cavities", "To lighten their load"],
+    "answer": "To prevent dental infections in the field"
+  },
+  {
+    "question": "What role did dentists play in identifying soldiers after battles?",
+    "choices": ["Providing forensic dental records", "Extracting all teeth for identification", "Using dental molds for reconstruction", "No role"],
+    "answer": "Providing forensic dental records"
+  },
+  {
+    "question": "Which war was the first to use forensic dentistry to identify soldiers' remains?",
+    "choices": ["American Civil War", "World War I", "World War II", "Vietnam War"],
+    "answer": "American Civil War"
+  },
+  {
+    "question": "Why did ancient Roman soldiers chew on sticks made from the Salvadora persica tree?",
+    "choices": ["To clean their teeth", "To relieve stress", "To heal wounds", "To help digestion"],
+    "answer": "To clean their teeth"
+  },
+  {
+    "question": "What is the primary role of dentin in a tooth?",
+    "choices": ["It protects the enamel", "It transmits sensations from the surface to the nerves", "It produces saliva", "It prevents plaque formation"],
+    "answer": "It transmits sensations from the surface to the nerves"
+  },
+  {
+    "question": "Which hormone can impact gum health during pregnancy?",
+    "choices": ["Insulin", "Estrogen", "Adrenaline", "Melatonin"],
+    "answer": "Estrogen"
+  },
+  {
+    "question": "Which part of the tooth helps anchor it to the jawbone?",
+    "choices": ["Enamel", "Pulp", "Cementum", "Dentin"],
+    "answer": "Cementum"
+  },
+  {
+    "question": "What is the scientific term for teeth grinding?",
+    "choices": ["Bruxism", "Periodontitis", "Halitosis", "Attrition"],
+    "answer": "Bruxism"
+  },
+  {
+    "question": "Which vitamin deficiency is linked to slow wound healing in the gums?",
+    "choices": ["Vitamin A", "Vitamin C", "Vitamin K", "Vitamin E"],
+    "answer": "Vitamin C"
+  },
+  {
+    "question": "What is the function of periodontal ligaments?",
+    "choices": ["They hold the tooth in place", "They produce saliva", "They repair damaged enamel", "They create tooth enamel"],
+    "answer": "They hold the tooth in place"
+  },
+  {
+    "question": "Which type of bacteria primarily contribute to gum disease?",
+    "choices": ["Streptococcus mutans", "Porphyromonas gingivalis", "Escherichia coli", "Lactobacillus acidophilus"],
+    "answer": "Porphyromonas gingivalis"
+  },
+  {
+    "question": "What is the average lifespan of a dental filling?",
+    "choices": ["5-7 years", "10-15 years", "20-30 years", "Lifetime"],
+    "answer": "10-15 years"
+  },
+  {
+    "question": "Which dental procedure involves reshaping and contouring the gums?",
+    "choices": ["Gingivectomy", "Root canal", "Tooth scaling", "Crown placement"],
+    "answer": "Gingivectomy"
+  },
+  {
+    "question": "Which substance in saliva helps neutralize acids and remineralize teeth?",
+    "choices": ["Calcium", "Bicarbonate", "Lactic acid", "Glucose"],
+    "answer": "Bicarbonate"
+  },
+  {
+    "question": "What dental tool is used to measure gum pocket depth?",
+    "choices": ["Explorer", "Periodontal probe", "Scaler", "Curette"],
+    "answer": "Periodontal probe"
+  },
+  {
+    "question": "Which ancient civilization is credited with the first known dental fillings?",
+    "choices": ["Romans", "Egyptians", "Chinese", "Mayans"],
+    "answer": "Mayans"
+  },
+  {
+    "question": "What is the primary function of the pulp inside a tooth?",
+    "choices": ["It strengthens enamel", "It contains blood vessels and nerves", "It removes plaque", "It produces dentin"],
+    "answer": "It contains blood vessels and nerves"
+  },
+  {
+    "question": "Which condition is characterized by the loss of tooth enamel due to acid exposure?",
+    "choices": ["Tooth erosion", "Gingivitis", "Bruxism", "Halitosis"],
+    "answer": "Tooth erosion"
+  },
+  {
+    "question": "What is an apicoectomy?",
+    "choices": ["A type of dental cleaning", "Surgical removal of the root tip", "A procedure to whiten teeth", "A method to prevent cavities"],
+    "answer": "Surgical removal of the root tip"
+  },
+  {
+    "question": "Which mineral, found in toothpaste, is essential for strengthening teeth?",
+    "choices": ["Iron", "Zinc", "Calcium", "Fluoride"],
+    "answer": "Fluoride"
+  },
+  {
+    "question": "What is the purpose of a dental dam during procedures?",
+    "choices": ["To isolate teeth and prevent contamination", "To measure gum recession", "To apply fluoride", "To reduce plaque"],
+    "answer": "To isolate teeth and prevent contamination"
+  },
+  {
+    "question": "Which part of the mouth contains the most bacteria?",
+    "choices": ["Teeth", "Tongue", "Gums", "Cheeks"],
+    "answer": "Tongue"
+  },
+  {
+    "question": "What is the main cause of tooth sensitivity?",
+    "choices": ["Worn enamel exposing dentin", "Too much fluoride", "Brushing too lightly", "Eating spicy foods"],
+    "answer": "Worn enamel exposing dentin"
+  },
+  {
+    "question": "Which of these dental treatments can help regrow lost tooth structure?",
+    "choices": ["Fluoride treatment", "Stem cell therapy", "Composite bonding", "Tooth scaling"],
+    "answer": "Stem cell therapy"
+  },
+  {
+    "question": "What is the name of the structure that connects the tooth root to the jawbone?",
+    "choices": ["Gingiva", "Periodontal ligament", "Pulp chamber", "Cementum"],
+    "answer": "Periodontal ligament"
+  },
+  {
+    "question": "Which ancient civilization is believed to have used honey and crushed eggshells as early toothpaste?",
+    "choices": ["Romans", "Egyptians", "Greeks", "Chinese"],
+    "answer": "Egyptians"
+  },
+  {
+    "question": "What is the function of odontoblasts in a tooth?",
+    "choices": ["They produce enamel", "They create dentin", "They fight bacteria", "They whiten teeth"],
+    "answer": "They create dentin"
+  },
+  {
+    "question": "How many roots does an upper first molar typically have?",
+    "choices": ["One", "Two", "Three", "Four"],
+    "answer": "Three"
+  },
+  {
+    "question": "Which condition causes white patches in the mouth that can be a precursor to oral cancer?",
+    "choices": ["Halitosis", "Leukoplakia", "Xerostomia", "Gingivitis"],
+    "answer": "Leukoplakia"
+  },
+  {
+    "question": "Which type of bacteria are most associated with causing bad breath?",
+    "choices": ["Streptococcus mutans", "Porphyromonas gingivalis", "Treponema denticola", "Lactobacillus acidophilus"],
+    "answer": "Treponema denticola"
+  },
+  {
+    "question": "Which famous historical figure had wooden dentures?",
+    "choices": ["Abraham Lincoln", "George Washington", "Napoleon Bonaparte", "Benjamin Franklin"],
+    "answer": "George Washington"
+  },
+  {
+    "question": "What type of dental restoration is used to completely cover or encircle a tooth?",
+    "choices": ["Filling", "Crown", "Veneer", "Sealant"],
+    "answer": "Crown"
+  },
+  {
+    "question": "Which of these drinks is the most acidic and harmful to tooth enamel?",
+    "choices": ["Soda", "Orange juice", "Coffee", "Milk"],
+    "answer": "Soda"
+  },
+  {
+    "question": "What is the primary cause of black hairy tongue?",
+    "choices": ["Smoking", "Poor oral hygiene", "Drinking coffee", "All of the above"],
+    "answer": "All of the above"
+  },
+  {
+    "question": "Which tooth is commonly referred to as the 'eye tooth'?",
+    "choices": ["Incisor", "Canine", "Molar", "Premolar"],
+    "answer": "Canine"
+  },
+  {
+    "question": "What is the main ingredient in traditional dental amalgam fillings?",
+    "choices": ["Gold", "Silver", "Mercury", "Copper"],
+    "answer": "Mercury"
+  },
+  {
+    "question": "What is another term for baby teeth?",
+    "choices": ["Primary teeth", "Deciduous teeth", "Temporary teeth", "Milk teeth"],
+    "answer": "Deciduous teeth"
+  },
+  {
+    "question": "Which of these animals can continuously regrow their teeth throughout their life?",
+    "choices": ["Humans", "Sharks", "Horses", "Cats"],
+    "answer": "Sharks"
+  },
+  {
+    "question": "What is the purpose of a bitewing X-ray in dentistry?",
+    "choices": ["To check for cavities between teeth", "To view wisdom teeth", "To measure gum recession", "To check jaw alignment"],
+    "answer": "To check for cavities between teeth"
+  },
+  {
+    "question": "Which dental condition results from a misalignment of the jaw or teeth?",
+    "choices": ["Halitosis", "Bruxism", "Malocclusion", "Pericoronitis"],
+    "answer": "Malocclusion"
+  },
+  {
+    "question": "Which of the following foods can naturally help clean teeth?",
+    "choices": ["Carrots", "Bananas", "Bread", "Pasta"],
+    "answer": "Carrots"
+  },
+  {
+    "question": "What does the term 'edentulous' mean in dentistry?",
+    "choices": ["Having misaligned teeth", "Having extra teeth", "Having no natural teeth", "Having cavities"],
+    "answer": "Having no natural teeth"
+  },
+  {
+    "question": "Which of these conditions is caused by excessive fluoride exposure?",
+    "choices": ["Tooth erosion", "Fluorosis", "Gingivitis", "Halitosis"],
+    "answer": "Fluorosis"
+  },
+  {
+    "question": "What dental specialty focuses on the treatment of children’s teeth?",
+    "choices": ["Orthodontics", "Endodontics", "Pediatric Dentistry", "Periodontics"],
+    "answer": "Pediatric Dentistry"
+  },
+  {
+    "question": "Which dental tool is commonly used to remove plaque and tartar?",
+    "choices": ["Scaler", "Explorer", "Mirror", "Curette"],
+    "answer": "Scaler"
+  },
+  {
+    "question": "Which vitamin plays a key role in preventing gum disease and maintaining oral health?",
+    "choices": ["Vitamin A", "Vitamin C", "Vitamin D", "Vitamin B12"],
+    "answer": "Vitamin C"
+  },
+  {
+    "question": "What is the main function of saliva?",
+    "choices": ["To digest proteins", "To neutralize acids and clean the mouth", "To strengthen enamel", "To kill all bacteria"],
+    "answer": "To neutralize acids and clean the mouth"
+  },
+  {
+    "question": "Which soft tissue in the mouth helps protect teeth from excessive pressure when chewing?",
+    "choices": ["Gums", "Tongue", "Cheek lining", "Pulp"],
+    "answer": "Gums"
+  },
+  {
+    "question": "What is the primary reason some people are more prone to cavities than others?",
+    "choices": ["Genetics", "Brushing technique", "Diet", "Toothpaste brand"],
+    "answer": "Genetics"
+  },
+  {
+    "question": "Which of these conditions is an inflammation of the tissue around a wisdom tooth?",
+    "choices": ["Pericoronitis", "Bruxism", "Periodontitis", "Tooth erosion"],
+    "answer": "Pericoronitis"
+  },
+  {
+    "question": "What was the first toothpaste sold in a collapsible tube called?",
+    "choices": ["Colgate Dental Cream", "Pepsodent", "Sensodyne", "Aquafresh"],
+    "answer": "Colgate Dental Cream"
+  },
+  {
+    "question": "Which habit can contribute to enamel erosion over time?",
+    "choices": ["Drinking soda frequently", "Chewing gum", "Brushing once a day", "Using mouthwash"],
+    "answer": "Drinking soda frequently"
+  },
+  {
+    "question": "What percentage of people experience dental anxiety?",
+    "choices": ["10%", "20%", "30%", "50%"],
+    "answer": "20%"
+  },
+  {
+    "question": "What was one of the first toothbrushes in history made from?",
+    "choices": ["Animal hair bristles", "Feathers", "Leaves", "Seashells"],
+    "answer": "Animal hair bristles"
+  },
+  {
+    "question": "What is the term for the fear of dentists?",
+    "choices": ["Dentophobia", "Odontophobia", "Xenophobia", "Hygienophobia"],
+    "answer": "Odontophobia"
+  },
+  {
+    "question": "Which neurotransmitter is released when people smile, contributing to reduced stress?",
+    "choices": ["Dopamine", "Serotonin", "Cortisol", "Adrenaline"],
+    "answer": "Serotonin"
+  },
+  {
+    "question": "What percentage of people avoid going to the dentist due to anxiety?",
+    "choices": ["5%", "10%", "20%", "30%"],
+    "answer": "20%"
+  },
+  {
+    "question": "What is the placebo effect in dentistry?",
+    "choices": ["When a fake treatment reduces pain", "When pain worsens after a procedure", "When fluoride stops working", "When teeth become resistant to decay"],
+    "answer": "When a fake treatment reduces pain"
+  },
+  {
+    "question": "Which part of the brain is responsible for processing pain signals from the teeth?",
+    "choices": ["Frontal lobe", "Cerebellum", "Thalamus", "Hippocampus"],
+    "answer": "Thalamus"
+  },
+  {
+    "question": "Which of these psychological conditions has been linked to increased risk of gum disease?",
+    "choices": ["Anxiety", "Depression", "OCD", "Bipolar disorder"],
+    "answer": "Depression"
+  },
+  {
+    "question": "Which dental condition can be worsened by stress and anxiety?",
+    "choices": ["Gingivitis", "Bruxism", "Cavities", "Tooth discoloration"],
+    "answer": "Bruxism"
+  },
+  {
+    "question": "Which dental issue can impact a person’s confidence and self-esteem the most?",
+    "choices": ["Tooth loss", "Mild gingivitis", "Tooth sensitivity", "Bad breath"],
+    "answer": "Tooth loss"
+  },
+  {
+    "question": "Which hormone, released during stress, can weaken the immune response and increase risk of gum disease?",
+    "choices": ["Dopamine", "Serotonin", "Cortisol", "Melatonin"],
+    "answer": "Cortisol"
+  },
+  {
+    "question": "What percentage of first impressions are influenced by someone’s smile?",
+    "choices": ["20%", "40%", "60%", "80%"],
+    "answer": "80%"
+  },
+  {
+    "question": "Which type of chewing gum is best for reducing stress and promoting oral health?",
+    "choices": ["Sugar-free gum", "Bubble gum", "Cinnamon-flavored gum", "Gum with caffeine"],
+    "answer": "Sugar-free gum"
+  },
+  {
+    "question": "Which unusual factor can make dental pain seem worse?",
+    "choices": ["Hearing the sound of a dental drill", "Drinking water", "Wearing sunglasses", "Breathing through the nose"],
+    "answer": "Hearing the sound of a dental drill"
+  },
+  {
+    "question": "Which ancient civilization believed that tooth decay was caused by ‘tooth worms’?",
+    "choices": ["Greeks", "Romans", "Ancient Egyptians", "Sumerians"],
+    "answer": "Sumerians"
+  },
+  {
+    "question": "Which famous person was known for their gold teeth?",
+    "choices": ["Michael Jordan", "Johnny Depp", "Elvis Presley", "Miley Cyrus"],
+    "answer": "Johnny Depp"
+  },
+  {
+    "question": "What is the world record for the longest human tooth extracted?",
+    "choices": ["2 cm", "3 cm", "5 cm", "7 cm"],
+    "answer": "3 cm"
+  },
+  {
+    "question": "What is one of the strangest toothbrush materials used in history?",
+    "choices": ["Horsehair", "Porcupine quills", "Bamboo fibers", "Cotton wool"],
+    "answer": "Porcupine quills"
+  },
+  {
+    "question": "What type of toothbrush did NASA develop for astronauts?",
+    "choices": ["Self-cleaning toothbrush", "Toothpaste-free toothbrush", "Chewable toothbrush", "Waterless toothbrush"],
+    "answer": "Toothpaste-free toothbrush"
+  },
+  {
+    "question": "Which popular candy was originally created by a dentist?",
+    "choices": ["Cotton candy", "Gummy bears", "Lollipops", "Chocolate bars"],
+    "answer": "Cotton candy"
+  },
+  {
+    "question": "Which modern country is known for having the best overall dental health?",
+    "choices": ["United States", "Japan", "Sweden", "Canada"],
+    "answer": "Sweden"
+  },
+  {
+    "question": "What is the most common reason for people to skip brushing their teeth at night?",
+    "choices": ["Laziness", "Forgetting", "Being too tired", "Not having a toothbrush nearby"],
+    "answer": "Being too tired"
+  },
+  {
+    "question": "Which country is known for having the lowest rates of cavities due to high levels of fluoride in its water?",
+    "choices": ["Iceland", "Japan", "Sweden", "Argentina"],
+    "answer": "Iceland"
+  },
+  {
+    "question": "What unique dental modification was practiced by the ancient Mayans?",
+    "choices": ["Filing teeth to a point", "Gold teeth implants", "Tattooing teeth", "Using animal teeth as replacements"],
+    "answer": "Filing teeth to a point"
+  },
+  {
+    "question": "Which mineral, commonly found in volcanic ash, is being studied for its ability to strengthen tooth enamel?",
+    "choices": ["Silica", "Obsidian", "Calcium carbonate", "Zeolite"],
+    "answer": "Zeolite"
+  },
+  {
+    "question": "In which culture was blackening teeth seen as a sign of beauty and maturity?",
+    "choices": ["Japanese", "Egyptian", "Incan", "Greek"],
+    "answer": "Japanese"
+  },
+  {
+    "question": "Which country has an annual festival where children throw their lost teeth onto rooftops for good luck?",
+    "choices": ["Mexico", "Vietnam", "Spain", "Turkey"],
+    "answer": "Vietnam"
+  },
+  {
+    "question": "Which region is known for chewing miswak, a natural toothbrush made from tree twigs?",
+    "choices": ["Middle East", "South America", "Scandinavia", "Australia"],
+    "answer": "Middle East"
+  },
+  {
+    "question": "What was the primary dental cleaning method used by ancient Romans?",
+    "choices": ["Saltwater rinses", "Chewing herbs", "Using urine-based mouthwash", "Rubbing teeth with coal"],
+    "answer": "Using urine-based mouthwash"
+  },
+  {
+    "question": "Which country has one of the highest rates of dental visits per year due to cultural emphasis on oral hygiene?",
+    "choices": ["Germany", "Japan", "United States", "Norway"],
+    "answer": "Japan"
+  },
+  {
+    "question": "What geological formation has been a source of fluoride, which is added to drinking water to prevent tooth decay?",
+    "choices": ["Limestone", "Basalt", "Granite", "Shale"],
+    "answer": "Limestone"
+  },
+  {
+    "question": "Which indigenous group traditionally used charcoal to clean their teeth and freshen breath?",
+    "choices": ["Maasai of Africa", "Inuit of Canada", "Aboriginal Australians", "Mayan civilization"],
+    "answer": "Aboriginal Australians"
+  },
+  {
+    "question": "Which region’s ancient cultures used gold wire to stabilize loose teeth, an early form of braces?",
+    "choices": ["China", "Egypt", "South America", "India"],
+    "answer": "Egypt"
+  },
+  {
+    "question": "In which country is the 'Tooth Fairy' replaced by a small mouse called Ratoncito Pérez?",
+    "choices": ["France", "Spain", "Italy", "Russia"],
+    "answer": "Spain"
+  },
+  {
+    "question": "Which geological material is commonly used in dental ceramics for making crowns and veneers?",
+    "choices": ["Quartz", "Zirconia", "Obsidian", "Granite"],
+    "answer": "Zirconia"
+  },
+  {
+    "question": "In which part of the world did archaeologists discover 9,000-year-old drilled teeth, indicating early dentistry?",
+    "choices": ["India", "Egypt", "Pakistan", "Peru"],
+    "answer": "Pakistan"
+  },
+  {
+    "question": "Which country is famous for its 'gold teeth culture,' where gold crowns are seen as a status symbol?",
+    "choices": ["Kazakhstan", "United States", "Sweden", "Brazil"],
+    "answer": "Kazakhstan"
+  },
+  {
+    "question": "What traditional dental cleaning method is still widely used in India?",
+    "choices": ["Brushing with coconut husks", "Using neem twigs", "Chewing tobacco leaves", "Rubbing sand on teeth"],
+    "answer": "Using neem twigs"
+  },
+  {
+    "question": "Which country was the first to introduce mandatory fluoridation in its public water supply?",
+    "choices": ["United States", "Australia", "United Kingdom", "New Zealand"],
+    "answer": "United States"
+  },
+  {
+    "question": "Which natural material was historically used in East Asia to create early forms of dentures?",
+    "choices": ["Bamboo", "Ivory", "Seashells", "Coral"],
+    "answer": "Bamboo"
+  },
+  {
+    "question": "Which Scandinavian country is known for government-funded dental care for children and young adults?",
+    "choices": ["Denmark", "Norway", "Sweden", "Finland"],
+    "answer": "Sweden"
+  },
+  {
+    "question": "In some parts of Africa, what plant-based material is used to clean teeth and is believed to have antibacterial properties?",
+    "choices": ["Baobab bark", "Neem twigs", "Kola nut", "Eucalyptus leaves"],
+    "answer": "Neem twigs"
+  },
+  {
+    "question": "What is the hardest part of the human body?",
+    "choices": ["Bone", "Tooth enamel", "Cartilage", "Nail"],
+    "answer": "Tooth enamel"
+  },
+  {
+    "question": "Which type of toothpaste is best for individuals with sensitive teeth?",
+    "choices": ["Whitening toothpaste", "Charcoal toothpaste", "Fluoride-free toothpaste", "Desensitizing toothpaste"],
+    "answer": "Desensitizing toothpaste"
+  },
+  {
+    "question": "Which historical figure was known to have severe dental problems and lost many of his teeth?",
+    "choices": ["Napoleon Bonaparte", "Abraham Lincoln", "George Washington", "Winston Churchill"],
+    "answer": "George Washington"
+  },
+  {
+    "question": "Which common dental procedure is performed to remove infected pulp from inside a tooth?",
+    "choices": ["Tooth extraction", "Filling", "Root canal", "Gingivectomy"],
+    "answer": "Root canal"
+  },
+  {
+    "question": "Which part of the tooth is responsible for producing dentin?",
+    "choices": ["Pulp", "Cementum", "Enamel", "Odontoblasts"],
+    "answer": "Odontoblasts"
+  },
+  {
+    "question": "What percentage of the world's population suffers from dental cavities?",
+    "choices": ["20%", "40%", "60%", "90%"],
+    "answer": "90%"
+  },
+  {
+    "question": "Which civilization is credited with creating the first metal dental fillings?",
+    "choices": ["Egyptians", "Romans", "Chinese", "Greeks"],
+    "answer": "Chinese"
+  },
+  {
+    "question": "What type of toothbrush bristles are generally recommended by dentists?",
+    "choices": ["Hard", "Medium", "Soft", "Extra-soft"],
+    "answer": "Soft"
+  },
+  {
+    "question": "What is the function of the periodontal ligament?",
+    "choices": ["Protects the enamel", "Anchors the tooth to the jawbone", "Produces saliva", "Forms dentin"],
+    "answer": "Anchors the tooth to the jawbone"
+  },
+  {
+    "question": "Which dental specialty focuses on treating gum disease and supporting structures of the teeth?",
+    "choices": ["Endodontics", "Orthodontics", "Prosthodontics", "Periodontics"],
+    "answer": "Periodontics"
+  },
+  {
+    "question": "Which vitamin deficiency can cause bleeding gums?",
+    "choices": ["Vitamin A", "Vitamin C", "Vitamin D", "Vitamin B12"],
+    "answer": "Vitamin C"
+  },
+  {
+    "question": "Which food is considered highly beneficial for strengthening teeth?",
+    "choices": ["Cheese", "Bread", "Coffee", "Candy"],
+    "answer": "Cheese"
+  },
+  {
+    "question": "Which famous structure was built with a dental-related purpose in mind?",
+    "choices": ["The Pyramids", "The Eiffel Tower", "The Colosseum", "The Temple of Tooth in Sri Lanka"],
+    "answer": "The Temple of Tooth in Sri Lanka"
+  },
+  {
+    "question": "Which dental issue is most commonly associated with stress and anxiety?",
+    "choices": ["Gingivitis", "Bruxism", "Tooth sensitivity", "Tooth decay"],
+    "answer": "Bruxism"
+  },
+  {
+    "question": "Which country has one of the highest rates of dental visits per capita?",
+    "choices": ["United States", "Japan", "Germany", "Sweden"],
+    "answer": "Japan"
+  },
+  {
+    "question": "Which type of water is most beneficial for dental health?",
+    "choices": ["Distilled water", "Fluoridated water", "Spring water", "Mineral water"],
+    "answer": "Fluoridated water"
+  },
+  {
+    "question": "How often should dental X-rays be taken for an average adult with good oral health?",
+    "choices": ["Every 6 months", "Once a year", "Every 2-3 years", "Every 5 years"],
+    "answer": "Every 2-3 years"
+  },
+  {
+    "question": "What does the term 'malocclusion' refer to?",
+    "choices": ["Overgrown gums", "Misalignment of teeth", "Tooth erosion", "Tooth discoloration"],
+    "answer": "Misalignment of teeth"
+  },
+  {
+    "question": "What dental term refers to the condition of having no teeth?",
+    "choices": ["Halitosis", "Edentulism", "Bruxism", "Periodontitis"],
+    "answer": "Edentulism"
+  },
+  {
+    "question": "Which continent has the highest rate of dental fluorosis?",
+    "choices": ["Europe", "Asia", "Africa", "South America"],
+    "answer": "Africa"
+  },
+  {
+    "question": "What is the most common chronic childhood disease?",
+    "choices": ["Asthma", "Diabetes", "Tooth decay", "Obesity"],
+    "answer": "Tooth decay"
+  },
+  {
+    "question": "Which dental innovation allows for the scanning of teeth without traditional molds?",
+    "choices": ["CBCT scans", "Digital intraoral scanning", "MRI", "Panoramic X-ray"],
+    "answer": "Digital intraoral scanning"
+  },
+  {
+    "question": "Which country was the first to introduce national health coverage for dental care?",
+    "choices": ["United States", "United Kingdom", "Japan", "Sweden"],
+    "answer": "United Kingdom"
+  },
+  {
+    "question": "What is the most common cause of bad breath?",
+    "choices": ["Gum disease", "Lack of brushing", "Bacterial buildup on the tongue", "Smoking"],
+    "answer": "Bacterial buildup on the tongue"
+  },
+  {
+    "question": "Which historical period saw the introduction of dental implants using seashells?",
+    "choices": ["Ancient Egypt", "The Mayan civilization", "Medieval Europe", "Renaissance Italy"],
+    "answer": "The Mayan civilization"
+  },
+  {
+    "question": "Which animal has the strongest bite force of any land mammal?",
+    "choices": ["Tiger", "Hyena", "Bear", "Gorilla"],
+    "answer": "Hyena"
+  },
+  {
+    "question": "What common beverage is most likely to stain teeth?",
+    "choices": ["Soda", "Tea", "Coffee", "Red wine"],
+    "answer": "Red wine"
+  },
+  {
+    "question": "What percentage of tooth loss in adults is due to gum disease?",
+    "choices": ["25%", "50%", "70%", "90%"],
+    "answer": "70%"
+  },
+  {
+    "question": "Which component in some modern fillings releases fluoride to help prevent cavities?",
+    "choices": ["Gold", "Composite resin", "Glass ionomer", "Titanium"],
+    "answer": "Glass ionomer"
   }
 ]

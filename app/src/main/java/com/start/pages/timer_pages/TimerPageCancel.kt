@@ -57,7 +57,6 @@ fun TimerPageCancel(modifier: Modifier, navController: NavController, timerViewM
     // everytime data changes.
     val timerState = timerViewModel.timerState.collectAsState()
 
-
     // Launched Effect for navigating back to the beginning.
     LaunchedEffect(timerState.value) {
         when(timerState.value) {
@@ -79,7 +78,7 @@ fun TimerPageCancel(modifier: Modifier, navController: NavController, timerViewM
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // We display the tooth model.
+            // We display the sad face.
             Image(
                 // Using the painter Resource API we display the image.
                 painter = painterResource(id = R.drawable.sadface_timer),
