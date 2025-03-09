@@ -1,5 +1,6 @@
 package com.start.pages
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.TimePickerDialog
@@ -7,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -27,6 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 import kotlin.random.Random
 
 @RequiresApi(Build.VERSION_CODES.S)
@@ -65,12 +68,47 @@ fun AddEventPage(navController: NavController, date: String, eventViewModel: Eve
 
         // Save Event
         Button(onClick = {
-            val formattedDate = SimpleDateFormat("yyyy-MM-dd",
-                Locale.getDefault()).format(SimpleDateFormat("yyyy-MM-dd",
-                Locale.getDefault()).parse(date) ?: Date())
-            eventViewModel.addEvent(title, description, formattedDate, time)
+            // Check if permission is granted to schedule exact alarms
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ) {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                if (!alarmManager.canScheduleExactAlarms()) {
+                    val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                    context.startActivity(intent)
+                    Toast.makeText(
+                        context,
+                        "Please allow notification permissions",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@Button
+                }
+            }
+            // Generate UUID for scheduling event and EventsViewModel
+            val eventID = UUID.randomUUID().toString()
 
+            // Event creation
+            val formattedDate = SimpleDateFormat(
+                "yyyy-MM-dd",
+                Locale.getDefault()
+            ).format(
+                SimpleDateFormat(
+                    "yyyy-MM-dd",
+                    Locale.getDefault()
+                ).parse(date) ?: Date()
+            )
+            eventViewModel.addEvent(eventID, title, description, formattedDate, time)
+
+            // Schedule notification
+            val notificationTime = parseDateTime(formattedDate, time)
+            TimerNotificationHandler(context).scheduleNotification(
+                eventID,
+                notificationTime.timeInMillis,
+                title,
+                description
+            )
+
+            // Return to weekly calendar page
             navController.popBackStack()
+
         }) { Text("Save Event") }
 
         // Space between save event and cancel
@@ -129,6 +167,17 @@ fun EditEventPage(navController: NavController, date:String, eventID: String, ev
                 Locale.getDefault()).format(SimpleDateFormat("yyyy-MM-dd",
                 Locale.getDefault()).parse(date) ?: Date())
             eventViewModel.updateEvent(eventID, title, description, formattedDate, time)
+
+            // Cancel previously-made notifications
+            TimerNotificationHandler(context).cancelScheduledNotification(eventID)
+
+            // Schedule notification
+            val notificationTime = parseDateTime(date, time)
+            TimerNotificationHandler(context).scheduleNotification(
+                eventID,
+                notificationTime.timeInMillis,
+                title,
+                description)
             navController.popBackStack()
         }) { Text("Save Changes") }
 
@@ -200,10 +249,11 @@ fun parseDateTime(date: String, time: String): Calendar {
     return calendar
 }
 
+// Receive broadcast and send notification at scheduled time
 class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val title = intent.getStringExtra("title") ?: "Reminder"
-        val description = intent.getStringExtra("description") ?: "You have an event!"
+        val description = intent.getStringExtra("description") ?: "An event you scheduled is soon."
 
         // Display the notification
         val notificationHandler = TimerNotificationHandler(context)

@@ -29,9 +29,8 @@ class EventViewModel : ViewModel() {
     }
 
     // Add event(s).
-    fun addEvent(title: String, description: String, date: String, time: String) {
+    fun addEvent(eventID: String, title: String, description: String, date: String, time: String) {
         val userID = auth.currentUser?.uid ?: return
-        val eventID = UUID.randomUUID().toString()
         val combinedDate = "$date $time"
         val event = Event(eventID, userID, title, description, date, time)
 
