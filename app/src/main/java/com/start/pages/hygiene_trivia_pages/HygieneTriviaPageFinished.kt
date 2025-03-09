@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,8 +15,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.start.viewmodels.HygieneTriviaState
 import com.start.viewmodels.HygieneTriviaViewModel
@@ -48,23 +54,27 @@ fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController, 
     // Text to display whether the user got the question right or wrong.
     val resultText: @Composable (questionIndex: Int, userAnswerIndex: Int) -> Unit = { questionIndex, userAnswerIndex ->
         // Display the question for the particular question passed in.
-        Text(text = "Question ${questionIndex + 1}:\n${questions[questionIndex]}", textAlign = TextAlign.Center)
+        Text(text="Question ${questionIndex + 1}:", textAlign = TextAlign.Center, fontSize = 32.sp,
+            lineHeight = 1.5.em, fontWeight = FontWeight.Bold)
+        Text(modifier = modifier.padding(horizontal = 16.dp), text = questions[questionIndex], textAlign = TextAlign.Center, fontSize = 32.sp,
+            lineHeight = 1.5.em, fontStyle = FontStyle.Italic)
 
         // We compare the correct answers with the user's answers and display the result of if
         // they got it wrong or right. Display the correct answer for the question if they got it
         // wrong.
         if (answers[questionIndex] == choices[questionIndex][userAnswerIndex]) {
-            Text(text = "✅ Your Answer: ${choices[questionIndex][userAnswerIndex]}", textAlign = TextAlign.Center)
+            Text(modifier = modifier.padding(horizontal = 16.dp), text = "✅ Your Answer: ${choices[questionIndex][userAnswerIndex]}",
+                textAlign = TextAlign.Center, fontSize = 24.sp, lineHeight = 1.5.em)
         }
         // Else we display that the user did not get the question right.
         else {
-            Text(text = "❌ Your Answer: ${choices[questionIndex][userAnswerIndex]}\n" +
-                    "✅ Correct Answer: ${answers[questionIndex]}", textAlign = TextAlign.Center)
+            Text(modifier = modifier.padding(horizontal = 16.dp), text = "❌ Your Answer: ${choices[questionIndex][userAnswerIndex]}\n" +
+                    "✅ Correct Answer: ${answers[questionIndex]}", textAlign = TextAlign.Center,
+                fontSize = 24.sp, lineHeight = 1.5.em)
         }
     }
 
-
-
+    // When the state of the trivia is changed to begin, navigate to the home screen.
     LaunchedEffect(hygieneTriviaState.value) {
         when(hygieneTriviaState.value) {
             is HygieneTriviaState.Begin -> navController.navigate("home")
@@ -77,12 +87,14 @@ fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController, 
     // Column for the trivia page.
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .border(1.dp, Color.Black),
+            .fillMaxSize(),
+            //.border(1.dp, Color.Black),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (!userAnswers.isEmpty()) Text("Results!")
+        // If condition so that when it recomposes and the userAnswers has been reset, it
+        // it does not display UI
+        if (!userAnswers.isEmpty()) Text("Results!", fontSize = 48.sp, fontWeight = FontWeight.Bold)
         when(resultsIndex.value) {
 
             0 -> if (!userAnswers.isEmpty()) resultText(0, userAnswers[0])
@@ -103,6 +115,8 @@ fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController, 
                 }
             }
             else -> {
+                // If condition so that when it recomposes and the userAnswers has been reset, it
+                // it does not display UI
                 if (userAnswers.isEmpty()) {}
                 else {
                     Button(onClick = {

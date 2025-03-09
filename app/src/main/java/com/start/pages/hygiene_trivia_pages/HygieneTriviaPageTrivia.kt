@@ -60,6 +60,8 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
     val hygieneTriviaState = hygieneTriviaViewModel.hygieneTriviaState.collectAsState()
     // Collect the List of DentalTriviaQnA
     val questions = hygieneTriviaViewModel.questions.collectAsState()
+    // Collect the timer.
+    val hygieneTriviaTimer = hygieneTriviaViewModel.hygieneTriviaTimer.collectAsState()
 
     // Store the specific question, answer, and choices for the specific trivia question.
     val question: String = questions.value[triviaIndex.value].question
@@ -69,10 +71,12 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
     val answer: String = questions.value[triviaIndex.value].answer
     //val answer: String = hygieneTriviaViewModel.questions[triviaIndex.value].answer
 
-    // When the state is finished, go to the finished page.
+    // When the state is finished, go to the finished page. When the state is failed,
+    // go to the failed page.
     LaunchedEffect(hygieneTriviaState.value) {
         when(hygieneTriviaState.value) {
             is HygieneTriviaState.Finished -> navController.navigate("trivia_finish")
+            is HygieneTriviaState.Failed -> navController.navigate("trivia_fail")
             else -> Unit
         }
     }
@@ -239,7 +243,16 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
              */
         }
     }
-
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top=24.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        // Timer will be above the animated content..
+        Text(text = "${hygieneTriviaTimer.value / 1000}s", textAlign = TextAlign.Center,
+            fontWeight= FontWeight.Bold, fontSize = 28.sp)
+    }
     // Animate when the user selects an answer.
     AnimatedContent(
         // Animate based off of the current question.

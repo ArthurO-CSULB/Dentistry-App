@@ -33,6 +33,7 @@ import com.start.pages.timer_pages.TimerPageCancel
 import com.start.pages.timer_pages.TimerPageCountingModel
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
+import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFinished
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
 import com.start.pages.timer_pages.TimerPageCounting
@@ -134,6 +135,15 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel
             }
         ) {
             HygieneTriviaPageFinished(modifier, navController, hygieneTriviaViewModel)
+        }
+
+        composable(
+            route = "trivia_fail",
+            enterTransition = {
+                fadeIn(animationSpec=tween(800, 750))
+            }
+        ) {
+            HygieneTriviaPageFailed(modifier, navController, hygieneTriviaViewModel)
         }
 
         // Monthly Calendar screen.
