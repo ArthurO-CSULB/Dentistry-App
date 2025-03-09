@@ -176,7 +176,7 @@ fun WeeklyCalendarPage(modifier: Modifier = Modifier, navController: NavControll
                                     horizontalArrangement = Arrangement.End,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    TextButton(onClick = { navController.navigate("editEvent/${event.eventID}") }) {
+                                    TextButton(onClick = { navController.navigate("editEvent/${event.eventID}/${event.date}") }) {
                                         Text("Edit")
                                     }
                                     TextButton(onClick = { eventViewModel.deleteEvent(event.eventID) }) {

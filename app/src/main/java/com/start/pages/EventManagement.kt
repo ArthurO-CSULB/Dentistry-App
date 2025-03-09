@@ -87,12 +87,11 @@ fun AddEventPage(navController: NavController, date: String, eventViewModel: Eve
 // Edit event page for when we want to modify previously-made events
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
-fun EditEventPage(navController: NavController, eventID: String, eventViewModel: EventViewModel = viewModel()) {
+fun EditEventPage(navController: NavController, date:String, eventID: String, eventViewModel: EventViewModel = viewModel()) {
     // Retrieve the event from ViewModel using the eventID
     val event = eventViewModel.events.value?.find { it.eventID == eventID }
     var title by remember { mutableStateOf(event?.title ?: "") }
     var description by remember { mutableStateOf(event?.description ?: "") }
-    var date by remember { mutableStateOf(event?.date ?: "") }
     var time by remember { mutableStateOf(event?.time ?: "") }
     val context = LocalContext.current
 
@@ -105,7 +104,7 @@ fun EditEventPage(navController: NavController, eventID: String, eventViewModel:
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Text("Edit Event", style = MaterialTheme.typography.headlineSmall)
+        Text("Edit Event on $date", style = MaterialTheme.typography.headlineSmall)
         OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") })
         OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("Description") })
 

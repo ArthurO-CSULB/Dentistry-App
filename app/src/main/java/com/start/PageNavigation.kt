@@ -136,9 +136,10 @@ TimerViewModel) {
         }
 
         // Edit Event screen.
-        composable("editEvent/{eventId}") { backStackEntry ->
+        composable("editEvent/{eventId}/{date}") { backStackEntry ->
             val eventID = backStackEntry.arguments?.getString("eventId") ?: ""
-            EditEventPage(navController = navController, eventID = eventID)
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            EditEventPage(navController = navController, date = date, eventID = eventID)
         }
 
         // Games screen.
