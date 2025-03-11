@@ -90,7 +90,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Image(
-            painter = painterResource(id = R.drawable.basicprofilepic),
+            painter = painterResource(id = R.drawable.ic_profile),
             contentDescription = "Profile Picture",
             modifier = Modifier.size(160.dp)
         )
