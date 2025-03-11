@@ -1,5 +1,6 @@
 package com.start.pages
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.start.viewmodels.AuthState
 import com.start.viewmodels.AuthViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 
 /*
 We have a composable sign up page which will handle the UI for signing in integrated with
@@ -98,8 +106,7 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
             onValueChange = {
                 email = it
             },
-            label = {
-                Text(text = "Email")
+            label = { Text(text = "Email")
             }
         )
 
@@ -153,7 +160,19 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
         // Button for creating an account
         Button(onClick = {
             // Upon click call the signup method of authViewModel. Pass in data.
-            authViewModel.signup(email, password, firstName, lastName)
+            // If successful, send user to login page
+            (CoroutineScope(Main)).launch{
+                try {
+                    val result = withContext(Main) {authViewModel.signup(email, password, firstName, lastName)}
+                    if (result) {
+                        navController.navigate("login")
+                    }
+                }
+                catch(e: Exception) {
+                    Log.e("Signup", e.message.toString())
+                }
+            }
+
         },
             // Button enabled when the authentication state is not loading.
             enabled = authState.value != AuthState.Loading

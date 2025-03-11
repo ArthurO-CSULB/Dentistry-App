@@ -1,6 +1,7 @@
 package com.start
 
 import android.os.Bundle
+import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,6 +16,9 @@ import com.start.repos.TimerFunFactsRepo
 //import com.start.repos.TimerFunFactsRepo
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
+import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
+import com.google.android.libraries.places.api.Places
+
 /*
 We have our main and sole activity where the app will navigate through various composable screens
 and manage shared data. Managing shared data is easier when you have a single activity and
@@ -32,12 +36,24 @@ class MainActivity : ComponentActivity(){
 
         // Enable the app content to extend fully to the edges of the screen.
         enableEdgeToEdge()
+
+        //Initializes the Places API with the API key
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, MAPS_API_KEY)
+        }
+        // We declare and initialize the ViewModel 'AuthViewModel', delegating its initialization
+
+        // Enable to see errors in the logs when trying to load the GLB model.
+        WebView.setWebContentsDebuggingEnabled(true)
+
+        // Gabriel Villanueva
         // We create our repositories, passing in the Context for app resources.
         val funFactsRepo = TimerFunFactsRepo(applicationContext)
 
         // We declare and initialize the view-models, delegating their initialization
         // and lifecycle management to Jetpack's viewModels function.
         val authViewModel : AuthViewModel by viewModels()
+        // Gabriel Villanueva
         val timerViewModel: TimerViewModel by viewModels() {
             // Use factory to create view model to pass in the fun facts repository
             TimerViewModel.TimerViewModelFactory(funFactsRepo)

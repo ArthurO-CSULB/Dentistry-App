@@ -3,7 +3,6 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.example.dentalhygiene.R
-import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 /*

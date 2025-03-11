@@ -8,19 +8,36 @@ import androidx.navigation.compose.rememberNavController
 import com.start.pages.LoginPage
 import com.start.pages.SignUpPage
 import com.start.pages.HomePage
-import com.start.pages.TimerPage
+import com.start.pages.TimerPages.TimerPage
 import com.start.pages.CalendarPage
+import com.start.pages.ChangePasswordPage
+import com.start.pages.ChangeUserDetailsPage
+import com.start.pages.ClinicSearchPage
 import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
 import com.start.pages.ClinicSearchPage
 import com.start.pages.ProfilePage
+import com.start.pages.ReauthenticationPage
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
-import android.content.Context
 import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import com.start.pages.AddEventPage
+import com.start.pages.BookmarkPage
+import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.SettingsPage
+import com.start.pages.TimerPages.TimerPageBegin
+import com.start.pages.TimerPages.TimerPageCancel
+import com.start.pages.TimerPages.TimerPageCountingModel
 import com.start.pages.VerificationPage
+import com.start.pages.WeeklyCalendarPage
+import com.start.pages.TimerPages.TimerPageCounting
+import com.start.pages.TimerPages.TimerPageFinish
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -31,6 +48,7 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
 TimerViewModel) {
@@ -57,7 +75,7 @@ TimerViewModel) {
         }
         // Home screen.
         composable("home"){
-            HomePage(modifier, navController, authViewModel)
+            HomePage(modifier, navController, authViewModel, timerViewModel)
         }
 
         // Timer screen.
@@ -73,9 +91,56 @@ TimerViewModel) {
             }
         }
 
-        // Calendar screen.
+        composable("timer_begin") {
+            TimerPageBegin(modifier, navController, timerViewModel)
+        }
+
+        composable(
+            route = "timer_counting",
+        ) {
+            TimerPageCounting(modifier, navController, timerViewModel)
+        }
+
+        composable(
+            route = "timer_counting_model",
+            enterTransition = {
+                fadeIn(animationSpec=tween(1500, 750))
+            }
+        ) {
+            TimerPageCountingModel(modifier, navController, timerViewModel)
+        }
+
+        composable("timer_cancel") {
+            TimerPageCancel(modifier, navController, timerViewModel)
+        }
+
+        composable("timer_finish") {
+            TimerPageFinish(modifier, navController, timerViewModel)
+        }
+
+        // Monthly Calendar screen.
         composable("calendar"){
             CalendarPage(modifier, navController)
+        }
+
+        // Weekly Calendar screen.
+        composable("weeklyCalendar/{startDate}/{endDate}") { backStackEntry ->
+            val startDate = backStackEntry.arguments?.getString("startDate") ?: ""
+            val endDate = backStackEntry.arguments?.getString("endDate") ?: ""
+            WeeklyCalendarPage(navController = navController, startDate = startDate, endDate = endDate)
+        }
+
+        // Add Event screen.
+        composable("addEvent/{date}") { backStackEntry ->
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            AddEventPage(navController = navController, date = date)
+        }
+
+        // Edit Event screen.
+        composable("editEvent/{eventId}/{date}") { backStackEntry ->
+            val eventID = backStackEntry.arguments?.getString("eventId") ?: ""
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            EditEventPage(navController = navController, date = date, eventID = eventID)
         }
 
         // Games screen.
@@ -98,6 +163,11 @@ TimerViewModel) {
             ProfilePage(modifier, navController)
         }
 
+        // Bookmark screen.
+        composable("bookmark"){
+            BookmarkPage(modifier, navController)
+        }
+
         // Verification Screen
         // Cannot be accessed when user is already verified
         composable("verification"){
@@ -106,7 +176,28 @@ TimerViewModel) {
 
         // Settings Page
         composable("settings"){
-            SettingsPage(modifier, navController)
+            SettingsPage(modifier, navController, authViewModel)
+        }
+
+        // Change Password Page
+        composable("changePassword"){
+            ChangePasswordPage(modifier, navController, authViewModel)
+        }
+
+        // Reauthentication Page Route for Password Change
+        composable("reauthenticationPasswordChange"){
+            ReauthenticationPage(modifier, navController, authViewModel, "changePassword")
+        }
+
+        // Reauthentication Page Route for Account Deletion
+        composable("reauthenticationAccountDeletion"){
+            ReauthenticationPage(modifier, navController, authViewModel, "settings")
+        }
+
+
+        // Change User Details Page
+        composable("changeUserDetails"){
+            ChangeUserDetailsPage(modifier, navController, authViewModel)
         }
     })
 }

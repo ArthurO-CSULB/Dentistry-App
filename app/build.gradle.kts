@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 
@@ -17,6 +18,12 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        buildFeatures {
+            buildConfig = true
+        }
+        //Allows API to be called with BuildConfig in other project files
+        buildConfigField("String", "MAPS_API_KEY", "\"${project.findProperty("MAPS_API_KEY") ?: ""}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -40,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -50,6 +58,19 @@ android {
         }
     }
 }
+
+secrets {
+    // To add the Maps API key to this project:
+    // 1. If the secrets.properties file does not exist, create it in the same folder as the local.properties file.
+    // 2. Add this line, where YOUR_API_KEY is your API key:
+    //        MAPS_API_KEY=YOUR_API_KEY
+    propertiesFileName = "secrets.properties"
+
+    // A properties file containing default secret values. This file can be
+    // checked in version control.
+    defaultPropertiesFileName = "local.defaults.properties"
+}
+
 
 dependencies {
 
@@ -69,6 +90,10 @@ dependencies {
 
     implementation("androidx.test.services:storage:1.5.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.5")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
@@ -91,4 +116,25 @@ dependencies {
     // APIs for handling runtime permissions in Jetpack Compose, which streamlines the process
     // for requesting permissions. Will be used for the timer and may be used for other features.
     implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
+
+    // Sync
+    // Filament dependencies for rendering a tooth model.
+    //implementation("com.google.android.filament:filament-android:1.36.0")
+    //implementation("com.google.android.filament:gltfio-android:1.36.0") // Loads GLB models
+    //implementation("com.google.android.filament:filamat-android:1.36.0") // Material management
+
+    // Webkit to work with modern WebView APIs. This is to for the teeth model.
+    implementation("androidx.webkit:webkit:1.12.1")
+
+    // Maps SDK for Android
+    // Google Maps Compose library
+    val mapsComposeVersion = "4.4.1"
+    implementation("com.google.maps.android:maps-compose:$mapsComposeVersion")
+    // Google Maps Compose utility library
+    implementation("com.google.maps.android:maps-compose-utils:$mapsComposeVersion")
+    // Google Maps Compose widgets library
+    implementation("com.google.maps.android:maps-compose-widgets:$mapsComposeVersion")
+    // Places API
+    implementation("com.google.android.libraries.places:places:3.3.0")
+
 }

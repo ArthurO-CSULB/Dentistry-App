@@ -8,8 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -33,6 +35,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import com.example.dentalhygiene.R
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.start.viewmodels.TimerState
+import com.start.viewmodels.TimerViewModel
 
 @Composable
 fun FeatureButton(
@@ -66,10 +70,12 @@ fun FeatureButton(
     }
 }
 @Composable
-fun HomePage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
+fun HomePage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel, timerViewModel: TimerViewModel) {
 
     // Observe authentication state
     val authState = authViewModel.authState.observeAsState()
+    // We get the timer state.
+    val timerState = timerViewModel.timerState.collectAsState()
 
     // Handle authentication state changes
     LaunchedEffect(authState.value) {
@@ -126,6 +132,39 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
             )
         }
 
+        // Space
+        Spacer(modifier=Modifier.height(16.dp))
+        // Button to the timer page.
+        Button(onClick={
+            when(timerState.value) {
+                is TimerState.Begin -> navController.navigate("timer_begin")
+                is TimerState.Counting -> navController.navigate("timer_counting")
+                is TimerState.Cancel -> navController.navigate("timer_cancel")
+                is TimerState.Finished -> navController.navigate("timer_finish")
+                else -> Unit
+            }
+            navController.navigate("timer_begin")
+        }) {
+            Text(text = "Prototype Toothbrush Timer")
+        }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Calendar page.
+        Button(onClick={navController.navigate("calendar")}) {
+            Text(text = "Prototype Calendar")
+        }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Games page.
+        Button(onClick={navController.navigate("games")}) {
+            Text(text = "Prototype Games")
+        }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Glossary page.
+        Button(onClick={navController.navigate("glossary")}) {
+            Text(text = "Prototype Glossary")
+        }
         // Space between first and second rows
         Spacer(modifier = Modifier.height(16.dp))
 

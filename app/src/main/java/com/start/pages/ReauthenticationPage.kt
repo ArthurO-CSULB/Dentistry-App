@@ -1,5 +1,7 @@
 package com.start.pages
 
+import android.app.AlertDialog
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,16 +25,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dentalhygiene.R
 import com.start.viewmodels.AuthState
 import com.start.viewmodels.AuthViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /*
 We have a composable login page which will handle the UI for login integrated with
@@ -42,7 +52,7 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 @Composable
-fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
+fun ReauthenticationPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel, destinationString: String) {
 
     // We create two variables of email and password and use by remember for the data to persist
     // across recompositions.
@@ -64,11 +74,6 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
     LaunchedEffect(authState.value) {
         // Whenever the authState is a certain authentication state...
         when (authState.value){
-            // When the user is unverified via email, navigate to verification page
-            is AuthState.Unverified -> navController.navigate("verification")
-            // When the user is authenticated by login, navigate to the home page.
-            is AuthState.Authenticated -> navController.navigate("home")
-            // When the user inputs incorrectly, we create a Toast message of the error.
             is AuthState.Error -> Toast.makeText(context,
                 (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
             // Else do nothing.
@@ -76,9 +81,8 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
         }
     }
 
-    // Login Page UI Text
+    // Reauthentication Page UI Text
     // We create a Column to arrange the UI components
-    // ToDo: 2/1/2025 Improve UI of Login Page
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
@@ -87,14 +91,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Create the title of the page.
-        Text(text = "Welcome to", fontSize = 32.sp)
-
-        // mOral Logo
-        Image(
-            painter = painterResource(id = R.drawable.moral_logo),
-            contentDescription = "Profile Picture",
-            modifier = Modifier.size(200.dp)
-        )
+        Text(text = "Please reauthenticate your credentials before proceeding with this operation", fontSize = 30.sp)
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
@@ -105,7 +102,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
                 email = it
             },
             label = {
-                Text(text = "Email")
+                Text(text = "")
             }
         )
 
@@ -131,26 +128,23 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))
-        // Button for logging in
+        // Button for reauthentication
         Button(onClick = {
-            authViewModel.login(email, password)
-            if (authState.value == AuthState.Unverified) {
-                navController.navigate("verification")
-            }
+            (CoroutineScope(Dispatchers.Main).launch{
+                try {
+                    val result = withContext(IO) { authViewModel.reauthenticate(email, password)}
+                    if (result) {
+                        navController.navigate(destinationString)
+                    }
+                } catch(e: Exception) {
+                    Log.e("Reauthentication", e.message.toString())
+                }
+            })
         },
             // Button enabled when the authentication state is not loading.
             enabled = authState.value != AuthState.Loading
         ) {
             Text(text = "Login")
-        }
-
-        // Space
-        Spacer(modifier = Modifier.height(8.dp))
-        // Button to navigate to login.
-        TextButton(onClick = {
-            navController.navigate("signup")
-        }) {
-            Text(text = "Don't have an account? Sign up!")
         }
     }
 }
