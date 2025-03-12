@@ -117,6 +117,8 @@ TimerViewModel) {
         composable("search"){
             ClinicSearchPage(modifier, navController = navController)
         }
+
+        // Detail screen
         composable("clinicDetails/{placeId}") {backStackEntry ->
             ClinicDetailsPage(
                 placeId = backStackEntry.arguments?.getString("placeId"),

@@ -9,7 +9,8 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
-//File for handling the nearby search function for the clinic search page
+// File for handling the nearby search function for the clinic search page
+// and getting place details in the clinic details page
 object PlacesApiService {
     suspend fun searchNearbyClinics(
         lat: Double,

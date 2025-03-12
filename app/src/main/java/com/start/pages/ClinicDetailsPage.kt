@@ -1,12 +1,19 @@
 package com.start.pages
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,12 +23,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
+import com.example.dentalhygiene.R
 import com.google.android.libraries.places.api.Places
 import com.start.PlacesApiService
 import com.start.model.PlaceDetails
@@ -44,24 +57,87 @@ fun ClinicDetailsPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
     ) {
         Button(
-            onClick = { navController.popBackStack() })
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .padding(top = 32.dp, bottom = 24.dp))
         {
             Text("Back to Map")
         }
 
         clinicDetails?.let { clinic ->
-            Text(text = clinic.name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Text(text = "Address: ${clinic.address}")
-            Text(text = "Phone: ${clinic.phoneNumber ?: "N/A"}")
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+            )
+            {
+                Text(text = clinic.name, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            }
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+            ){
+                Image(
+                    painter = painterResource(id = R.drawable.dental_clinic_clipart),
+                    contentDescription = "Default Clinic Picture",
+                    modifier = Modifier
+                        .size(300.dp)
+                        .fillMaxSize()
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ){
+                Image(
+                    painter = painterResource(id = R.drawable.address_pin),
+                    contentDescription = "Address Pin Icon",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(end = 8.dp)
+                )
+                clinic.address?.let { Text(text = it, fontSize = 20.sp, fontWeight = FontWeight.SemiBold) }
+            }
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ){
+                Image(
+                    painter = painterResource(id = R.drawable.clinic_phone),
+                    contentDescription = "Phone Icon",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(end = 8.dp)
+                )
+                clinic.phoneNumber?.let { Text(text = it, fontSize = 20.sp, fontWeight = FontWeight.SemiBold) }
+            }
         }
             ?: Text("Loading clinic details...") //If details are null, shows this
 
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth(),
+            thickness = 2.dp,
+            color = Color.Black
+        )
+
         Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
         ) {
             Button(onClick = { navController.popBackStack()}) {
                 Text("Make a Rating")
@@ -71,4 +147,105 @@ fun ClinicDetailsPage(
             }
         }
     }
+}
+
+@Composable
+fun ClinicDetailsPageLayout(
+    navController: NavController
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Button(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .padding(top = 24.dp, bottom = 12.dp))
+        {
+            Text("Back to Map")
+        }
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
+        )
+        {
+            Text(text = "Dinkleberg Dentistry", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+        }
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
+        ){
+            Image(
+                painter = painterResource(id = R.drawable.dental_clinic_clipart),
+                contentDescription = "Clinic Picture",
+                modifier = Modifier
+                    .size(300.dp)
+                    .fillMaxSize()
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ){
+            Image(
+                painter = painterResource(id = R.drawable.address_pin),
+                contentDescription = "Address Pin",
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(end = 8.dp)
+            )
+            Text(text = "96024 Applebottom Ave.", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+        }
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ){
+            Image(
+                painter = painterResource(id = R.drawable.clinic_phone),
+                contentDescription = "Address Pin",
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(end = 8.dp)
+            )
+            Text(text = "555-555-5555", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+        }
+            ?: Text("Loading clinic details...") //If details are null, shows this
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth(),
+            thickness = 2.dp,
+            color = Color.Black
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
+        ) {
+            Button(onClick = { navController.popBackStack()}) {
+                Text("Make a Rating")
+            }
+            Button(onClick = { navController.popBackStack()}) {
+                Text("Bookmark Clinic")
+            }
+        }
+    }
+
+}
+@Preview(showBackground = true)
+@Composable
+fun ClinicDetailsPagePreview() {
+    ClinicDetailsPageLayout(rememberNavController())
 }
