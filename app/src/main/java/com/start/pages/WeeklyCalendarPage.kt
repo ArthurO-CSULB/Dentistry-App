@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.start.EventViewModel
 import java.util.Calendar
 import java.util.Locale
 import java.text.SimpleDateFormat

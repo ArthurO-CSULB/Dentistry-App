@@ -19,6 +19,12 @@ import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.Long
 
+// literal strings to use for document references
+// avoids logical mistakes
+val CLINICS = "clinics"
+val CLINIC_RATINGS = "clinicRatings"
+val ACCOUNTS = "accounts"
+val USER_RATINGS = "userRatings"
 
 // class that handles ratings and updates
 class RatingViewModel: ViewModel() {
@@ -27,14 +33,17 @@ class RatingViewModel: ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
-    // handling field for user ratings
-    private val _clinicList = MutableStateFlow<List<ClinicReview>>(emptyList())
-    val clinicList: StateFlow<List<ClinicReview>> get() = _clinicList
+    // handling fields for clinic ratings
+    private val _clinicRatingsList = MutableStateFlow<List<ClinicReview>>(emptyList())
+    val clinicRatingsList: StateFlow<List<ClinicReview>> get() = _clinicRatingsList
 
-    // private value that holds the state of the viewmodel
+    // handling fields for clinic rating average
+    private val _clinicRatingAverage = MutableStateFlow<Int?>(null)
+    val clinicRatingAverage: StateFlow<Int?> get() = _clinicRatingAverage
+
+
+    // handling fields for rating states
     private val _ratingState = MutableStateFlow<RatingState>(RatingState.Idle)
-
-    // public viewmodel state holder that is utilized by the pages
     val ratingState: StateFlow<RatingState> get() = _ratingState
 
 
@@ -51,6 +60,7 @@ class RatingViewModel: ViewModel() {
         val createdAt = LocalDateTime.now()
 
         // rating details that will be put in the ratings class
+        /*
         val ratingDetails = hashMapOf(
             "creatorID" to userID,
             "clinicID" to clinicID,
@@ -59,6 +69,7 @@ class RatingViewModel: ViewModel() {
             "ratingScore" to rating,
             "review" to review,
         )
+         */
 
         // rating details to be appended to the user
         val userRatingRecord = hashMapOf(
@@ -76,25 +87,24 @@ class RatingViewModel: ViewModel() {
             "createdAt" to createdAt
         )
 
+        val userRatingRef = db.collection(ACCOUNTS).document(userID).collection(USER_RATINGS).document(clinicID)
+        val clinicRatingRef = db.collection(CLINICS).document(clinicID).collection(CLINIC_RATINGS).document(userID)
+
         //handle all of the updates concurrently via the use of a coroutine
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 awaitAll(
                     // create a rating on the ratings collection
-                    async { db.collection("ratings").document(ratingID).set(ratingDetails).await() },
+                    // async { db.collection("ratings").document(ratingID).set(ratingDetails).await() },
 
                     // create a rating in the users collection
                     // user can only rate once per clinic, will replace old rating if done again
-                    async { db.collection("accounts").document(userID)
-                        .collection("userRatings").document(clinicID)
-                        .set(userRatingRecord).await() },
+                    async { userRatingRef.set(userRatingRecord).await() },
 
                     // create a rating in the clinics collection
                     // a clinic can only have one rating per user
                     // avoids tanking rating score
-                    async { db.collection("clinics").document(clinicID)
-                        .collection("clinicRatings").document(userID)
-                        .set(clinicRatingRecord).await() }
+                    async { clinicRatingRef.set(clinicRatingRecord).await() }
                 )
 
                 // if rating is created successfully, display a toast message
@@ -113,9 +123,11 @@ class RatingViewModel: ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun getClinicRatings(clinicID: String) {
 
+        val clinicDocRef = db.collection("clinics").document(clinicID)
+            .collection("clinicRatings")
+
         //get all ratings on a clinic
-        db.collection("clinics").document(clinicID)
-            .collection("clinicRatings").get()
+        clinicDocRef.get()
 
             // if successful...
             .addOnSuccessListener { ratings ->
@@ -146,7 +158,7 @@ class RatingViewModel: ViewModel() {
                 }
 
                 // once its finished... replace the value of _clinicList into the contents of the handler
-                _clinicList.value = processedRatings
+                _clinicRatingsList.value = processedRatings
                 Log.d("Clinic Ratings Fetching", "Clinic Ratings successfully fetched")
             }
 
@@ -194,6 +206,24 @@ class RatingViewModel: ViewModel() {
 
     // Outputs the current rating average of a clinic
     fun calculateRatingScoreAverage() {
+    }
+
+    // Outputs the current number of reviews a clinic has
+    fun getClinicRatingsCount() {
+    }
+
+    // Outputs the current number of ratings a user has made
+    fun getUserRatingsCount() {
+    }
+
+    // Delete a rating a user has made
+    // Should only delete ratings the user has made, not other reviews
+    fun deleteReview() {
+    }
+
+    // Sort ratings based on the specification user choose
+    fun sortReviews() {
+
     }
 
     // Function that changes the state when user starts creating a rating

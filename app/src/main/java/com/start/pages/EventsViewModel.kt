@@ -1,4 +1,4 @@
-package com.start.pages
+package com.start
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -29,11 +29,10 @@ class EventViewModel : ViewModel() {
     }
 
     // Add event(s).
-    fun addEvent(title: String, description: String, date: String, time: String) {
+    fun addEvent(eventID: String, title: String, description: String, date: String, time: String) {
         val userID = auth.currentUser?.uid ?: return
-        val eventID = UUID.randomUUID().toString()
         val combinedDate = "$date $time"
-        val event = Event(eventID, title, description, combinedDate, time)
+        val event = Event(eventID, userID, title, description, date, time)
 
         db.collection("accounts").document(userID).collection("events")
             .document(eventID).set(event)
@@ -43,7 +42,8 @@ class EventViewModel : ViewModel() {
     // Update an existing event.
     fun updateEvent(eventID: String, title: String, description: String, date: String, time: String) {
         val userID = auth.currentUser?.uid ?: return
-        val event = Event(eventID, title, description, date, time)
+
+        val event = Event(eventID, userID, title, description, date, time)
 
         db.collection("accounts").document(userID).collection("events")
             .document(eventID).set(event)

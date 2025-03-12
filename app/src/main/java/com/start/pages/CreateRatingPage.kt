@@ -41,7 +41,13 @@ import com.start.viewmodels.RatingViewModel
 // Function that handles the UI components of the page
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun RatingsPage(navController: NavController, ratingViewModel: RatingViewModel, clinicID: String, clinicName: String) {
+fun CreateRatingPage(
+    navController: NavController,
+    ratingViewModel: RatingViewModel,
+    clinicID: String,
+    clinicName: String
+)
+{
 
     // initialization values used to hold the rating details
     var rating by remember { mutableIntStateOf(0) }
@@ -134,6 +140,7 @@ fun RatingsPage(navController: NavController, ratingViewModel: RatingViewModel, 
                         clinicID = clinicID,
                         clinicName = clinicName
                     )
+                    ratingViewModel.ratingCreationExit()
                 }
             }
         ) {
@@ -163,12 +170,4 @@ fun RatingBar(rating: Int, onRatingChanged: (Int) -> Unit, modifier: Modifier = 
             }
         }
     }
-}
-
-// Test function for checking this page's UI
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun TestRatingPage() {
-    //RatingsPage(navController = rememberNavController(), ratingViewModel = {var ratingViewModel = {}})
 }

@@ -21,9 +21,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.start.pages.AddEventPage
 import com.start.pages.ClinicDetailsPage
+import com.start.pages.ClinicRatingsPage
+import com.start.pages.CreateRatingPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
-import com.start.pages.RatingsPage
 import com.start.pages.SettingsPage
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
@@ -126,9 +127,19 @@ TimerViewModel, ratingViewModel: RatingViewModel) {
                 ratingViewModel = ratingViewModel)
         }
 
-        // rating page navigation
-        composable("ratingsPage/{placeID},{clinicName}") {backStackEntry ->
-            RatingsPage(
+        // clinic ratings page navigation
+        composable("clinicRatings/{placeID},{clinicName}") { backStackEntry ->
+            ClinicRatingsPage(
+                navController = navController,
+                ratingViewModel = ratingViewModel,
+                clinicID = backStackEntry.arguments?.getString("placeID").toString(),
+                clinicName = backStackEntry.arguments?.getString("clinicName").toString()
+            )
+        }
+
+        // rating creation page navigation
+        composable("createRating/{placeID},{clinicName}") { backStackEntry ->
+            CreateRatingPage(
                 navController = navController,
                 ratingViewModel = ratingViewModel,
                 clinicID = backStackEntry.arguments?.getString("placeID").toString(),
