@@ -30,10 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.start.ui.theme.Purple80
 import com.start.viewmodels.RatingState
 import com.start.viewmodels.RatingViewModel
 
@@ -75,7 +75,6 @@ fun CreateRatingPage(
                 Toast.makeText(context,
                     (ratingState as RatingState.Success).message, Toast.LENGTH_SHORT).show()
                 // Navigate back to the previous page after showing the success message
-                navController.popBackStack()
             }
             else -> Unit
         }
@@ -90,7 +89,10 @@ fun CreateRatingPage(
     ) {
         // UI elements and logic for the back button
         Row(Modifier.fillMaxWidth()) {
-            Button(onClick = { navController.popBackStack() }) {
+            Button(onClick = {
+                navController.popBackStack()
+                ratingViewModel.ratingCreationExit()
+            }) {
                 Text("Go back to clinic details")
             }
         }
@@ -165,7 +167,7 @@ fun RatingBar(rating: Int, onRatingChanged: (Int) -> Unit, modifier: Modifier = 
                 Icon(
                     imageVector = Icons.Filled.Star,
                     contentDescription = if (i <= rating) "Rated $i stars" else "Rate $i stars",
-                    tint = if (i <= rating) Color.Yellow else Color.Gray
+                    tint = if (i <= rating) Purple80 else Color.Gray
                 )
             }
         }

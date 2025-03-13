@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
@@ -37,7 +36,6 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -50,8 +48,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dentalhygiene.R
 import com.start.viewmodels.ClinicReview
@@ -81,13 +81,16 @@ fun ClinicRatingsPage
 
     // variables for handling state changes and displaying ratings on the clinic
     var ratingState = ratingViewModel.ratingState
-    val clinicList by ratingViewModel.clinicRatingsList.collectAsState()
+    val clinicList by ratingViewModel.ratingsList.collectAsState()
+    var listCount = ratingViewModel.ratingsCount.collectAsState()
+    var ratingAverage = ratingViewModel.clinicRatingAverage.collectAsState()
 
     // Gets details about the clinic when the page loads
     LaunchedEffect(clinicID, ratingState) {
         clinicID.let {
             try {
                 ratingViewModel.getClinicRatings(clinicID.toString())
+                ratingViewModel.calculateClinicRatingAverage(clinicID.toString())
             }
             // if it fails...
             catch (e: Exception) {
@@ -120,7 +123,7 @@ fun ClinicRatingsPage
         // Details the specifications of this page's top bar
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text ("Reviews for this clinic") }, // title of the Page
+                title = { Text ("$clinicName") }, // title of the Page
                 navigationIcon =
                 {
                     // back button
@@ -139,8 +142,7 @@ fun ClinicRatingsPage
                 actions = {
                     // Refresh Button
                     IconButton(onClick = {
-                        //navController.navigate("createRating/$clinicID,$clinicName")
-                        //ratingViewModel.ratingCreationEnter()
+
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Refresh,
@@ -164,7 +166,10 @@ fun ClinicRatingsPage
                 // floating action button for review creation
                 floatingActionButton = {
                     FloatingActionButton(
-                        onClick = { navController.navigate("createRating/$clinicID,$clinicName") },
+                        onClick = {
+                            ratingViewModel.ratingCreationEnter()
+                            navController.navigate("createRating/$clinicID,$clinicName")
+                                  },
                         containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                         elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
                 ) {
@@ -179,8 +184,20 @@ fun ClinicRatingsPage
     ) { innerPadding -> // Inner padding to be used by the content of the page
         Column(
             modifier = Modifier.padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Text(
+                text = "Number of Reviews: ${listCount.value}",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Current Rating Average: ${ratingAverage.value}",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+
             // Tab that shows all reviews on the clinic
             ReviewsTab(clinicList)
         }
@@ -195,19 +212,20 @@ fun ClinicReviewItem(clinicReview: ClinicReview) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp, horizontal = 5.dp)
             .border(width = 1.dp, color = PurpleGrey40, shape = RoundedCornerShape(4.dp))
     ) {
         // Make a row for handling user information
         Row(
-            modifier = Modifier,
+            modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
+
             // Profile Picture handler
             Image(
                 painter = painterResource(id = R.drawable.basicprofilepic),
                 contentDescription = "Profile Picture",
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(48.dp)
             )
 
             // Extra Space
@@ -222,29 +240,34 @@ fun ClinicReviewItem(clinicReview: ClinicReview) {
                 // Users are anonymous in the program so don't use real name
                 Text(
                     text = "A mOral User",
-                    Modifier.padding(12.dp, 3.dp)
+                    modifier = Modifier.padding(12.dp, 3.dp),
+                    fontSize = 18.sp
                 )
 
                 // Date when review was made
                 Text(
                     text = "${clinicReview.createdAt.format(formatter)}",
                     modifier = Modifier.padding(12.dp, 0.dp),
-                    color = Color.Gray
+                    color = Color.Gray,
+                    fontSize = 18.sp
                 )
             }
         }
         // star bar that specifies how much rating it got on this review
         StarBar(
             rating = clinicReview.rating,
-            modifier = Modifier.padding(0.dp, 16.dp)
+            modifier = Modifier.padding(16.dp, 8.dp)
             )
         // Review details
-        Text(clinicReview.review)
+        Text(
+            text = clinicReview.review,
+            modifier = Modifier.padding(18.dp, 0.dp),
+            fontSize = 16.sp)
 
         // Like and dislike buttons for a rating
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(8.dp)
         ) {
             // Like button
             Button(
@@ -293,7 +316,8 @@ fun StarBar(rating: Int, modifier: Modifier) {
             Icon(
                 imageVector = Icons.Filled.Star,
                 contentDescription = if (i<= rating) "Rated $i stars" else "Rate $i stars",
-                tint = if (i <= rating) Color.Yellow else Color.Gray
+                tint = if (i <= rating) Purple80 else Color.Gray,
+                modifier = Modifier.size(30.dp)
             )
         }
     }

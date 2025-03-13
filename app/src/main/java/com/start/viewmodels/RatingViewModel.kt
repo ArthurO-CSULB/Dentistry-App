@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.AggregateField
+import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.start.model.PlaceDetails
 import kotlinx.coroutines.CoroutineScope
@@ -21,10 +23,10 @@ import kotlin.Long
 
 // literal strings to use for document references
 // avoids logical mistakes
-val CLINICS = "clinics"
-val CLINIC_RATINGS = "clinicRatings"
-val ACCOUNTS = "accounts"
-val USER_RATINGS = "userRatings"
+const val CLINICS = "clinics"
+const val CLINIC_RATINGS = "clinicRatings"
+const val ACCOUNTS = "accounts"
+const val USER_RATINGS = "userRatings"
 
 // class that handles ratings and updates
 class RatingViewModel: ViewModel() {
@@ -34,12 +36,15 @@ class RatingViewModel: ViewModel() {
     private val db = FirebaseFirestore.getInstance()
 
     // handling fields for clinic ratings
-    private val _clinicRatingsList = MutableStateFlow<List<ClinicReview>>(emptyList())
-    val clinicRatingsList: StateFlow<List<ClinicReview>> get() = _clinicRatingsList
+    private val _ratingsList = MutableStateFlow<List<ClinicReview>>(emptyList())
+    val ratingsList: StateFlow<List<ClinicReview>> get() = _ratingsList
+
+    private val _ratingsCount = MutableStateFlow<Int>(0)
+    val ratingsCount: StateFlow<Int> get() = _ratingsCount
 
     // handling fields for clinic rating average
-    private val _clinicRatingAverage = MutableStateFlow<Int?>(null)
-    val clinicRatingAverage: StateFlow<Int?> get() = _clinicRatingAverage
+    private val _clinicRatingAverage = MutableStateFlow<Float>(0f)
+    val clinicRatingAverage: StateFlow<Float> get() = _clinicRatingAverage
 
 
     // handling fields for rating states
@@ -140,7 +145,6 @@ class RatingViewModel: ViewModel() {
 
                     // get the data
                     val data = rating.data
-                    Log.d("Clinic Ratings Fetching", "Processing rating: $data")
 
                     // then get the relevant data: the rating, the review, and the date it was made
                     val ratingScore = (data["ratingScore"] as? Long)?.toInt() ?: 0
@@ -158,7 +162,8 @@ class RatingViewModel: ViewModel() {
                 }
 
                 // once its finished... replace the value of _clinicList into the contents of the handler
-                _clinicRatingsList.value = processedRatings
+                _ratingsList.value = processedRatings
+                _ratingsCount.value = processedRatings.size
                 Log.d("Clinic Ratings Fetching", "Clinic Ratings successfully fetched")
             }
 
@@ -205,15 +210,50 @@ class RatingViewModel: ViewModel() {
     }
 
     // Outputs the current rating average of a clinic
-    fun calculateRatingScoreAverage() {
+    fun calculateClinicRatingAverage(clinicID: String?) {
+
+        var ratingAverage: Float = 0F
+        val docRef = db.collection(CLINICS).document(clinicID.toString()).collection(CLINIC_RATINGS)
+        val query = docRef.aggregate(AggregateField.average("ratingScore"))
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                async {
+                    query.get(AggregateSource.SERVER).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val snapshot = task.result
+                            val processedSnapshot =
+                                snapshot.get(AggregateField.average("ratingScore"))?.toFloat()
+                            if (processedSnapshot is Float) {
+                                ratingAverage = processedSnapshot
+                                _ratingState.value = RatingState.Success("Clinic Average successfully calculated")
+                                Log.d("Getting Rating Average", "Clinic Average successfully calculated. Clinic Average = $processedSnapshot")
+
+                            }
+                            else {
+                                Log.e("Getting Rating Average", "Clinic Average cannot be calculated. Clinic Average = $processedSnapshot")
+                                ratingAverage = 0f
+                                _ratingState.value = RatingState.Error("Clinic Ratings cannot be calculated")
+                            }
+                            _clinicRatingAverage.value = ratingAverage
+                        } else {
+                            Log.e("Getting Rating Average", task.exception?.message.toString())
+                            _ratingState.value =
+                                RatingState.Error(task.exception?.message.toString())
+                            _clinicRatingAverage.value = 0f
+                        }
+                    }.await()
+                }
+            } catch(e: Exception) {
+                _ratingState.value = RatingState.Error(e.message.toString())
+                Log.e("Getting Rating Average", e.message.toString())
+            }
+        }
     }
 
-    // Outputs the current number of reviews a clinic has
-    fun getClinicRatingsCount() {
-    }
-
-    // Outputs the current number of ratings a user has made
-    fun getUserRatingsCount() {
+    //get clinicRatingAverage
+    fun getClinicRatingAverage(): Float {
+        return _clinicRatingAverage.value
     }
 
     // Delete a rating a user has made
@@ -223,7 +263,6 @@ class RatingViewModel: ViewModel() {
 
     // Sort ratings based on the specification user choose
     fun sortReviews() {
-
     }
 
     // Function that changes the state when user starts creating a rating
