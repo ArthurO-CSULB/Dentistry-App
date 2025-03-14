@@ -27,6 +27,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import com.start.pages.AddEventPage
+import com.start.pages.BookmarkPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.SettingsPage
@@ -136,9 +137,10 @@ TimerViewModel) {
         }
 
         // Edit Event screen.
-        composable("editEvent/{eventId}") { backStackEntry ->
-            val eventID = backStackEntry.arguments?.getString("eventID") ?: ""
-            EditEventPage(navController = navController, eventID = eventID)
+        composable("editEvent/{eventId}/{date}") { backStackEntry ->
+            val eventID = backStackEntry.arguments?.getString("eventId") ?: ""
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            EditEventPage(navController = navController, date = date, eventID = eventID)
         }
 
         // Games screen.
@@ -159,6 +161,11 @@ TimerViewModel) {
         // Profile screen.
         composable("profile"){
             ProfilePage(modifier, navController)
+        }
+
+        // Bookmark screen.
+        composable("bookmark"){
+            BookmarkPage(modifier, navController)
         }
 
         // Verification Screen

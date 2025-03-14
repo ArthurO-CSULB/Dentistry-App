@@ -3,7 +3,6 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.example.dentalhygiene.R
-import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 /*
@@ -40,22 +39,6 @@ class TimerNotificationHandler(private val context: Context) {
         // notify the user. Random.nextInt() generates a unique
         // identifier for the notification, ensuring that each notification is treated as a
         // separate instance.
-        notificationManager.notify(Random.nextInt(), notification)
-    }
-
-
-
-    // Overloaded function for notifications of events made in the calendar
-    // Overloaded method for custom notifications
-    fun timerFinishedNotification(title: String, description: String) {
-        val notification = NotificationCompat.Builder(context, notificationChannelTimer)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(title)
-            .setContentText(description)
-            .setPriority(NotificationManager.IMPORTANCE_HIGH)
-            .setAutoCancel(true)
-            .build()
-
         notificationManager.notify(Random.nextInt(), notification)
     }
 }

@@ -1,5 +1,6 @@
 package com.start.pages
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.TimePickerDialog
@@ -7,6 +8,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.provider.Settings
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,9 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.start.EventViewModel
+import com.start.notificationhandlers.NotificationHelper
 import com.start.notificationhandlers.TimerNotificationHandler
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
+import java.util.UUID
 import kotlin.random.Random
 
 @RequiresApi(Build.VERSION_CODES.S)
@@ -61,10 +69,53 @@ fun AddEventPage(navController: NavController, date: String, eventViewModel: Eve
 
         // Save Event
         Button(onClick = {
-            eventViewModel.addEvent(title, description, date, time)
-            // For notification
-            scheduleNotification(context, title, description, date, time)
+            // Check if permission is granted to schedule exact alarms
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ) {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                if (!alarmManager.canScheduleExactAlarms()) {
+                    val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                    context.startActivity(intent)
+                    Toast.makeText(
+                        context,
+                        "Please allow notification permissions",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@Button
+                }
+            }
+            // Generate UUID for scheduling event and EventsViewModel
+            val eventID = UUID.randomUUID().toString()
+
+            // Event creation
+            val formattedDate = SimpleDateFormat(
+                "yyyy-MM-dd",
+                Locale.getDefault()
+            ).format(
+                SimpleDateFormat(
+                    "yyyy-MM-dd",
+                    Locale.getDefault()
+                ).parse(date) ?: Date()
+            )
+            eventViewModel.addEvent(eventID, title, description, formattedDate, time)
+
+            // Schedule notification
+            val notificationTime = parseDateTime(formattedDate, time)
+            Log.d("NotificationTime", "Notification scheduled at: ${notificationTime.timeInMillis}")
+            val currentTimeMillis = System.currentTimeMillis()
+
+            // Log the current time in milliseconds
+            Log.d("CurrentTime", "Current time in milliseconds: $currentTimeMillis")
+
+            NotificationHelper(context).scheduleNotification(
+                eventID,
+                notificationTime.timeInMillis,
+                title,
+                description
+            )
+
+            // Return to weekly calendar page
             navController.popBackStack()
+
         }) { Text("Save Event") }
 
         // Space between save event and cancel
@@ -79,35 +130,73 @@ fun AddEventPage(navController: NavController, date: String, eventViewModel: Eve
 }
 
 // Edit event page for when we want to modify previously-made events
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
-fun EditEventPage(navController: NavController, eventID: String, eventViewModel: EventViewModel = viewModel()) {
+fun EditEventPage(navController: NavController, date:String, eventID: String, eventViewModel: EventViewModel = viewModel()) {
+    // Retrieve the event from ViewModel using the eventID
     val event = eventViewModel.events.value?.find { it.eventID == eventID }
     var title by remember { mutableStateOf(event?.title ?: "") }
     var description by remember { mutableStateOf(event?.description ?: "") }
-    var date by remember { mutableStateOf(event?.date ?: "") }
     var time by remember { mutableStateOf(event?.time ?: "") }
+    val context = LocalContext.current
+
+    Spacer(modifier = Modifier.height(15.dp))
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(16.dp)) {
-        Text("Edit Event", style = MaterialTheme.typography.headlineSmall)
+        .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text("Edit Event on $date", style = MaterialTheme.typography.headlineSmall)
         OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") })
         OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("Description") })
-        OutlinedTextField(value = time, onValueChange = { time = it }, label = { Text("Time") })
 
-        Row {
-            Button(onClick = {
-                eventViewModel.updateEvent(eventID, title, description, date, time)
-                navController.popBackStack()
-            }) { Text("Save Changes") }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = {
-                eventViewModel.deleteEvent(eventID)
-                navController.popBackStack()
-            }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) {
-                Text("Delete")
-            }
+        // Set the time for the alarm (same as in AddEventPage)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { showTimePicker(context) { selectedTime -> time = selectedTime } }
+                .padding(vertical = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Selected time: $time",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(16.dp)
+            )
         }
+
+        // Save the event
+        Button(onClick = {
+            val formattedDate = SimpleDateFormat("yyyy-MM-dd",
+                Locale.getDefault()).format(SimpleDateFormat("yyyy-MM-dd",
+                Locale.getDefault()).parse(date) ?: Date())
+            eventViewModel.updateEvent(eventID, title, description, formattedDate, time)
+
+            // Cancel previously-made notifications
+            NotificationHelper(context).cancelScheduledNotification(eventID)
+
+            // Schedule notification
+            val notificationTime = parseDateTime(date, time)
+            NotificationHelper(context).scheduleNotification(
+                eventID,
+                notificationTime.timeInMillis,
+                title,
+                description
+            )
+            navController.popBackStack()
+        }) { Text("Save Changes") }
+
+        // Space between save and cancel buttons
+        Spacer(modifier = Modifier.height(15.dp))
+
+        // Cancel button
+        Button(
+            onClick = { navController.popBackStack() }, // Go back without saving
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+        ) { Text("Cancel") }
     }
 }
 
@@ -129,58 +218,6 @@ fun showTimePicker(context: Context, onTimeSelected: (String) -> Unit) {
         minute,
         false // Use 12-hour format
     ).show()
-}
-
-// Function for notifications of events
-// below line was requested by error message
-@RequiresApi(Build.VERSION_CODES.S)
-fun scheduleNotification(context: Context, title: String, description: String, date: String, time: String) {
-    // Parse the date and time
-    val calendar = parseDateTime(date, time)
-
-    // Create an intent for the notification
-    val intent = Intent(context, NotificationReceiver::class.java).apply {
-        putExtra("title", title)
-        putExtra("description", description)
-    }
-    val pendingIntent = PendingIntent.getBroadcast(
-        context,
-        Random.nextInt(), // Unique request code
-        intent,
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    )
-
-
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-    // Check if the app has the SCHEDULE_EXACT_ALARM permission
-    if (alarmManager.canScheduleExactAlarms()) {
-        val calendar = Calendar.getInstance().apply {
-            val (hour, minute) = parseTime(time)
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
-        }
-
-        // Create an intent for the notification
-        val intent = Intent(context, NotificationReceiver::class.java).apply {
-            putExtra("title", title)
-            putExtra("description", description)
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            Random.nextInt(), // Unique request code
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        // Schedule the notification using AlarmManager
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-    } else {
-        // Handle the case where the permission is not granted
-        // You can either request the permission or fall back to inexact alarms
-        requestExactAlarmPermission(context)
-    }
 }
 
 // Function that allows user to get permission
@@ -206,24 +243,16 @@ fun parseTime(time: String): Pair<Int, Int> {
 fun parseDateTime(date: String, time: String): Calendar {
     val calendar = Calendar.getInstance()
     val (hour, minute) = parseTime(time) // Parse the time
-    val day = date.toInt() // Parse the day
 
-    // Set the day, month, and year
-    calendar.set(Calendar.DAY_OF_MONTH, day)
-    calendar.set(Calendar.HOUR_OF_DAY, hour)
-    calendar.set(Calendar.MINUTE, minute)
-    calendar.set(Calendar.SECOND, 0)
+    // Parse the year, month, and day
+    val parts = date.split("-")
+    val year = parts[0].toInt()
+    val month = parts[1].toInt() - 1
+    val day = parts[2].toInt()
+
+    // Set calendar information
+    calendar.set(year, month, day, hour, minute, 0)
+    Log.d("DateTime", "Date received: $date")
 
     return calendar
-}
-
-class NotificationReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
-        val title = intent.getStringExtra("title") ?: "Reminder"
-        val description = intent.getStringExtra("description") ?: "You have an event!"
-
-        // Display the notification
-        val notificationHandler = TimerNotificationHandler(context)
-        notificationHandler.timerFinishedNotification(title, description)
-    }
 }
