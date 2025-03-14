@@ -2,18 +2,23 @@ package com.start.pages
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,7 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -33,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.example.dentalhygiene.R
 import com.google.android.libraries.places.api.Places
@@ -76,20 +84,53 @@ fun ClinicDetailsPage(
             {
                 Text(text = clinic.name, fontSize = 28.sp, fontWeight = FontWeight.Bold)
             }
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
-            ){
-                Image(
-                    painter = painterResource(id = R.drawable.dental_clinic_clipart),
-                    contentDescription = "Default Clinic Picture",
-                    modifier = Modifier
-                        .size(300.dp)
-                        .fillMaxSize()
-                )
-            }
+
+            // Displays the clinic's photos if they have any, if it's null, then displays default clipart
+
+            if (clinic.photos != null) {
+                clinic.photos.let { photos ->
+                    Log.d("ClinicDetails", "${clinic.name} has ${photos.size} photos") //For testing
+                    if ((photos.isNotEmpty())) {
+                        LazyRow( // Allows for a scrollable list of photos
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(250.dp)
+                                .padding(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(photos.size ?: 0) { photo ->
+                                val photoReference = photos.get(photo).photoReference ?: return@items
+                                val imageUrl = getPhotoUrl(photoReference, MAPS_API_KEY)
+                                AsyncImage( // Asynchronously renders the photos
+                                    modifier = Modifier
+                                        .size(300.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(Color.LightGray),
+                                    model = imageUrl,
+                                    contentDescription = "Clinic Photo",
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
+                    }
+                }
+            } else{
+                    Log.d("ClinicDetails", "No Photos") // For testing
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp)
+                    ){
+                        Image(
+                            painter = painterResource(id = R.drawable.dental_clinic_clipart),
+                            contentDescription = "Clinic Picture",
+                            modifier = Modifier
+                                .size(300.dp)
+                                .fillMaxSize()
+                        )
+                    }
+                }
             Row(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
@@ -122,8 +163,7 @@ fun ClinicDetailsPage(
                 )
                 clinic.phoneNumber?.let { Text(text = it, fontSize = 20.sp, fontWeight = FontWeight.SemiBold) }
             }
-        }
-            ?: Text("Loading clinic details...") //If details are null, shows this
+        } ?: Text("Loading clinic details...") //If details are null, shows this
 
         HorizontalDivider(
             modifier = Modifier
@@ -147,6 +187,11 @@ fun ClinicDetailsPage(
             }
         }
     }
+}
+
+// Makes the request to the API based on the clinic's photo reference
+fun getPhotoUrl(photoRef: String, apiKey: String): String {
+    return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoRef&key=$apiKey"
 }
 
 @Composable
