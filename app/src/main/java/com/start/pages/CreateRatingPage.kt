@@ -143,6 +143,7 @@ fun CreateRatingPage(
                         clinicName = clinicName
                     )
                     ratingViewModel.ratingCreationExit()
+                    navController.popBackStack()
                 }
             }
         ) {

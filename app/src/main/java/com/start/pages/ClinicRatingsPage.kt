@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Close
@@ -30,6 +33,8 @@ import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -37,12 +42,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,14 +66,12 @@ import com.example.dentalhygiene.R
 import com.start.viewmodels.ClinicReview
 import com.start.viewmodels.RatingState
 import com.start.viewmodels.RatingViewModel
-import java.time.LocalDateTime
 import com.start.ui.theme.Purple80
 import com.start.ui.theme.PurpleGrey40
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 // Function that handles UI for the ClinicDetails Page (at least on my branch)
-// This branch is also being implemented by Kevin so changes may appear in the future
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -81,16 +88,16 @@ fun ClinicRatingsPage
 
     // variables for handling state changes and displaying ratings on the clinic
     var ratingState = ratingViewModel.ratingState
-    val clinicList by ratingViewModel.ratingsList.collectAsState()
-    var listCount = ratingViewModel.ratingsCount.collectAsState()
-    var ratingAverage = ratingViewModel.clinicRatingAverage.collectAsState()
+    val clinicList by ratingViewModel.ratingsList.collectAsState() // holds the list of clinics ratings dynamically
+    var listCount = ratingViewModel.ratingsCount.collectAsState() // holds the number of ratings dynamically
+    var ratingAverage = ratingViewModel.clinicRatingAverage.collectAsState() // holds the clinic rating average dynamically
 
     // Gets details about the clinic when the page loads
     LaunchedEffect(clinicID, ratingState) {
         clinicID.let {
             try {
-                ratingViewModel.getClinicRatings(clinicID.toString())
-                ratingViewModel.calculateClinicRatingAverage(clinicID.toString())
+                ratingViewModel.getClinicRatings(clinicID.toString()) // get all the ratings of the clinic
+                ratingViewModel.calculateClinicRatingAverage(clinicID.toString()) // calculate the rating average of the clinic
             }
             // if it fails...
             catch (e: Exception) {
@@ -125,11 +132,14 @@ fun ClinicRatingsPage
             CenterAlignedTopAppBar(
                 title = {
 
+                    // text to be displayed in the top bar
+                    // if clinic name is too long, display part of it then add ellipses to cut off
+                    // otherwise, show everything
                     val textToDisplay: String = if (clinicName?.length!! < 27) clinicName else "${clinicName.take(24)}..."
 
-                    Text (
-                    text = textToDisplay,
-                    fontWeight = FontWeight.Bold) }, // title of the Page
+                    // title of the Page
+                    Text (text = textToDisplay, fontWeight = FontWeight.Bold) },
+
                 navigationIcon =
                 {
                     // back button
@@ -144,11 +154,10 @@ fun ClinicRatingsPage
                 scrollBehavior = scrollBehavior,
 
                 // Specifies all additional buttons in the top bar
-
                 actions = {
                     // Refresh Button
+                    //TODO Implement Refresh Page then add it to this page
                     IconButton(onClick = {
-
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Refresh,
@@ -167,17 +176,21 @@ fun ClinicRatingsPage
         // only implement a floating action button for creating a review
         bottomBar = {
             BottomAppBar(
+
                 // no additional buttons
                 actions = {},
+
                 // floating action button for review creation
                 floatingActionButton = {
                     FloatingActionButton(
+                        // when the button is clicked, go to rating creation page and enter to RatingCreation State
                         onClick = {
                             ratingViewModel.ratingCreationEnter()
                             navController.navigate("createRating/$clinicID,$clinicName")
                                   },
-                        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+                        //UI qualities of the bottom bar
+                        containerColor = BottomAppBarDefaults.bottomAppBarFabColor, // bar color
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation() // how much bar rises from button
                 ) {
                         //Icon used for the button
                         Icon(
@@ -192,20 +205,28 @@ fun ClinicRatingsPage
             modifier = Modifier.padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            // Extra space between top bar and additional text
             Spacer(Modifier.height(12.dp))
 
+            // Text that details number of reviews the clinic has
             Text(
                 text = "Number of Reviews: ${listCount.value}",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
 
+            // Specifies the format of the rating average to only show up to 1 decimal place
+            val formattedRatingAverage = "%.1f".format(ratingAverage.value)
+
+            // Shows the rating average of the clinic
             Text(
-                text = "Current Rating Average: ${ratingAverage.value}",
+                text = "Current Rating Average: $formattedRatingAverage",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
 
+            // Declare the dropdown menu for sorting options of the ratings
+            SortingDropdownMenu(ratingViewModel)
 
             // Tab that shows all reviews on the clinic
             ReviewsTab(clinicList)
@@ -219,6 +240,7 @@ fun ClinicRatingsPage
 @Composable
 fun ClinicReviewItem(clinicReview: ClinicReview) {
     Column(
+        // UI specifics of a single item
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 5.dp)
@@ -267,7 +289,7 @@ fun ClinicReviewItem(clinicReview: ClinicReview) {
             rating = clinicReview.rating,
             modifier = Modifier.padding(16.dp, 8.dp)
             )
-        // Review details
+        // Text that shows the review details of a rating
         Text(
             text = clinicReview.review,
             modifier = Modifier.padding(18.dp, 0.dp),
@@ -332,6 +354,78 @@ fun StarBar(rating: Int, modifier: Modifier) {
     }
 }
 
+// Implementation of the sorting menu to show relevant reviews
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SortingDropdownMenu(ratingViewModel: RatingViewModel) {
+
+    // variables needed to for the menu to function
+    var expanded by remember { mutableStateOf(false) } // checks if the menu is closed or not
+    var currentSortBy by remember { mutableStateOf("Most Helpful")} // checks the current sorting specification of the reviews
+
+    // Set modifier for the menu items
+    var menuItemsModifier = Modifier.
+    padding(vertical = 4.dp, horizontal = 16.dp).
+    border(width = 1.dp, color = PurpleGrey40, shape = RoundedCornerShape(16.dp))
+
+    // Use a box to initially hide the dropdown menu
+    // When menu is clicked, unload all UI elements downward
+    Box(
+        modifier = Modifier
+            .padding(12.dp)
+    ) {
+        // Use a row for handling the dropdown menu
+        Row(
+            modifier = menuItemsModifier
+        ) {
+            // Text button for showing the dropdown menu
+            TextButton(
+                onClick = { expanded = !expanded  } // either close or open the menu when clicked
+            )
+            {
+                // Text that shows the current sorting method
+                // TODO: fix to correct specifications when Kelson finishes Likes and Dislikes
+                Text("Sort by: $currentSortBy")
+
+                // Icon for showing if the dropdown menu is open or not
+                Icon(
+                    // if the menu is open, display a down arrow, otherwise display an up arrow
+                    imageVector = if (!expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = if (!expanded) "In Ascending Order" else "In Descending Order",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+            // Dropdown Menu specifications
+            DropdownMenu(
+                expanded = expanded, // details when the menu is expanded or not
+                onDismissRequest = { expanded = false } // if the menu is dismissed, close the menu
+            ) {
+                // Specifies the menu items in the menu
+                // Shows only two sorting methods: most helpful or most recent
+                // Show current sorting order in the text button when a menu item is clicked,
+                // then sort the reviews accordingly
+                DropdownMenuItem(
+                    text = { Text("Most Helpful") },
+                    onClick = {
+                        currentSortBy = "Most Helpful"
+                        ratingViewModel.sortReviews("Most Helpful")
+                              },
+                    modifier = menuItemsModifier
+                )
+                DropdownMenuItem(
+                    text = { Text("Most Recent") },
+                    onClick = {
+                        currentSortBy = "Most Recent"
+                        ratingViewModel.sortReviews("Most Recent")
+                              },
+                    modifier = menuItemsModifier
+                )
+            }
+        }
+    }
+}
+
 // Composable function for all the ratings in the clinic
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -345,6 +439,8 @@ fun ReviewsTab(clinicRatings: List<ClinicReview>) {
     }
 }
 
+/*
+Test Review Item
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
@@ -357,3 +453,4 @@ fun TestReviewItem() {
         )
     )
 }
+*/

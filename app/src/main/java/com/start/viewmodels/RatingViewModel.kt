@@ -35,10 +35,11 @@ class RatingViewModel: ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
-    // handling fields for clinic ratings
+    // handling fields for the list of ratings
     private val _ratingsList = MutableStateFlow<List<ClinicReview>>(emptyList())
     val ratingsList: StateFlow<List<ClinicReview>> get() = _ratingsList
 
+    // handling fields for the number of ratings present
     private val _ratingsCount = MutableStateFlow<Int>(0)
     val ratingsCount: StateFlow<Int> get() = _ratingsCount
 
@@ -65,6 +66,7 @@ class RatingViewModel: ViewModel() {
         val createdAt = LocalDateTime.now()
 
         // rating details that will be put in the ratings class
+        // currently deprecated since it will be too much reading and writing for the time being
         /*
         val ratingDetails = hashMapOf(
             "creatorID" to userID,
@@ -100,6 +102,7 @@ class RatingViewModel: ViewModel() {
             try {
                 awaitAll(
                     // create a rating on the ratings collection
+                    // currently deprecated since it will be too much reading and writing for the time being
                     // async { db.collection("ratings").document(ratingID).set(ratingDetails).await() },
 
                     // create a rating in the users collection
@@ -159,11 +162,13 @@ class RatingViewModel: ViewModel() {
                     // store them into a ClinicRating data class then append it to the handler
                     val processedRating = ClinicReview(ratingScore, review, createdAt)
                     processedRatings.add(processedRating)
+
                 }
 
-                // once its finished... replace the value of _clinicList into the contents of the handler
+                // once its finished... replace the value of _clinicList into the contents of the handler\
                 _ratingsList.value = processedRatings
                 _ratingsCount.value = processedRatings.size
+                sortReviews("Most Recent")
                 Log.d("Clinic Ratings Fetching", "Clinic Ratings successfully fetched")
             }
 
@@ -196,6 +201,7 @@ class RatingViewModel: ViewModel() {
     // function for adding a clinic into the clinic database
     // maybe replaced in the future as Kevin is also making one
     // Made a temporary one just for testing, update later
+    // currently not being used since Kevin is implementing a better one
     fun addClinicToDB(clinicDetails: PlaceDetails?)
     {
         var clinicData= hashMapOf(
@@ -212,31 +218,47 @@ class RatingViewModel: ViewModel() {
     // Outputs the current rating average of a clinic
     fun calculateClinicRatingAverage(clinicID: String?) {
 
-        var ratingAverage: Float = 0F
-        val docRef = db.collection(CLINICS).document(clinicID.toString()).collection(CLINIC_RATINGS)
-        val query = docRef.aggregate(AggregateField.average("ratingScore"))
+        // holder values to make function work properly
+        var ratingAverage: Float = 0F // holds ratingAverage that will be appended to rating holder soon
+        val docRef = db.collection(CLINICS).document(clinicID.toString()).collection(CLINIC_RATINGS) // collection reference for the query
+        val query = docRef.aggregate(AggregateField.average("ratingScore")) // aggregation query for getting the rating average of the clinic
 
+        // Use a coroutine to do the process asynchronously
+        // Scope main process in a try-catch block to handle errors (may not always work)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 async {
+                    // do the Firebase query in a seperate thread called task
                     query.get(AggregateSource.SERVER).addOnCompleteListener { task ->
+                        // if the task is successful...
                         if (task.isSuccessful) {
+                            // process the results and check if there is a floating point output
                             val snapshot = task.result
                             val processedSnapshot =
                                 snapshot.get(AggregateField.average("ratingScore"))?.toFloat()
+
+                            // if the result is a float...
                             if (processedSnapshot is Float) {
+                                // put the result in the container and
+                                // declare that the result is a success then log the details
                                 ratingAverage = processedSnapshot
                                 _ratingState.value = RatingState.Success("Clinic Average successfully calculated")
                                 Log.d("Getting Rating Average", "Clinic Average successfully calculated. Clinic Average = $processedSnapshot")
 
                             }
+                            // if it's not...
                             else {
-                                Log.e("Getting Rating Average", "Clinic Average cannot be calculated. Clinic Average = $processedSnapshot")
+                                // set the float handler to zero then declare the results
+                                Log.d("Getting Rating Average", "Clinic Average cannot be calculated. Clinic Average = $processedSnapshot")
                                 ratingAverage = 0f
                                 _ratingState.value = RatingState.Error("Clinic Ratings cannot be calculated")
                             }
+                            // in both cases, set the clinicRatingAverage field into the handler's value
                             _clinicRatingAverage.value = ratingAverage
-                        } else {
+                        }
+                        // if the task fails
+                        else {
+                            // output the error message then set the clinic average to zero
                             Log.e("Getting Rating Average", task.exception?.message.toString())
                             _ratingState.value =
                                 RatingState.Error(task.exception?.message.toString())
@@ -244,14 +266,16 @@ class RatingViewModel: ViewModel() {
                         }
                     }.await()
                 }
-            } catch(e: Exception) {
+            }
+            // if an exception occurs, display and log the error message
+            catch(e: Exception) {
                 _ratingState.value = RatingState.Error(e.message.toString())
                 Log.e("Getting Rating Average", e.message.toString())
             }
         }
     }
 
-    //get clinicRatingAverage
+    //get the clinicRatingAverage
     fun getClinicRatingAverage(): Float {
         return _clinicRatingAverage.value
     }
@@ -262,7 +286,21 @@ class RatingViewModel: ViewModel() {
     }
 
     // Sort ratings based on the specification user choose
-    fun sortReviews() {
+    fun sortReviews(sortedBy: String) {
+
+        //sort the list by the most recent ratings
+        if (sortedBy == "Most Recent") {
+            _ratingsList.value = _ratingsList.value.sortedWith(
+                compareByDescending<ClinicReview> { it.createdAt})
+        }
+
+        // sort the list by the most helpful ratings (likes > dislikes, if amount is the same, display the most recent one)
+        //TODO: Change this function to compare like amounts instead of rating when Kelson finishes likes and dislike implementation
+        if (sortedBy == "Most Helpful") {
+            _ratingsList.value = _ratingsList.value.sortedWith(
+                compareByDescending<ClinicReview> { it.rating }.thenByDescending { it.createdAt }
+            )
+        }
     }
 
     // Function that changes the state when user starts creating a rating
@@ -277,6 +315,7 @@ class RatingViewModel: ViewModel() {
 }
 
 // Data class for storing clinic ratings
+// TODO: may need to be modified based on Kelson's likes and dislikes implementation
 data class ClinicReview(
     val rating: Int,
     val review: String,
