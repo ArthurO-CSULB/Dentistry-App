@@ -123,7 +123,13 @@ fun ClinicRatingsPage
         // Details the specifications of this page's top bar
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text ("$clinicName") }, // title of the Page
+                title = {
+
+                    val textToDisplay: String = if (clinicName?.length!! < 27) clinicName else "${clinicName.take(24)}..."
+
+                    Text (
+                    text = textToDisplay,
+                    fontWeight = FontWeight.Bold) }, // title of the Page
                 navigationIcon =
                 {
                     // back button
@@ -186,11 +192,14 @@ fun ClinicRatingsPage
             modifier = Modifier.padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(Modifier.height(12.dp))
+
             Text(
                 text = "Number of Reviews: ${listCount.value}",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
+
             Text(
                 text = "Current Rating Average: ${ratingAverage.value}",
                 fontSize = 24.sp,
