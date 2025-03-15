@@ -16,6 +16,7 @@ import com.start.pages.ClinicSearchPage
 import com.start.pages.ProfilePage
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
+import com.start.viewmodels.ClinicDetailsViewModel
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -39,7 +40,7 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel) {
+TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
     // is consistent throughout the lifecycle of NavHost. This prevents a NavController being
@@ -122,7 +123,8 @@ TimerViewModel) {
         composable("clinicDetails/{placeId}") {backStackEntry ->
             ClinicDetailsPage(
                 placeId = backStackEntry.arguments?.getString("placeId"),
-                navController = navController)
+                navController = navController,
+                clinicDetailsViewModel = clinicDetailsViewModel)
         }
 
         // Profile screen.

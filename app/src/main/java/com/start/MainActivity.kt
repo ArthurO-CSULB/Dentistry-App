@@ -15,6 +15,7 @@ import com.start.repos.TimerFunFactsRepo
 //import com.start.repos.TimerFunFactsRepo
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
+import com.start.viewmodels.ClinicDetailsViewModel
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
 
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity(){
             // Use factory to create view model to pass in the fun facts repository
             TimerViewModel.TimerViewModelFactory(funFactsRepo)
         }
+        val clinicDetailsViewModel : ClinicDetailsViewModel by viewModels()
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
             DentalHygieneTheme {
@@ -60,7 +62,7 @@ class MainActivity : ComponentActivity(){
                     // inner padding to ensure page navigation respects the reserved space, as well
                     // as passing in the ViewModels.
                     PageNavigation(modifier = Modifier.padding(innerPadding),
-                        authViewModel = authViewModel, timerViewModel = timerViewModel)
+                        authViewModel = authViewModel, timerViewModel = timerViewModel, clinicDetailsViewModel = clinicDetailsViewModel)
                 }
             }
         }

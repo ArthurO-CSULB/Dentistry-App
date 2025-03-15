@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -53,12 +54,14 @@ import com.example.dentalhygiene.R
 import com.google.android.libraries.places.api.Places
 import com.start.PlacesApiService
 import com.start.model.PlaceDetails
+import com.start.viewmodels.ClinicDetailsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClinicDetailsPage(
     placeId: String?,// Place ID that is taken from one of the clinics in the Clinic Search Page
-    navController: NavController
+    navController: NavController,
+    clinicDetailsViewModel : ClinicDetailsViewModel = viewModel()
 ) {
     val context = LocalContext.current
     var clinicDetails by remember { mutableStateOf<PlaceDetails?>(null) }
@@ -67,7 +70,14 @@ fun ClinicDetailsPage(
     // Gets details about the clinic when the page loads
     LaunchedEffect(placeId) {
         placeId?.let {
-            clinicDetails = PlacesApiService.getPlaceDetails(it, MAPS_API_KEY)
+            val clinicInfo = PlacesApiService.getPlaceDetails(it, MAPS_API_KEY)
+
+            clinicDetails = clinicInfo
+
+            // Adds the clinic to the database with its PlaceID as a unique identifier
+            clinicInfo?.let {
+                clinicDetailsViewModel.addClinicToDb(it)
+            }
         }
         Log.d("ClinicDetails", "Received clinicId: $placeId") // For testing purposes
     }
