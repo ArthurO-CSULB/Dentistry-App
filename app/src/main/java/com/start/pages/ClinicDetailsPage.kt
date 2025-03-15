@@ -14,12 +14,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +40,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,6 +54,7 @@ import com.google.android.libraries.places.api.Places
 import com.start.PlacesApiService
 import com.start.model.PlaceDetails
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClinicDetailsPage(
     placeId: String?,// Place ID that is taken from one of the clinics in the Clinic Search Page
@@ -54,6 +62,7 @@ fun ClinicDetailsPage(
 ) {
     val context = LocalContext.current
     var clinicDetails by remember { mutableStateOf<PlaceDetails?>(null) }
+
 
     // Gets details about the clinic when the page loads
     LaunchedEffect(placeId) {
@@ -66,15 +75,30 @@ fun ClinicDetailsPage(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Button(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .padding(top = 32.dp, bottom = 24.dp))
-        {
-            Text("Back to Map")
-        }
-
         clinicDetails?.let { clinic ->
+            TopAppBar(
+                title =
+                {
+                    Text(
+                        text = "Back to Map",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                navigationIcon = {
+                    IconButton(onClick = {navController.popBackStack()}) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back Button",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults. topAppBarColors(MaterialTheme.colorScheme.secondaryContainer)
+            )
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
@@ -194,21 +218,39 @@ fun getPhotoUrl(photoRef: String, apiKey: String): String {
     return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoRef&key=$apiKey"
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClinicDetailsPageLayout(
     navController: NavController
 ) {
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Button(
-            onClick = { navController.popBackStack() },
+        TopAppBar(
+            title =
+            {
+                Text(
+                    text = "Back to Map",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
             modifier = Modifier
-                .padding(top = 24.dp, bottom = 12.dp))
-        {
-            Text("Back to Map")
-        }
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            navigationIcon = {
+                IconButton(onClick = {navController.popBackStack()}) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back Button",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            colors = TopAppBarDefaults. topAppBarColors(MaterialTheme.colorScheme.secondaryContainer)
+        )
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier

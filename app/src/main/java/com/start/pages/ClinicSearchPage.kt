@@ -26,13 +26,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -84,6 +92,7 @@ NavController.
  */
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("PotentialBehaviorOverride")
 @Composable
 fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController) {
@@ -252,39 +261,36 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        // Title of Clinic Search Page
-        Text(
-            text = "Prototype Clinic Search Page", fontSize = 28.sp
+        TopAppBar(
+            title =
+            {
+                Text(
+                    text = "Find a Dental Clinic",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+            navigationIcon = {
+                IconButton(onClick = { navController.navigate("home") }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back Button",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(MaterialTheme.colorScheme.secondaryContainer)
         )
-
-        // Button to go back home
-        TextButton(onClick = {
-            navController.navigate("home")
-        }) {
-            Text(text = "Home")
-        }
-
         // Display map
-        Box(modifier = modifier
-            .height(400.dp)
-            .fillMaxWidth())
-        {
-            AndroidView(
-                factory = { mapView },
-                modifier = Modifier.height(330.dp)
-            )
-        }
-    }
-
-
-    //UI for the Search Bar and the Radius buttons
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(350.dp))
+        AndroidView(
+            factory = { mapView },
+            modifier = Modifier
+                .height(430.dp)
+        )
+        //UI for the Search Bar and the Radius buttons
+        Spacer(modifier = Modifier.height(10.dp))
         HorizontalDivider(
             thickness = 2.dp,
             color = Color.Black
@@ -294,14 +300,18 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
             thickness = 2.dp,
             color = Color.Black
         )
-        Text(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 8.dp),
-            text = "Locate: ",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start){
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(),
+                text = "Locate: ",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
         SearchBar(placesClient, googleMapInstance) { latLng ->
             googleMapInstance?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
@@ -309,17 +319,17 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
-        ){
+        ) {
             Button(
-                onClick = {userRad = 8047}){
+                onClick = { userRad = 8047 }) {
                 Text("5 miles")
             }
             Button(
-                onClick = {userRad = 16093}){
+                onClick = { userRad = 16093 }) {
                 Text("10 miles")
             }
             Button(
-                onClick = {userRad = 32187}) {
+                onClick = { userRad = 32187 }) {
                 Text("20 miles")
             }
         }
@@ -421,6 +431,7 @@ private fun getUserLocation(
     }
 }
 //Test composable to see the layout in the preview without having to run the app
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClinicSearchLayout(modifier: Modifier = Modifier, navController: NavController) {
     Column(
@@ -428,33 +439,38 @@ fun ClinicSearchLayout(modifier: Modifier = Modifier, navController: NavControll
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        // Title of Clinic Search Page
-        Text(
-            text = "Prototype Clinic Search Page", fontSize = 28.sp
+        TopAppBar(
+            title =
+            {
+                Text(
+                    text = "Find a Clinic",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+            navigationIcon = {
+                IconButton(onClick = { navController.navigate("home") }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back Button",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(MaterialTheme.colorScheme.secondaryContainer)
         )
 
-        // Button to go back home
-        TextButton(onClick = {
-            navController.navigate("home")
-        }) {
-            Text(text = "Home")
-        }
-
         // Display map
-        Box(modifier = modifier
-            .height(400.dp)
-            .fillMaxWidth()
-            .background(Color.Blue))
-    }
+        Box(
+            modifier = modifier
+                .height(330.dp)
+                .fillMaxWidth()
+                .background(Color.Blue)
+        )
 
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(350.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         HorizontalDivider(
             thickness = 2.dp,
             color = Color.Black
@@ -464,14 +480,19 @@ fun ClinicSearchLayout(modifier: Modifier = Modifier, navController: NavControll
             thickness = 2.dp,
             color = Color.Black
         )
-        Text(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 8.dp),
-            text = "Locate: ",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start){
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(),
+                text = "Locate: ",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
         var query by remember { mutableStateOf("") }
 
         TextField(
@@ -488,17 +509,17 @@ fun ClinicSearchLayout(modifier: Modifier = Modifier, navController: NavControll
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
                 .fillMaxWidth()
-        ){
+        ) {
             Button(
-                onClick = {null}){
+                onClick = { null }) {
                 Text("5 miles")
             }
             Button(
-                onClick = {null}){
+                onClick = { null }) {
                 Text("10 miles")
             }
             Button(
-                onClick = {null}) {
+                onClick = { null }) {
                 Text("20 miles")
             }
         }
