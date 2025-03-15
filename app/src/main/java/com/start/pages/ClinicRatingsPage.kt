@@ -229,7 +229,7 @@ fun ClinicRatingsPage
             SortingDropdownMenu(ratingViewModel)
 
             // Tab that shows all reviews on the clinic
-            ReviewsTab(clinicList)
+            ReviewsTab(clinicList, ratingViewModel, clinicID)
         }
     }
 }
@@ -238,7 +238,12 @@ fun ClinicRatingsPage
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ClinicReviewItem(clinicReview: ClinicReview) {
+fun ClinicReviewItem(clinicReview: ClinicReview, ratingViewModel: RatingViewModel, clinicID: String) {
+    // Variables to keep track
+    var likeCount by remember { mutableStateOf(clinicReview.likeCount) }
+    var dislikeCount by remember { mutableStateOf(clinicReview.dislikeCount) }
+    var likeDislike by remember { mutableStateOf(clinicReview.likeDislike) }
+
     Column(
         // UI specifics of a single item
         modifier = Modifier
@@ -302,7 +307,14 @@ fun ClinicReviewItem(clinicReview: ClinicReview) {
         ) {
             // Like button
             Button(
-                onClick = {},
+                onClick = {
+                        ratingViewModel.updateLikeDislike(clinicID, clinicReview.ratingID, "like")
+
+                    // update local variables
+                    likeCount = clinicReview.likeCount
+                    dislikeCount = clinicReview.dislikeCount
+                    likeDislike = clinicReview.likeDislike
+                },
                 colors = ButtonColors(
                     containerColor = Color.Green,
                     contentColor = Color.Unspecified,
@@ -314,14 +326,21 @@ fun ClinicReviewItem(clinicReview: ClinicReview) {
                     contentDescription = "Like Rating",
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("Like")
+                Text("$likeCount")
             }
 
             // Dislike Button
             Button(
-                onClick = {},
+                onClick = {
+                        ratingViewModel.updateLikeDislike(clinicID, clinicReview.ratingID, "dislike")
+
+                    // update local variables
+                    likeCount = clinicReview.likeCount
+                    dislikeCount = clinicReview.dislikeCount
+                    likeDislike = clinicReview.likeDislike
+                },
                 colors = ButtonColors(
-                    containerColor = Color.LightGray,
+                    containerColor = Color.Gray,
                     contentColor = Color.Unspecified,
                     disabledContainerColor = Color.Gray,
                     disabledContentColor = Color.Unspecified)
@@ -331,7 +350,7 @@ fun ClinicReviewItem(clinicReview: ClinicReview) {
                     contentDescription = "Dislike Rating"
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("Dislike")
+                Text("$dislikeCount")
             }
         }
     }
@@ -429,11 +448,13 @@ fun SortingDropdownMenu(ratingViewModel: RatingViewModel) {
 // Composable function for all the ratings in the clinic
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ReviewsTab(clinicRatings: List<ClinicReview>) {
+fun ReviewsTab(clinicRatings: List<ClinicReview>, ratingViewModel: RatingViewModel, clinicID: String?) {
     LazyColumn {
         // display all ratings
         items(clinicRatings) { rating ->
-            ClinicReviewItem(rating)
+            if (clinicID != null) {
+                ClinicReviewItem(rating, ratingViewModel, clinicID)
+            }
             Spacer(Modifier.height(2.dp))
         }
     }

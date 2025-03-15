@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.AggregateField
 import com.google.firebase.firestore.AggregateSource
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.start.model.PlaceDetails
 import kotlinx.coroutines.CoroutineScope
@@ -43,9 +44,17 @@ class RatingViewModel: ViewModel() {
     private val _ratingsCount = MutableStateFlow<Int>(0)
     val ratingsCount: StateFlow<Int> get() = _ratingsCount
 
+    // handling ratingID
+    private var _ratingID: String? = null
+    val ratingID: String? get() = _ratingID
+
+    private val _clinicLikesAverage = MutableStateFlow<Float>(0f)
+    val clinicLikesAverage: StateFlow<Float> get() = _clinicLikesAverage
+
     // handling fields for clinic rating average
     private val _clinicRatingAverage = MutableStateFlow<Float>(0f)
     val clinicRatingAverage: StateFlow<Float> get() = _clinicRatingAverage
+
 
 
     // handling fields for rating states
@@ -62,7 +71,7 @@ class RatingViewModel: ViewModel() {
 
         // declare parameters that will be used for creating the data hashmaps
         val userID = auth.currentUser?.uid.toString()
-        val ratingID = UUID.randomUUID().toString()
+        _ratingID = UUID.randomUUID().toString()
         val createdAt = LocalDateTime.now()
 
         // rating details that will be put in the ratings class
@@ -80,18 +89,24 @@ class RatingViewModel: ViewModel() {
 
         // rating details to be appended to the user
         val userRatingRecord = hashMapOf(
-            "ratingID" to ratingID,
+            "ratingID" to _ratingID,
             "clinicName" to clinicName,
             "ratingScore" to rating,
             "review" to review,
+            "likeCount" to 0,
+            "dislikeCount" to 0,
+            "LikeDislike" to "neutral"
         )
 
         // rating details to be appended to the clinic
         val clinicRatingRecord = hashMapOf(
-            "ratingID" to ratingID,
+            "ratingID" to _ratingID,
             "review" to review,
             "ratingScore" to rating,
-            "createdAt" to createdAt
+            "createdAt" to createdAt,
+            "likeCount" to 0,
+            "dislikeCount" to 0,
+            "LikeDislike" to "neutral"
         )
 
         val userRatingRef = db.collection(ACCOUNTS).document(userID).collection(USER_RATINGS).document(clinicID)
@@ -134,11 +149,9 @@ class RatingViewModel: ViewModel() {
         val clinicDocRef = db.collection("clinics").document(clinicID)
             .collection("clinicRatings")
 
-        //get all ratings on a clinic
-        clinicDocRef.get()
-
-            // if successful...
-            .addOnSuccessListener { ratings ->
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val ratings = clinicDocRef.get().await() // using await to fetch synchroncusly
 
                 // create a handler for a ClinicReview data class to be used for showing reviews
                 val processedRatings = mutableListOf<ClinicReview>()
@@ -149,18 +162,29 @@ class RatingViewModel: ViewModel() {
                     // get the data
                     val data = rating.data
 
-                    // then get the relevant data: the rating, the review, and the date it was made
+                    // then get the relevant data: the rating, the review, the date it was made,
+                    // and the like/dislikes
                     val ratingScore = (data["ratingScore"] as? Long)?.toInt() ?: 0
                     val review = data["review"] as? String ?: ""
+                    val ratingID = data["ratingID"] as? String ?: ""
+
+                    val likes = (data["likeCount"] as? Long)?.toInt() ?: 0
+                    val dislikes = (data["dislikeCount"] as? Long)?.toInt() ?: 0
+                    val netLikes = data["LikeDislike"] as? String ?: "neutral"
 
                     // since Firestore time is being stored as a map, explicitly cast it to a map
                     // then use helper function to make it inton a LocalDateTime value being used
                     // by this app
                     val createdAtMap = data["createdAt"] as? Map<String, Any>
-                    val createdAt = createdAtMap?.let { mapToLocalDateTime(it) } ?: LocalDateTime.now()
+                    val createdAt =
+                        createdAtMap?.let { mapToLocalDateTime(it) } ?: LocalDateTime.now()
+
 
                     // store them into a ClinicRating data class then append it to the handler
-                    val processedRating = ClinicReview(ratingScore, review, createdAt)
+                    val processedRating = ClinicReview(
+                        ratingScore, review, createdAt, netLikes,
+                        likes, dislikes, ratingID
+                    )
                     processedRatings.add(processedRating)
 
                 }
@@ -172,11 +196,12 @@ class RatingViewModel: ViewModel() {
                 Log.d("Clinic Ratings Fetching", "Clinic Ratings successfully fetched")
             }
 
-            // if it fails...
-            .addOnFailureListener { exception ->
-                // log the reason why it failed
-                Log.e("Clinic Ratings Fetching", exception.message.toString())
+                // if it fails...
+            catch (e: Exception) {
+                    // log the reason why it failed
+                    Log.e("Clinic Ratings Fetching", e.message.toString())
             }
+        }
     }
 
 
@@ -280,6 +305,158 @@ class RatingViewModel: ViewModel() {
         return _clinicRatingAverage.value
     }
 
+    // Update likes or dislikes on an individual rating
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateLikeDislike(clinicID: String, ratingID: String, userDoesLikeDislike: String) {
+        // Gather necessary variables and access to database
+        val userID = auth.currentUser?.uid.toString()
+        val clinicRatingRef = db.collection("clinics").document(clinicID).collection("clinicRatings").document(ratingID)  // Create document for each user
+        val userLikeDislikeRef = clinicRatingRef.collection("userLikesDislikes").document(userID)
+
+        // Coroutine to handle asynchronously
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // ensure that the documents for clinicRatingRef exists, if not, create them
+                val clinicRatingDoc = clinicRatingRef.get().await()
+                if (!clinicRatingDoc.exists()) {
+                    // Create the review document with default values
+                    clinicRatingRef.set(
+                        hashMapOf(
+                            "ratingID" to ratingID,
+                            "likeCount" to 0,
+                            "dislikeCount" to 0,
+                            "LikeDislike" to "neutral"
+                        )
+                    ).await()
+                    }
+
+                // Proceed with likes and dislikes
+                val currentReviewDoc = clinicRatingRef.get().await()
+                val currentLikeDislike = currentReviewDoc.getString("LikeDislike") ?: ""
+
+                // Check if the user is not repeatedly clicking the like/dislike button on a rating
+                // If they aren't, then the data will be updated to whatever they picked
+                if (currentLikeDislike != userDoesLikeDislike) {
+                    val updateData = hashMapOf<String, Any>(
+                        "LikeDislike" to userDoesLikeDislike
+                    )
+
+                    // Adjust likes and dislikes based on what the user does
+                    if (userDoesLikeDislike == "like") {
+                        if (currentLikeDislike == "dislike") {
+                            // Update dislike count to negate previous dislike, then add a like
+                            updateData["dislikeCount"] = FieldValue.increment(-1)
+                            updateData["likeCount"] = FieldValue.increment(1)
+                        } else {
+                            // First time liking, so add a like
+                            updateData["likeCount"] = FieldValue.increment(1)
+                        }
+                    } else if (userDoesLikeDislike == "dislike") {
+                        // Same logic as above but reversed
+                        if (currentLikeDislike == "like") {
+                            updateData["likeCount"] = FieldValue.increment(-1)
+                            updateData["dislikeCount"] = FieldValue.increment(1)
+                        } else {
+                            updateData["dislikeCount"] = FieldValue.increment(1)
+                        }
+                    }
+
+                    // Update like/dislike state
+                    userLikeDislikeRef.set(mapOf("LikeDislike" to userDoesLikeDislike)).await()
+
+                    // Perform the database update for clinic rating
+                     clinicRatingRef.update(updateData).await()
+
+
+                    // Update the ClinicReview object in _ratingsList
+                    val updatedRatings = _ratingsList.value.map { review ->
+                        if (review.ratingID == ratingID) {
+                            review.copy(
+                                likeCount = (updateData["likeCount"] as? Long)?.toInt() ?: review.likeCount,
+                                dislikeCount = (updateData["dislikeCount"] as? Long)?.toInt() ?: review.dislikeCount,
+                                likeDislike = updateData["LikeDislike"] as? String ?: review.likeDislike
+                            )
+                        } else {
+                            review
+                        }
+                    }
+
+                    _ratingsList.value = updatedRatings
+                    // Fetch to ensure UI changes
+                    getClinicRatings(clinicID)
+                    _ratingState.value = RatingState.Success("Like/Dislike Updated Successfully!")
+                }
+            } catch (e: Exception) {
+                Log.e("LikeDislike update", e.message.toString())
+                _ratingState.value = RatingState.Error(e.message.toString())
+            }
+        }
+    }
+
+
+    // Outputs the likes average of individual ratings
+    fun calculateRatingLikesAverage(clinicID: String?) {
+        // holder values to make function work properly
+        var likesAverage: Float = 0F // holds likesAverage that will be appended to rating holder soon
+        val docRef = db.collection(CLINICS).document(clinicID.toString()).collection(CLINIC_RATINGS) // collection reference for the query
+        val query = docRef.aggregate(AggregateField.average("likesScore")) // aggregation query for getting the likes average of the clinic
+
+        // Use a coroutine to do the process asynchronously
+        // Scope main process in a try-catch block to handle errors (may not always work)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                async {
+                    // do the Firebase query in a separate thread called task
+                    query.get(AggregateSource.SERVER).addOnCompleteListener { task ->
+                        // if the task is successful...
+                        if (task.isSuccessful) {
+                            // process the results and check if there is a floating point output
+                            val snapshot = task.result
+                            val processedSnapshot =
+                                snapshot.get(AggregateField.average("likesScore"))?.toFloat()
+
+                            // if the result is a float...
+                            if (processedSnapshot is Float) {
+                                // put the result in the container and
+                                // declare that the result is a success then log the details
+                                likesAverage = processedSnapshot
+                                _ratingState.value = RatingState.Success("Rating's Like Average successfully calculated")
+                                Log.d("Getting Rating Average", "Rating's Like Average successfully calculated. Like Average = $processedSnapshot")
+
+                            }
+                            // if it's not...
+                            else {
+                                // set the float handler to zero then declare the results
+                                Log.d("Getting Rating's Net Likes", "Rating's Net Likes cannot be calculated. Like Average = $processedSnapshot")
+                                likesAverage = 0f
+                                _ratingState.value = RatingState.Error("Rating's Net Likes cannot be calculated")
+                            }
+                            // in both cases, set the clinicLikesAverage field into the handler's value
+                            _clinicLikesAverage.value = likesAverage
+                        }
+                        // if the task fails
+                        else {
+                            // output the error message then set the clinic average to zero
+                            Log.e("Getting Rating Net Likes", task.exception?.message.toString())
+                            _ratingState.value =
+                                RatingState.Error(task.exception?.message.toString())
+                            _clinicLikesAverage.value = 0f
+                        }
+                    }.await()
+                }
+            }
+            // if an exception occurs, display and log the error message
+            catch(e: Exception) {
+                _ratingState.value = RatingState.Error(e.message.toString())
+                Log.e("Getting Net Likes", e.message.toString())
+            }
+        }
+    }
+    // get the clinicLikesAverage
+    fun getClinicLikesAverage(): Float {
+        return _clinicLikesAverage.value
+    }
+
     // Delete a rating a user has made
     // Should only delete ratings the user has made, not other reviews
     fun deleteReview() {
@@ -319,7 +496,11 @@ class RatingViewModel: ViewModel() {
 data class ClinicReview(
     val rating: Int,
     val review: String,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    var likeDislike: String, // for when a user likes/dislikes a rating, initialized as String to avoid confusion
+    var likeCount: Int = 0, // Count of likes on an individual rating
+    var dislikeCount: Int = 0, // Count of dislikes on an individual rating
+    val ratingID: String
 )
 
 // sealed class used for handling state changes in this viewmodel
