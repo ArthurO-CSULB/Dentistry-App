@@ -310,7 +310,7 @@ class RatingViewModel: ViewModel() {
     fun updateLikeDislike(clinicID: String, ratingID: String, userDoesLikeDislike: String) {
         // Gather necessary variables and access to database
         val userID = auth.currentUser?.uid.toString()
-        val clinicRatingRef = db.collection("clinics").document(clinicID).collection("clinicRatings").document(ratingID)  // Create document for each user
+        val clinicRatingRef = db.collection("clinics").document(clinicID).collection("clinicRatings").document(userID)  // Create document for each user
         val userLikeDislikeRef = clinicRatingRef.collection("userLikesDislikes").document(userID)
 
         // Coroutine to handle asynchronously
