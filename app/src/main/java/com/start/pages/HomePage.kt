@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.start.viewmodels.AuthState
 import com.start.viewmodels.AuthViewModel
+import com.start.viewmodels.HygieneTriviaState
+import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.TimerState
 import com.start.viewmodels.TimerViewModel
 
@@ -32,13 +34,17 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 @Composable
-fun HomePage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel, timerViewModel: TimerViewModel) {
+fun HomePage(modifier: Modifier = Modifier, navController: NavController,
+             authViewModel: AuthViewModel, timerViewModel: TimerViewModel,
+             hygieneTriviaViewModel: HygieneTriviaViewModel) {
 
     // From the passed in AuthViewModel, we get the authState of the authentication and use
     // observeAsState() to subscribe to the live data and track its changes.
     val authState = authViewModel.authState.observeAsState()
     // We get the timer state.
     val timerState = timerViewModel.timerState.collectAsState()
+    // We get the state of the trivia.
+    val hygieneTriviaState = hygieneTriviaViewModel.hygieneTriviaState.collectAsState()
 
     // We create a launched effect that passes in the value of the authentication state. Upon
     // the value changing when calling authViewModel methods, the block of code will execute.
@@ -72,7 +78,7 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
 
         // Space
         Spacer(modifier=Modifier.height(16.dp))
-        // Button to the timer page.
+        // Button to the timer page. Navigate depending to certain page depending on specific state.
         Button(onClick={
             when(timerState.value) {
                 is TimerState.Begin -> navController.navigate("timer_begin")
@@ -87,6 +93,20 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         }
         // Space
         Spacer(modifier=Modifier.height(8.dp))
+
+        Button(onClick={
+            when(hygieneTriviaState.value) {
+                is HygieneTriviaState.Begin -> navController.navigate("trivia_begin")
+                is HygieneTriviaState.Trivia -> navController.navigate("trivia_trivia")
+                is HygieneTriviaState.Finished -> navController.navigate("trivia_finish")
+                else -> Unit
+            }
+        }) {
+            Text(text = "Dental Hygiene Trivia")
+        }
+
+        Spacer(modifier=Modifier.height(8.dp))
+
         // Button to the Calendar page.
         Button(onClick={navController.navigate("calendar")}) {
             Text(text = "Prototype Calendar")
