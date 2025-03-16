@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -58,14 +59,13 @@ fun HygieneTriviaPageBegin(modifier: Modifier, navController: NavController, hyg
         Text("Press the Button to Begin!", fontStyle = FontStyle.Italic, fontSize = 24.sp,
             lineHeight = 1.5.em)
 
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(onClick = {hygieneTriviaViewModel.beginTrivia()}) {
-                Text("Begin!")
-            }
+        Button(onClick = {hygieneTriviaViewModel.beginTrivia()}) {
+            Text("Begin!")
         }
+        TextButton(onClick = {navController.popBackStack("home", inclusive = false)}) {
+            Text("Go Home")
+        }
+
 
     }
 }

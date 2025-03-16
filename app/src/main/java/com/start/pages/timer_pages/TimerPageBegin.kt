@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -101,6 +102,9 @@ fun TimerPageBegin(modifier: Modifier, navController: NavController, timerViewMo
         // Create a button to start the timer.
         Button(onClick = {timerViewModel.startTimer()}) {
             Text(text="Start")
+        }
+        TextButton(onClick = {navController.popBackStack("home", inclusive = false)}) {
+            Text("Go Home")
         }
     }
 }
