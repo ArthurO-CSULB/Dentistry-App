@@ -333,7 +333,7 @@ class RatingViewModel: ViewModel() {
     fun updateLikeDislike(clinicID: String, ratingID: String, userDoesLikeDislike: String) {
         // Gather necessary variables and access to database
         val userID = auth.currentUser?.uid.toString()
-        val clinicRatingRef = db.collection("clinics").document(clinicID).collection("clinicRatings").document(userID)  // Create document for each user
+        val clinicRatingRef = db.collection("clinics").document(clinicID).collection("clinicRatings").document(ratingID)  // Create document for each user
         val userLikeDislikeRef = clinicRatingRef.collection("userLikesDislikes").document(userID)
 
         // Coroutine to handle asynchronously
@@ -342,7 +342,10 @@ class RatingViewModel: ViewModel() {
                 // ensure that the documents for clinicRatingRef exists, if not, create them
                 val clinicRatingDoc = clinicRatingRef.get().await()
                 if (!clinicRatingDoc.exists()) {
-                    // Create the review document with default values
+                    Log.e("LikeDislike update", "Rating document does not exist")
+                    _ratingState.value = RatingState.Error("Rating document does not exist")
+                    return@launch
+                    /* Create the review document with default values
                     clinicRatingRef.set(
                         hashMapOf(
                             "ratingID" to ratingID,
@@ -350,8 +353,8 @@ class RatingViewModel: ViewModel() {
                             "dislikeCount" to 0,
                             "LikeDislike" to "neutral"
                         )
-                    ).await()
-                    }
+                    ).await()*/
+                }
 
                 // Proceed with likes and dislikes
                 val currentReviewDoc = clinicRatingRef.get().await()
