@@ -333,32 +333,32 @@ class RatingViewModel: ViewModel() {
     fun updateLikeDislike(clinicID: String, ratingID: String, userDoesLikeDislike: String) {
         // Gather necessary variables and access to database
         val userID = auth.currentUser?.uid.toString()
-        val clinicRatingRef = db.collection("clinics").document(clinicID).collection("clinicRatings").document(ratingID)  // Create document for each user
-        val userLikeDislikeRef = clinicRatingRef.collection("userLikesDislikes").document(userID)
+        val clinicRatingsRef = db.collection("clinics").document(clinicID).collection("clinicRatings")
 
         // Coroutine to handle asynchronously
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // ensure that the documents for clinicRatingRef exists, if not, create them
-                val clinicRatingDoc = clinicRatingRef.get().await()
-                if (!clinicRatingDoc.exists()) {
-                    Log.e("LikeDislike update", "Rating document does not exist")
-                    _ratingState.value = RatingState.Error("Rating document does not exist")
+                // Query the clinicRatings collection to find the document with the matching ratingID
+                val query = clinicRatingsRef.whereEqualTo("ratingID", ratingID).limit(1)
+                val querySnapshot = query.get().await()
+
+                // Check if the query returned any documents
+                if (querySnapshot.isEmpty) {
+                    Log.e("LikeDislike update", "No rating found with ratingID: $ratingID")
+                    _ratingState.value = RatingState.Error("No rating found with ratingID: $ratingID")
                     return@launch
-                    /* Create the review document with default values
-                    clinicRatingRef.set(
-                        hashMapOf(
-                            "ratingID" to ratingID,
-                            "likeCount" to 0,
-                            "dislikeCount" to 0,
-                            "LikeDislike" to "neutral"
-                        )
-                    ).await()*/
                 }
 
-                // Proceed with likes and dislikes
-                val currentReviewDoc = clinicRatingRef.get().await()
-                val currentLikeDislike = currentReviewDoc.getString("LikeDislike") ?: ""
+                // Get the first document (there should only be one since ratingID is unique)
+                val clinicRatingDoc = querySnapshot.documents[0]
+                val clinicRatingRef = clinicRatingDoc.reference
+
+                // Proceed with likes and dislike, get document that has them
+                val userLikeDislikeRef = clinicRatingRef.collection("userLikesDislikes").document(userID)
+
+                // Fetch the current like/dislike state for the user
+                val userLikeDislikeDoc = userLikeDislikeRef.get().await()
+                val currentLikeDislike = userLikeDislikeDoc.getString("LikeDislike") ?: "neutral"
 
                 // Check if the user is not repeatedly clicking the like/dislike button on a rating
                 // If they aren't, then the data will be updated to whatever they picked
