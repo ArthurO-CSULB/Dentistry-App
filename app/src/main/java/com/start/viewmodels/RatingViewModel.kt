@@ -3,6 +3,7 @@ package com.start.viewmodels
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.AggregateField
@@ -16,7 +17,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import java.util.UUID
@@ -73,6 +78,16 @@ class RatingViewModel: ViewModel() {
         val userID = auth.currentUser?.uid.toString()
         _ratingID = UUID.randomUUID().toString()
         val createdAt = LocalDateTime.now()
+        val docRef = db.collection(ACCOUNTS).document(userID)
+        var userFirstName by mutableStateOf("firstName")
+        var userLastName by mutableStateOf("lastName")
+
+        // block current flow to get first name and last name on an asynchronous task
+        runBlocking {
+            var document = docRef.get().await()
+            userFirstName = document.getString("firstName").toString()
+            userLastName = document.getString("lastName").toString()
+        }
 
         // rating details that will be put in the ratings class
         // currently deprecated since it will be too much reading and writing for the time being
@@ -100,6 +115,8 @@ class RatingViewModel: ViewModel() {
 
         // rating details to be appended to the clinic
         val clinicRatingRecord = hashMapOf(
+            "firstName" to userFirstName,
+            "lastName" to userLastName,
             "ratingID" to _ratingID,
             "review" to review,
             "ratingScore" to rating,
@@ -142,6 +159,11 @@ class RatingViewModel: ViewModel() {
         }
     }
 
+    // function call for updating a rating
+    fun updateRating(clinicReview: ClinicReview) {
+
+    }
+
     // function that handles getting all ratings on a clinic
     @RequiresApi(Build.VERSION_CODES.O)
     fun getClinicRatings(clinicID: String) {
@@ -164,10 +186,11 @@ class RatingViewModel: ViewModel() {
 
                     // then get the relevant data: the rating, the review, the date it was made,
                     // and the like/dislikes
+                    val raterFirstName = data["firstName"] as? String ?: ""
+                    val raterLastName = data["lastName"] as? String ?: ""
                     val ratingScore = (data["ratingScore"] as? Long)?.toInt() ?: 0
                     val review = data["review"] as? String ?: ""
                     val ratingID = data["ratingID"] as? String ?: ""
-
                     val likes = (data["likeCount"] as? Long)?.toInt() ?: 0
                     val dislikes = (data["dislikeCount"] as? Long)?.toInt() ?: 0
                     val netLikes = data["LikeDislike"] as? String ?: "neutral"
@@ -181,7 +204,7 @@ class RatingViewModel: ViewModel() {
 
 
                     // store them into a ClinicRating data class then append it to the handler
-                    val processedRating = ClinicReview(
+                    val processedRating = ClinicReview(raterFirstName, raterLastName,
                         ratingScore, review, createdAt, netLikes,
                         likes, dislikes, ratingID
                     )
@@ -494,6 +517,8 @@ class RatingViewModel: ViewModel() {
 // Data class for storing clinic ratings
 // TODO: may need to be modified based on Kelson's likes and dislikes implementation
 data class ClinicReview(
+    val raterFirstName: String,
+    val raterLastName: String,
     val rating: Int,
     val review: String,
     val createdAt: LocalDateTime,

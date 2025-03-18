@@ -244,6 +244,7 @@ fun ClinicReviewItem(clinicReview: ClinicReview, ratingViewModel: RatingViewMode
     var dislikeCount by remember { mutableStateOf(clinicReview.dislikeCount) }
     var likeDislike by remember { mutableStateOf(clinicReview.likeDislike) }
 
+
     Column(
         // UI specifics of a single item
         modifier = Modifier
@@ -275,7 +276,7 @@ fun ClinicReviewItem(clinicReview: ClinicReview, ratingViewModel: RatingViewMode
                 // User name
                 // Users are anonymous in the program so don't use real name
                 Text(
-                    text = "A mOral User",
+                    text = "${clinicReview.raterFirstName} ${clinicReview.raterLastName}",
                     modifier = Modifier.padding(12.dp, 3.dp),
                     fontSize = 18.sp
                 )
@@ -461,7 +462,7 @@ fun ReviewsTab(clinicRatings: List<ClinicReview>, ratingViewModel: RatingViewMod
 }
 
 /*
-Test Review Item
+//Test Review Item
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
