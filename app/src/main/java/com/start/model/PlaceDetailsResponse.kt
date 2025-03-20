@@ -15,14 +15,15 @@ data class PlaceDetails(
     @SerializedName("name") val name: String,
     @SerializedName("formatted_address") val address: String?,
     @SerializedName("formatted_phone_number") val phoneNumber: String?,
-    @SerializedName("rating") val rating: Float?,
-    @SerializedName("user_ratings_total") val userRatingsTotal: Int?,
+    //@SerializedName("rating") val rating: Float?,
+    //@SerializedName("user_ratings_total") val userRatingsTotal: Int?,
     @SerializedName("opening_hours") val openingHours: OpeningHours?,
     @SerializedName("photos") val photos: List<Photo>?
 )
 
 // Data class for opening hours
 data class OpeningHours(
+    @SerializedName("open_now") val open: Boolean,
     @SerializedName("weekday_text") val weekdayText: List<String>?
 )
 

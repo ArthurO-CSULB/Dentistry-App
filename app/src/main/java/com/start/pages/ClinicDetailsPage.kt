@@ -1,8 +1,10 @@
 package com.start.pages
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,10 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,10 +67,11 @@ import com.start.viewmodels.ClinicDetailsViewModel
 fun ClinicDetailsPage(
     placeId: String?,// Place ID that is taken from one of the clinics in the Clinic Search Page
     navController: NavController,
-    clinicDetailsViewModel : ClinicDetailsViewModel = viewModel()
+    clinicDetailsViewModel : ClinicDetailsViewModel = viewModel() // Viewmodel to allow sending clinic data to the database
 ) {
     val context = LocalContext.current
     var clinicDetails by remember { mutableStateOf<PlaceDetails?>(null) }
+    var isExpanded by remember {mutableStateOf(false)} //State for the collapsable Opening Hours list
 
 
     // Gets details about the clinic when the page loads
@@ -160,11 +167,13 @@ fun ClinicDetailsPage(
                             painter = painterResource(id = R.drawable.dental_clinic_clipart),
                             contentDescription = "Clinic Picture",
                             modifier = Modifier
-                                .size(300.dp)
+                                .size(260.dp)
                                 .fillMaxSize()
                         )
                     }
-                }
+            }
+
+            //Clinic Address Row
             Row(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
@@ -181,6 +190,8 @@ fun ClinicDetailsPage(
                 )
                 clinic.address?.let { Text(text = it, fontSize = 20.sp, fontWeight = FontWeight.SemiBold) }
             }
+
+            //Clinic Phone Number Row
             Row(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
@@ -197,7 +208,107 @@ fun ClinicDetailsPage(
                 )
                 clinic.phoneNumber?.let { Text(text = it, fontSize = 20.sp, fontWeight = FontWeight.SemiBold) }
             }
+
+            // Clinic Opening Hours Row
+            clinic.openingHours?.weekdayText?.let { hours ->
+                Column(
+                    //horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { isExpanded = !isExpanded }
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.clock),
+                            contentDescription = "Clock Icon",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .padding(end = 8.dp)
+                        )
+                        Text(
+                            text = "Opening Hours",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Icon(
+                            imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Expand/Collapse Icon",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(start = 8.dp)
+                        )
+                        //Displays green Open sign if clinic is currently open
+                        if (clinic.openingHours.open) {
+                            Text(
+                                text = "Open",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Green,
+                                modifier = Modifier
+                                    .padding(start = 12.dp)
+                            )
+                        }
+                        //Displays red Closed sign if clinic is currently closed
+                        else{
+                            Text(
+                                text = "Closed",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Red,
+                                modifier = Modifier
+                                    .padding(start = 12.dp)
+                            )
+                        }
+                    }
+                    //Displays all opening days/hours
+                    AnimatedVisibility(visible = isExpanded) {
+                        Column (
+                            horizontalAlignment = Alignment.Start,
+                            modifier = Modifier
+                                .padding(start = 52.dp)
+                                .fillMaxWidth()
+                        )
+                        {
+                            hours.forEach { daysHours ->
+                                Text(
+                                    text = daysHours,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
+                }
+            } ?: Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.clock),
+                    contentDescription = "Clock Icon",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(end = 8.dp)
+                )
+
+                Text( //If there are no opening hours available
+                    text = "Opening hours not available",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Gray
+                )
+            }
         } ?: Text("Loading clinic details...") //If details are null, shows this
+
 
         HorizontalDivider(
             modifier = Modifier
@@ -309,7 +420,7 @@ fun ClinicDetailsPageLayout(
         ){
             Image(
                 painter = painterResource(id = R.drawable.clinic_phone),
-                contentDescription = "Address Pin",
+                contentDescription = "Phone Icon",
                 modifier = Modifier
                     .size(40.dp)
                     .padding(end = 8.dp)
@@ -317,6 +428,59 @@ fun ClinicDetailsPageLayout(
             Text(text = "555-555-5555", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
         }
             ?: Text("Loading clinic details...") //If details are null, shows this
+        //val hours: List<String> = listOf("Monday: 12AM-8PM", "Tuesday: 12AM-8PM", "Wednesday: 12AM-8PM", "Thursday: 12AM-8PM", "Friday: 12AM-8PM", "Saturday: 12AM-8PM" ,"Sunday: 12AM-8PM")
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {}
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.clock),
+                    contentDescription = "Clock Icon",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(end = 8.dp)
+                )
+                Text(
+                    text = "Opening Hours",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = "Expand/Collapse Icon",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(start = 8.dp)
+                )
+                if (false) {
+                    Text(
+                        text = "Open",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Green,
+                        modifier = Modifier.padding(start = 12.dp)
+                    )
+                }
+                else{
+                    Text(
+                        text = "Closed",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Red,
+                        modifier = Modifier.padding(start = 12.dp)
+                    )
+                }
+            }
+        }
         HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -339,7 +503,6 @@ fun ClinicDetailsPageLayout(
             }
         }
     }
-
 }
 @Preview(showBackground = true)
 @Composable
