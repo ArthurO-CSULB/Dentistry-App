@@ -19,7 +19,9 @@ import com.start.viewmodels.TimerViewModel
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
 import com.start.repos.HygieneTriviaRepo
+import com.start.repos.PointsRepo
 import com.start.viewmodels.HygieneTriviaViewModel
+import com.start.viewmodels.PointsViewModel
 
 /*
 We have our main and sole activity where the app will navigate through various composable screens
@@ -52,6 +54,7 @@ class MainActivity : ComponentActivity(){
         // We create our repositories, passing in the Context for app resources.
         val funFactsRepo = TimerFunFactsRepo(applicationContext)
         val hygieneTriviaRepo = HygieneTriviaRepo(applicationContext)
+        val pointsRepo = PointsRepo(applicationContext)
 
         // We declare and initialize the view-models, delegating their initialization
         // and lifecycle management to Jetpack's viewModels function.
@@ -62,8 +65,13 @@ class MainActivity : ComponentActivity(){
             TimerViewModel.TimerViewModelFactory(funFactsRepo)
         }
         val hygieneTriviaViewModel: HygieneTriviaViewModel by viewModels() {
+            // Use factory to create view model to pass in the fun facts repository
             HygieneTriviaViewModel.HygieneTriviaViewModelFactory(hygieneTriviaRepo)
         }
+        val pointsViewModel: PointsViewModel by viewModels() {
+            PointsViewModel.PointsViewModelFactory(pointsRepo)
+        }
+
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
             DentalHygieneTheme {
@@ -72,8 +80,12 @@ class MainActivity : ComponentActivity(){
                     // The page navigation is the main content of the scaffold. Modifier assigned
                     // inner padding to ensure page navigation respects the reserved space, as well
                     // as passing in the ViewModels.
-                    PageNavigation(modifier = Modifier.padding(innerPadding),
-                        authViewModel = authViewModel, timerViewModel = timerViewModel, hygieneTriviaViewModel = hygieneTriviaViewModel)
+                    PageNavigation(
+                        modifier = Modifier.padding(innerPadding),
+                        authViewModel = authViewModel,
+                        timerViewModel = timerViewModel,
+                        hygieneTriviaViewModel = hygieneTriviaViewModel,
+                        pointsViewModel = pointsViewModel)
                 }
             }
         }
