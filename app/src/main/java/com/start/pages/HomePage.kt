@@ -154,13 +154,11 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController,
         // Space
         Spacer(modifier=Modifier.height(8.dp))
 
-        /*
-
         // Button to the points test page.
         Button(onClick={navController.navigate("points_test")}) {
             Text(text = "Points Test")
         }
-         */
+
     }
 
     //Arrange another column only for Sign Out button

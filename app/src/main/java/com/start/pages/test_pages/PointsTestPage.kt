@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavController
 import com.start.viewmodels.PointsProgressionViewModel
@@ -16,15 +20,30 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun PointsTestPage(modifier: Modifier, navController: NavController, pointsProgressionViewModel: PointsProgressionViewModel) {
+
+    var currPrestige by remember { mutableStateOf("")}
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Points Test!", fontWeight = FontWeight.Bold, fontSize = 64.sp,
+        Text("Points Test!", fontWeight = FontWeight.Bold, fontSize = 16.sp,
             lineHeight = 1.5.em)
+        Text("Prestige: $currPrestige", fontSize = 16.sp, lineHeight = 1.5.em)
         Button(onClick = {pointsProgressionViewModel.addTriviaPoints(1)}) {
             Text("Add 1 Point")
         }
+        Button(onClick = {pointsProgressionViewModel.prestigeTest()}) {
+            Text("Prestige")
+        }
+        Button(onClick = {
+            pointsProgressionViewModel.getPrestigeTest { prestige ->
+                currPrestige = prestige.toString()
+            }
+        }) {
+            Text("Get Prestige")
+        }
+
     }
 }
