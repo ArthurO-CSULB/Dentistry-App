@@ -7,7 +7,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 // Repo to connect to the database.
-class PointsRepo(context: Context) {
+class PointsProgressionRepo(context: Context) {
     // Store references to the Firebase Authentication and Firestore instances.
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()

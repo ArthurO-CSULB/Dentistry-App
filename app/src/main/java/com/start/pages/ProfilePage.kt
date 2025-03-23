@@ -106,7 +106,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Text(text = "Name: ")
         Box(
             modifier = Modifier
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .padding(8.dp)
         ){
         Text(text = "$firstName $lastName", fontSize = 20.sp)}
@@ -116,7 +116,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Text(text = "Email: ")
         Box(
             modifier = Modifier
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .padding(8.dp)
         ) {
             Text(text = email, fontSize = 20.sp)
@@ -127,7 +127,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Text(text = "Experience Points: ")
         Box(
             modifier = Modifier
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .padding(8.dp)
         ) {
             Text(text = experience, fontSize = 20.sp)

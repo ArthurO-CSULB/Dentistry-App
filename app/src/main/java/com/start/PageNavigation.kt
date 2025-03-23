@@ -42,7 +42,7 @@ import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
 import com.start.pages.timer_pages.TimerPageCounting
 import com.start.pages.timer_pages.TimerPageFinish
 import com.start.viewmodels.HygieneTriviaViewModel
-import com.start.viewmodels.PointsViewModel
+import com.start.viewmodels.PointsProgressionViewModel
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -56,7 +56,7 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsViewModel: PointsViewModel
+TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressionViewModel: PointsProgressionViewModel
 ) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
@@ -138,7 +138,7 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsViewModel:
                 fadeIn(animationSpec=tween(800, 750))
             }
         ) {
-            HygieneTriviaPageFinished(modifier, navController, hygieneTriviaViewModel, pointsViewModel)
+            HygieneTriviaPageFinished(modifier, navController, hygieneTriviaViewModel)
         }
 
         composable(
@@ -151,7 +151,7 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsViewModel:
         }
 
         composable("trivia_points") {
-            HygieneTriviaPagePoints(modifier, navController, hygieneTriviaViewModel, pointsViewModel)
+            HygieneTriviaPagePoints(modifier, navController, hygieneTriviaViewModel, pointsProgressionViewModel)
         }
 
 
@@ -238,7 +238,7 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsViewModel:
         }
 
         composable("points_test") {
-            PointsTestPage(modifier, navController, pointsViewModel)
+            PointsTestPage(modifier, navController, pointsProgressionViewModel)
         }
     })
 }

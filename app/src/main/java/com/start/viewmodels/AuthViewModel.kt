@@ -135,7 +135,8 @@ class AuthViewModel : ViewModel() {
                         "firstName" to firstName,
                         "lastName" to lastName,
                         "email" to email,
-                        "experience" to 0
+                        "experience" to 0,
+                        "prestige" to 0
                     )
 
                     // Get current user

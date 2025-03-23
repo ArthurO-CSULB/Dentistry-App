@@ -8,18 +8,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.start.viewmodels.HygieneTriviaState
 import com.start.viewmodels.HygieneTriviaViewModel
-import com.start.viewmodels.PointsViewModel
+import com.start.viewmodels.PointsProgressionViewModel
 
 @Composable
 fun HygieneTriviaPagePoints(modifier: Modifier, navController: NavController,
                             hygieneTriviaViewModel: HygieneTriviaViewModel,
-                            pointsViewModel: PointsViewModel
+                            pointsProgressionViewModel: PointsProgressionViewModel
 ) {
     val hygieneTriviaState = hygieneTriviaViewModel.hygieneTriviaState.collectAsState()
     val numCorrect = hygieneTriviaViewModel.numCorrect()
@@ -33,7 +32,7 @@ fun HygieneTriviaPagePoints(modifier: Modifier, navController: NavController,
 
     // Add points to to the user's account.
     LaunchedEffect(Unit) {
-        pointsViewModel.addTriviaPoints(numCorrect.toLong())
+        pointsProgressionViewModel.addTriviaPoints(numCorrect.toLong())
     }
 
     if (hygieneTriviaState.value != HygieneTriviaState.Begin) {
