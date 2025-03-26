@@ -26,6 +26,7 @@ import com.start.pages.CreateRatingPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.SettingsPage
+import com.start.pages.UserRatingsPage
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
 import com.start.viewmodels.RatingViewModel
@@ -161,6 +162,10 @@ TimerViewModel, ratingViewModel: RatingViewModel) {
         // Settings Page
         composable("settings"){
             SettingsPage(modifier, navController)
+        }
+
+        composable("userRatings") {
+            UserRatingsPage(navController, ratingViewModel)
         }
     })
 }

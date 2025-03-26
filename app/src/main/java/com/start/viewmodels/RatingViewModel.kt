@@ -42,12 +42,20 @@ class RatingViewModel: ViewModel() {
     private val db = FirebaseFirestore.getInstance()
 
     // handling fields for the list of ratings
-    private val _ratingsList = MutableStateFlow<List<ClinicReview>>(emptyList())
-    val ratingsList: StateFlow<List<ClinicReview>> get() = _ratingsList
+    private val _clinicRatingsList = MutableStateFlow<List<ClinicReview>>(emptyList())
+    val clinicRatingsList: StateFlow<List<ClinicReview>> get() = _clinicRatingsList
 
-    // handling fields for the number of ratings present
-    private val _ratingsCount = MutableStateFlow<Int>(0)
-    val ratingsCount: StateFlow<Int> get() = _ratingsCount
+    // handling fields for the number of clinic ratings present
+    private val _clinicRatingsCount = MutableStateFlow<Int>(0)
+    val clinicRatingsCount: StateFlow<Int> get() = _clinicRatingsCount
+
+    // handling fields for the list of user ratings
+    private val _userRatingsList = MutableStateFlow<List<UserReview>>(emptyList())
+    val userRatingsList: StateFlow<List<UserReview>> get() = _userRatingsList
+
+    // handling fields for the number of user ratings present
+    private val _userRatingsCount = MutableStateFlow<Int>(0)
+    val userRatingsCount: StateFlow<Int> get() = _userRatingsCount
 
     // handling ratingID
     private var _ratingID: String? = null
@@ -104,26 +112,29 @@ class RatingViewModel: ViewModel() {
 
         // rating details to be appended to the user
         val userRatingRecord = hashMapOf(
-            "ratingID" to _ratingID,
+            "clinicID" to clinicID,
             "clinicName" to clinicName,
+            "ratingID" to _ratingID,
             "ratingScore" to rating,
             "review" to review,
+            "createdAt" to createdAt,
             "likeCount" to 0,
             "dislikeCount" to 0,
-            "LikeDislike" to "neutral"
+            "LikeDislike" to "neutral",
         )
 
         // rating details to be appended to the clinic
         val clinicRatingRecord = hashMapOf(
             "firstName" to userFirstName,
             "lastName" to userLastName,
+            "userID" to userID,
             "ratingID" to _ratingID,
             "review" to review,
             "ratingScore" to rating,
             "createdAt" to createdAt,
             "likeCount" to 0,
             "dislikeCount" to 0,
-            "LikeDislike" to "neutral"
+            "LikeDislike" to "neutral",
         )
 
         val userRatingRef = db.collection(ACCOUNTS).document(userID).collection(USER_RATINGS).document(clinicID)
@@ -213,9 +224,9 @@ class RatingViewModel: ViewModel() {
                 }
 
                 // once its finished... replace the value of _clinicList into the contents of the handler\
-                _ratingsList.value = processedRatings
-                _ratingsCount.value = processedRatings.size
-                sortReviews("Most Recent")
+                _clinicRatingsList.value = processedRatings
+                _clinicRatingsCount.value = processedRatings.size
+                sortClinicReviews("Most Recent")
                 Log.d("Clinic Ratings Fetching", "Clinic Ratings successfully fetched")
             }
 
@@ -223,6 +234,61 @@ class RatingViewModel: ViewModel() {
             catch (e: Exception) {
                     // log the reason why it failed
                     Log.e("Clinic Ratings Fetching", e.message.toString())
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getUserRatings() {
+        val userID = auth.uid.toString()
+        val userDocRef = db.collection(ACCOUNTS).document(userID).collection(USER_RATINGS)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val ratings = userDocRef.get().await()
+                val processedRatings = mutableListOf<UserReview>()
+
+                for (rating in ratings) {
+                    val rawData = rating.data
+                    val clinicID = rawData["clinicID"] as? String?: ""
+                    val clinicName = rawData["clinicName"] as? String?: ""
+                    val ratingScore = (rawData["ratingScore"] as? Long)?.toInt() ?: 0
+                    val review = rawData["review"] as? String?: ""
+                    val likeCount = (rawData["likeCount"] as? Long?)?.toInt() ?: 0
+                    val dislikeCount = (rawData["dislikeCount"] as? Long?)?.toInt() ?: 0
+                    val netLikes = rawData["LikeDislike"] as? String?: ""
+                    //val userID = rawData["userID"] as? String?: ""
+                    val ratingID = rawData["ratingID"] as? String?: ""
+
+                    val createdAtMap = rawData["createdAt"] as? Map<String, Any>
+                    val createdAt =
+                        createdAtMap?.let { mapToLocalDateTime(it) } ?: LocalDateTime.now()
+
+
+                    val processedRating = UserReview(
+                        clinicID = clinicID,
+                        clinicName = clinicName,
+                        rating = ratingScore,
+                        review = review,
+                        createdAt = createdAt,
+                        likeDislike = netLikes,
+                        likeCount = likeCount,
+                        dislikeCount = dislikeCount,
+                        ratingID = ratingID
+                    )
+
+                    processedRatings.add(processedRating)
+                }
+
+                _userRatingsList.value = processedRatings
+                _userRatingsCount.value = processedRatings.size
+                Log.d("User Ratings Fetching", "Clinic Ratings successfully fetched")
+            }
+
+            // if it fails...
+            catch (e: Exception) {
+                // log the reason why it failed
+                Log.e("User Ratings Fetching", e.message.toString())
             }
         }
     }
@@ -395,7 +461,7 @@ class RatingViewModel: ViewModel() {
 
 
                     // Update the ClinicReview object in _ratingsList
-                    val updatedRatings = _ratingsList.value.map { review ->
+                    val updatedRatings = _clinicRatingsList.value.map { review ->
                         if (review.ratingID == ratingID) {
                             review.copy(
                                 likeCount = (updateData["likeCount"] as? Long)?.toInt() ?: review.likeCount,
@@ -407,7 +473,7 @@ class RatingViewModel: ViewModel() {
                         }
                     }
 
-                    _ratingsList.value = updatedRatings
+                    _clinicRatingsList.value = updatedRatings
                     // Fetch to ensure UI changes
                     getClinicRatings(clinicID)
                     _ratingState.value = RatingState.Success("Like/Dislike Updated Successfully!")
@@ -489,21 +555,30 @@ class RatingViewModel: ViewModel() {
     }
 
     // Sort ratings based on the specification user choose
-    fun sortReviews(sortedBy: String) {
+    fun sortClinicReviews(sortedBy: String) {
 
         //sort the list by the most recent ratings
         if (sortedBy == "Most Recent") {
-            _ratingsList.value = _ratingsList.value.sortedWith(
+            _clinicRatingsList.value = _clinicRatingsList.value.sortedWith(
                 compareByDescending<ClinicReview> { it.createdAt})
         }
 
         // sort the list by the most helpful ratings (likes > dislikes, if amount is the same, display the most recent one)
         //TODO: Change this function to compare like amounts instead of rating when Kelson finishes likes and dislike implementation
         if (sortedBy == "Most Helpful") {
-            _ratingsList.value = _ratingsList.value.sortedWith(
+            _clinicRatingsList.value = _clinicRatingsList.value.sortedWith(
                 compareByDescending<ClinicReview> { it.rating }.thenByDescending { it.createdAt }
             )
         }
+    }
+
+    fun sortUserReviews(sortedBy: String) {
+
+        if (sortedBy == "Most Recent")
+            _userRatingsList.value = _userRatingsList.value.sortedWith(compareByDescending<UserReview> {it.createdAt})
+
+        if (sortedBy == "Clinic Name")
+            _userRatingsList.value = _userRatingsList.value.sortedWith(compareBy<UserReview> {it.clinicName})
     }
 
     // Function that changes the state when user starts creating a rating
@@ -518,7 +593,6 @@ class RatingViewModel: ViewModel() {
 }
 
 // Data class for storing clinic ratings
-// TODO: may need to be modified based on Kelson's likes and dislikes implementation
 data class ClinicReview(
     val raterFirstName: String,
     val raterLastName: String,
@@ -528,6 +602,18 @@ data class ClinicReview(
     var likeDislike: String, // for when a user likes/dislikes a rating, initialized as String to avoid confusion
     var likeCount: Int = 0, // Count of likes on an individual rating
     var dislikeCount: Int = 0, // Count of dislikes on an individual rating
+    val ratingID: String
+)
+
+data class UserReview(
+    val clinicID: String,
+    val clinicName: String,
+    val rating: Int,
+    val review: String,
+    val createdAt: LocalDateTime,
+    var likeDislike: String,
+    var likeCount: Int = 0,
+    var dislikeCount: Int = 0,
     val ratingID: String
 )
 

@@ -88,8 +88,8 @@ fun ClinicRatingsPage
 
     // variables for handling state changes and displaying ratings on the clinic
     var ratingState = ratingViewModel.ratingState
-    val clinicList by ratingViewModel.ratingsList.collectAsState() // holds the list of clinics ratings dynamically
-    var listCount = ratingViewModel.ratingsCount.collectAsState() // holds the number of ratings dynamically
+    val clinicList by ratingViewModel.clinicRatingsList.collectAsState() // holds the list of clinics ratings dynamically
+    var listCount = ratingViewModel.clinicRatingsCount.collectAsState() // holds the number of ratings dynamically
     var ratingAverage = ratingViewModel.clinicRatingAverage.collectAsState() // holds the clinic rating average dynamically
 
     // Gets details about the clinic when the page loads
@@ -226,7 +226,7 @@ fun ClinicRatingsPage
             )
 
             // Declare the dropdown menu for sorting options of the ratings
-            SortingDropdownMenu(ratingViewModel)
+            ClinicSortingDropdownMenu(ratingViewModel)
 
             // Tab that shows all reviews on the clinic
             ReviewsTab(clinicList, ratingViewModel, clinicID)
@@ -377,7 +377,7 @@ fun StarBar(rating: Int, modifier: Modifier) {
 // Implementation of the sorting menu to show relevant reviews
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SortingDropdownMenu(ratingViewModel: RatingViewModel) {
+fun ClinicSortingDropdownMenu(ratingViewModel: RatingViewModel) {
 
     // variables needed to for the menu to function
     var expanded by remember { mutableStateOf(false) } // checks if the menu is closed or not
@@ -429,7 +429,7 @@ fun SortingDropdownMenu(ratingViewModel: RatingViewModel) {
                     text = { Text("Most Helpful") },
                     onClick = {
                         currentSortBy = "Most Helpful"
-                        ratingViewModel.sortReviews("Most Helpful")
+                        ratingViewModel.sortClinicReviews("Most Helpful")
                               },
                     modifier = menuItemsModifier
                 )
@@ -437,7 +437,7 @@ fun SortingDropdownMenu(ratingViewModel: RatingViewModel) {
                     text = { Text("Most Recent") },
                     onClick = {
                         currentSortBy = "Most Recent"
-                        ratingViewModel.sortReviews("Most Recent")
+                        ratingViewModel.sortClinicReviews("Most Recent")
                               },
                     modifier = menuItemsModifier
                 )
