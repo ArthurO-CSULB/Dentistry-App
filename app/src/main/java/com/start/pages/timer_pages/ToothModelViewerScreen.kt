@@ -1,9 +1,8 @@
-package com.start.pages.TimerPages
+package com.start.pages.timer_pages
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Base64
-import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.wrapContentSize
@@ -19,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.viewinterop.AndroidView
 import com.start.viewmodels.TimerModelState
 import com.start.viewmodels.TimerViewModel
-import kotlinx.coroutines.delay
 import java.io.InputStream
 
 /*

@@ -89,7 +89,7 @@ class TimerViewModel(private val timerFunFactsRepo: TimerFunFactsRepo) : ViewMod
         // Else it is counting.
         else _timerState.value = TimerState.Counting
         // Asynchronously run the counting down of the timer to avoid blocking the main thread.
-        // runs coroutines on a background thread pool via Dispatchers.Default
+        // runs coroutines on a background thread pool via Dispatchers.Default for cpu heavy tasks.
         timerRun = viewModelScope.launch(Dispatchers.Default) {
             // Loop for counting down for two minutes until state changes.
             while (true) {

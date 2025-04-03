@@ -1,4 +1,4 @@
-package com.start.pages.TimerPages
+package com.start.pages.timer_pages
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dentalhygiene.R
-import com.start.viewmodels.TimerViewModel
 import com.start.notificationhandlers.TimerNotificationHandler
 import com.start.viewmodels.TimerState
+import com.start.viewmodels.TimerViewModel
 
 /*
 We have a composable timer page which will handle the UI the toothbrush timer.
@@ -46,8 +46,7 @@ URL: https://meetpatadia9.medium.com/local-notification-in-android-with-jetpack-
  */
 
 @Composable
-fun TimerPageCancel(modifier: Modifier, navController: NavController, timerViewModel: TimerViewModel) {
-
+fun TimerPageFinish(modifier: Modifier, navController: NavController, timerViewModel: TimerViewModel) {
     // Use BackHandler to intercept the system back button and navigate to the home screen.
     BackHandler {
         // Navigate back to the home screen when the system back button is pressed
@@ -59,16 +58,18 @@ fun TimerPageCancel(modifier: Modifier, navController: NavController, timerViewM
     // everytime data changes.
     val timerState = timerViewModel.timerState.collectAsState()
 
+    val timerNotifications = TimerNotificationHandler(LocalContext.current)
 
-    // Launched Effect for navigating back to the beginning.
+    // Launched effect when timer state changes to navigate to beginning.
     LaunchedEffect(timerState.value) {
         when(timerState.value) {
             is TimerState.Begin -> navController.navigate("timer_begin")
+            is TimerState.Finished -> timerNotifications.timerFinishedNotification()
             else -> Unit
         }
     }
 
-    // We create the column to display the UI when cancelled.
+    // We create the column to display the UI when finished.
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -84,7 +85,7 @@ fun TimerPageCancel(modifier: Modifier, navController: NavController, timerViewM
             // We display the tooth model.
             Image(
                 // Using the painter Resource API we display the image.
-                painter = painterResource(id = R.drawable.sadface_timer),
+                painter = painterResource(id = R.drawable.smileyface_timer),
                 contentDescription = stringResource(id = R.string.tooth_model_initial),
                 // We crop the image to our liking.
                 contentScale = ContentScale.Crop,
@@ -101,9 +102,9 @@ fun TimerPageCancel(modifier: Modifier, navController: NavController, timerViewM
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Text for message.
+            // Text to congratulate.
             Text(
-                text="You don't have to brush all your teeth - just the ones you want to keep...",
+                text="Great Job! Take care of your teeth and they'll take care of you.",
                 fontSize=24.sp,
                 textAlign= TextAlign.Center,
                 lineHeight=2.em,
@@ -118,12 +119,12 @@ fun TimerPageCancel(modifier: Modifier, navController: NavController, timerViewM
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text="+0",
+                text="+100",
                 fontSize=70.sp,
                 textAlign= TextAlign.Center,
                 lineHeight=2.em,
                 fontWeight= FontWeight.ExtraBold,
-                color = Color.Red
+                color = Color.Green
             )
         }
         // Row for the button to restart.

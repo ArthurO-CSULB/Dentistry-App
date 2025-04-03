@@ -8,36 +8,38 @@ import androidx.navigation.compose.rememberNavController
 import com.start.pages.LoginPage
 import com.start.pages.SignUpPage
 import com.start.pages.HomePage
-import com.start.pages.TimerPages.TimerPage
+import com.start.pages.timer_pages.TimerPage
 import com.start.pages.CalendarPage
 import com.start.pages.ChangePasswordPage
 import com.start.pages.ChangeUserDetailsPage
 import com.start.pages.ClinicSearchPage
 import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
-import com.start.pages.ClinicSearchPage
 import com.start.pages.ProfilePage
 import com.start.pages.ReauthenticationPage
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import com.start.pages.AddEventPage
 import com.start.pages.BookmarkPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
+import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageBegin
 import com.start.pages.SettingsPage
-import com.start.pages.TimerPages.TimerPageBegin
-import com.start.pages.TimerPages.TimerPageCancel
-import com.start.pages.TimerPages.TimerPageCountingModel
+import com.start.pages.timer_pages.TimerPageBegin
+import com.start.pages.timer_pages.TimerPageCancel
+import com.start.pages.timer_pages.TimerPageCountingModel
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
-import com.start.pages.TimerPages.TimerPageCounting
-import com.start.pages.TimerPages.TimerPageFinish
+import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
+import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFinished
+import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
+import com.start.pages.timer_pages.TimerPageCounting
+import com.start.pages.timer_pages.TimerPageFinish
+import com.start.viewmodels.HygieneTriviaViewModel
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -51,7 +53,8 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel) {
+TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel
+) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
     // is consistent throughout the lifecycle of NavHost. This prevents a NavController being
@@ -75,10 +78,10 @@ TimerViewModel) {
         }
         // Home screen.
         composable("home"){
-            HomePage(modifier, navController, authViewModel, timerViewModel)
+            HomePage(modifier, navController, authViewModel, timerViewModel, hygieneTriviaViewModel)
         }
 
-        // Timer screen.
+        // Timer screen. Not in use
         composable("timer"){
             // If the current build is at least API level 33...
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -116,6 +119,32 @@ TimerViewModel) {
 
         composable("timer_finish") {
             TimerPageFinish(modifier, navController, timerViewModel)
+        }
+
+        composable("trivia_begin") {
+            HygieneTriviaPageBegin(modifier, navController, hygieneTriviaViewModel)
+        }
+
+        composable("trivia_trivia") {
+            HygieneTriviaPageTrivia(modifier, navController, hygieneTriviaViewModel)
+        }
+
+        composable(
+            route ="trivia_finish",
+            enterTransition = {
+                fadeIn(animationSpec=tween(800, 750))
+            }
+        ) {
+            HygieneTriviaPageFinished(modifier, navController, hygieneTriviaViewModel)
+        }
+
+        composable(
+            route = "trivia_fail",
+            enterTransition = {
+                fadeIn(animationSpec=tween(800, 750))
+            }
+        ) {
+            HygieneTriviaPageFailed(modifier, navController, hygieneTriviaViewModel)
         }
 
         // Monthly Calendar screen.

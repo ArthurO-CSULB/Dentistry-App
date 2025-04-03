@@ -18,6 +18,8 @@ import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
+import com.start.repos.HygieneTriviaRepo
+import com.start.viewmodels.HygieneTriviaViewModel
 
 /*
 We have our main and sole activity where the app will navigate through various composable screens
@@ -49,6 +51,7 @@ class MainActivity : ComponentActivity(){
         // Gabriel Villanueva
         // We create our repositories, passing in the Context for app resources.
         val funFactsRepo = TimerFunFactsRepo(applicationContext)
+        val hygieneTriviaRepo = HygieneTriviaRepo(applicationContext)
 
         // We declare and initialize the view-models, delegating their initialization
         // and lifecycle management to Jetpack's viewModels function.
@@ -57,6 +60,9 @@ class MainActivity : ComponentActivity(){
         val timerViewModel: TimerViewModel by viewModels() {
             // Use factory to create view model to pass in the fun facts repository
             TimerViewModel.TimerViewModelFactory(funFactsRepo)
+        }
+        val hygieneTriviaViewModel: HygieneTriviaViewModel by viewModels() {
+            HygieneTriviaViewModel.HygieneTriviaViewModelFactory(hygieneTriviaRepo)
         }
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
@@ -67,7 +73,7 @@ class MainActivity : ComponentActivity(){
                     // inner padding to ensure page navigation respects the reserved space, as well
                     // as passing in the ViewModels.
                     PageNavigation(modifier = Modifier.padding(innerPadding),
-                        authViewModel = authViewModel, timerViewModel = timerViewModel)
+                        authViewModel = authViewModel, timerViewModel = timerViewModel, hygieneTriviaViewModel = hygieneTriviaViewModel)
                 }
             }
         }

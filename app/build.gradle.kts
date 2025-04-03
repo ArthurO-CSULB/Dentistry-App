@@ -91,7 +91,7 @@ dependencies {
     implementation("androidx.test.services:storage:1.5.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.5")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
     testImplementation("junit:junit:4.13.2")
@@ -125,6 +125,9 @@ dependencies {
 
     // Webkit to work with modern WebView APIs. This is to for the teeth model.
     implementation("androidx.webkit:webkit:1.12.1")
+
+    // Gson to parse JSON data for the dental hygiene trivia.
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // Maps SDK for Android
     // Google Maps Compose library
