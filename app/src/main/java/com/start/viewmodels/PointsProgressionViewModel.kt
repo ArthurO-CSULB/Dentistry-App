@@ -39,6 +39,9 @@ import java.lang.IllegalArgumentException
 
 class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgressionRepo): ViewModel() {
 
+    // TODO: When adding points, implement the functionality that limits the amount of points for each prestige
+
+
     // Pass in the number of questions that were answered correctly by the user. Each
     // question answered correctly, multiplied by 10 will be the number of points awarded.
     fun addTriviaPoints(numCorrect: Long) {
@@ -49,13 +52,22 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
         }
     }
 
-    fun prestigeTest() {
+    // Add 100 points to the user's account when they have successfully completed the timer.
+    fun addTimerPoints() {
+        // Add points to the Firestore database asynchronously
+        viewModelScope.launch {
+            pointsProgressionRepo.addPoints(100L)
+        }
+    }
+
+
+    fun prestige() {
         viewModelScope.launch {
             pointsProgressionRepo.prestige()
         }
     }
 
-    fun getPrestigeTest(onResult: (Long) -> Unit) {
+    fun getPrestige(onResult: (Long) -> Unit) {
         pointsProgressionRepo.getPrestige { prestige ->
             onResult(prestige)
         }

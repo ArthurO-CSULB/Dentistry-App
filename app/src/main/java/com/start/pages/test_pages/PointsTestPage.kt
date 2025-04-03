@@ -17,12 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun PointsTestPage(modifier: Modifier, navController: NavController, pointsProgressionViewModel: PointsProgressionViewModel) {
 
     var currPrestige by remember { mutableStateOf("")}
-
+    
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -34,12 +35,13 @@ fun PointsTestPage(modifier: Modifier, navController: NavController, pointsProgr
         Button(onClick = {pointsProgressionViewModel.addTriviaPoints(1)}) {
             Text("Add 1 Point")
         }
-        Button(onClick = {pointsProgressionViewModel.prestigeTest()}) {
+        Button(onClick = {pointsProgressionViewModel.prestige()}) {
             Text("Prestige")
         }
         Button(onClick = {
-            pointsProgressionViewModel.getPrestigeTest { prestige ->
-                currPrestige = prestige.toString()
+            // Get prestige
+            pointsProgressionViewModel.getPrestige {
+                prestige -> currPrestige = prestige.toString()
             }
         }) {
             Text("Get Prestige")
