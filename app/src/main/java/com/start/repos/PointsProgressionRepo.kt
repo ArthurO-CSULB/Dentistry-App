@@ -161,12 +161,13 @@ class PointsProgressionRepo(context: Context) {
             userAccountListener = null
             Log.d(TAG, "user account listener removed")
         }
-
+    // Only changes are emitted to the flow.
     }.distinctUntilChanged()
 
 
     // Method to detach a listener to the user's account for points and prestige.
     fun detachPointsPrestigeListener() {
+        // Remove listener and set to null.
         userAccountListener?.remove()
         userAccountListener = null
     }

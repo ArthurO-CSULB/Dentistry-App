@@ -49,6 +49,7 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
 
     // TODO: When adding points, implement the functionality that limits the amount of points for each prestige
 
+    // Store the experience and prestige of the user.
     private val _experience = MutableStateFlow(0L)
     val experience: StateFlow<Long> = _experience
     private val _prestige = MutableStateFlow(0L)
@@ -60,14 +61,22 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
         // the flow that emits data from the user's account, and the flow that emits data
         // when the user is logged out.
         viewModelScope.launch {
+            // Call loggedInFlow to emit the logged in state. Use flatMapLatest to dynamically
+            // collect from the latest inner flow. It cancels current flow when 'isLoggedIn' changes
+            // and builds new inner flow based off new value of 'isLoggedIn'. Method will also
+            // assign the 'userAccount' variable in the repo with the reference to the 'account'
+            // document of the user.
             pointsProgressionRepo.loggedInFlow().flatMapLatest { isLoggedIn ->
-                // If the user is logged in, we can begin collecting the state of the user's
-                // account for the UI to observe.
+                // If the user is logged in, we can build the inner flow that will emit experience
+                // and prestige data from the database.
                 if (isLoggedIn) {
-                    // Method to attach a listener to the user's account and emit changes to
+                    // Method to attaches a listener to the user's account and emit changes to
                     // points and prestige.
                     pointsProgressionRepo.userLevelFlow()
                 }
+                // If the user is not logged in, we can build the inner flow that will detach the
+                // listener of the user who signed out and emit a dummy value of 0 points and 0
+                // prestige for the UI to display.
                 else {
                     flow {
                         // Detach listener from the user's account if no user is logged in.
@@ -79,8 +88,9 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
                     }
 
                 }
+                // Collect from the latest inner flow emitted by flatMapLatest.
             }.collect {pointsPrestige ->
-                // Update the experience and prestige state.
+                // Update the experience and prestige state that will be presented to the UI
                 _experience.value = pointsPrestige.experience
                 _prestige.value = pointsPrestige.prestige
             }
