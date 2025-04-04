@@ -8,7 +8,12 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 // Repo to connect to the database.
 class PointsProgressionRepo(context: Context) {
@@ -17,8 +22,11 @@ class PointsProgressionRepo(context: Context) {
     private val db = FirebaseFirestore.getInstance()
 
     // Initialize a reference to the user's account.
-    private var userAccount: DocumentReference? = null
+    var userAccount: DocumentReference? = null
+    // Initialize a listener to the user's account.
+    var userAccountListener: ListenerRegistration? = null
 
+    /*
     // Initialize a listener, that when the user logs in, create a reference and listener to the user's account.
     init {
         auth.addAuthStateListener { firebaseAuth ->
@@ -26,6 +34,20 @@ class PointsProgressionRepo(context: Context) {
             if (firebaseAuth.currentUser != null) {
                 // Create reference to user's account with snapshot listener
                 userAccount = getUserAccount()
+                // Add snapshot listener to users account to react to changes in the points.
+                userAccount!!.addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, e ->
+                    // If there is an error getting the snapshot...
+                    if (e != null) {
+                        // Log the error.
+                        Log.e(TAG, "User account listener failed", e)
+                        return@addSnapshotListener
+                    }
+                    // If there is a snapshot...
+                    if (snapshot != null && snapshot.exists()) {
+                        Log.i(TAG, "User account snapshot exists: ${snapshot.data}")
+
+                    }
+                }
             }
             // If there is no user logged in, remove account reference.
             else {
@@ -34,6 +56,11 @@ class PointsProgressionRepo(context: Context) {
             }
         }
     }
+    */
+
+    // ***************************************************************************************
+    // callbackFlow is a Kotlin tool that lets you convert a callback-based API into a
+    // coroutine-based Flow, so you can collect it cleanly in a coroutine.
 
     /*
 
@@ -55,6 +82,94 @@ class PointsProgressionRepo(context: Context) {
 
     }
     */
+
+    // Aided with ChatGPT and
+    // https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/callback-flow.html
+    // https://firebase.google.com/docs/reference/kotlin/com/google/firebase/auth/FirebaseAuth.AuthStateListener
+
+    // Method to emit a boolean variable that will indicate if the user is logged in.
+    // PointsProgressionViewModel will observe this variable. Upon true, view model will observe a
+    // flow that is emitted from the repo to update the UI based on changes in the user account.
+    // Will be called in the view model upon initialization
+    fun loggedInFlow(): Flow<Boolean> = callbackFlow {
+        // We declare a listener to listen for the changes in the authentication state of the app.
+        val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            // We check if the user is logged in or not.
+            val isLoggedIn = firebaseAuth.currentUser != null
+            // Initialize the reference to the user account.
+            if (isLoggedIn) {
+                userAccount = db.collection("accounts").document(auth.currentUser?.uid.toString())
+            }
+            else {
+                userAccount = null
+            }
+            Log.d(TAG, "Emitting logged in status: $isLoggedIn")
+            // Emit that the user is logged in or not.
+            trySend(isLoggedIn)
+        }
+
+        // Add the listener to the auth instance.
+        auth.addAuthStateListener(authStateListener)
+        // We remove the listener when the flow is cancelled.
+        awaitClose {
+            // Remove the listener
+            auth.removeAuthStateListener(authStateListener)
+            Log.d(TAG, "Auth state listener removed")
+        }
+        // Only changes are emitted to the flow.
+    }.distinctUntilChanged()
+
+    // Aided with ChatGPT and
+    // https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/callback-flow.html
+    // https://firebase.google.com/docs/reference/kotlin/com/google/firebase/firestore/ListenerRegistration
+    // Method to emit the user points
+    fun userLevelFlow(): Flow<PointsPrestige> = callbackFlow {
+
+        // Store the ListenerRegistration in userAccountListener.
+        userAccountListener = userAccount!!.addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, e ->
+            // If there is an error, log the error.
+            if (e != null) {
+                // Log the error.
+                Log.e(TAG, "User account listener failed", e)
+                return@addSnapshotListener
+            }
+            // If there is a snapshot...
+            if (snapshot != null && snapshot.exists()) {
+                Log.d(TAG, "User account snapshot exists: ${snapshot.data}")
+            }
+            // Get the experience and prestige form the snapshot.
+            val experience = if (snapshot!!.contains("experience")) {
+                snapshot.getLong("experience") ?: 0L
+            }
+            else {
+                0L
+            }
+            val prestige = if (snapshot.contains("prestige")) {
+                snapshot.getLong("prestige") ?: 0L
+            }
+            else {
+                0L
+            }
+            // Emit the points and experience.
+            trySend(PointsPrestige(experience, prestige))
+        }
+
+        // We remove the listener when the flow is cancelled.
+        awaitClose {
+            // Remove the listener
+            userAccountListener?.remove()
+            userAccountListener = null
+            Log.d(TAG, "user account listener removed")
+        }
+
+    }.distinctUntilChanged()
+
+
+    // Method to detach a listener to the user's account for points and prestige.
+    fun detachPointsPrestigeListener() {
+        userAccountListener?.remove()
+        userAccountListener = null
+    }
 
     fun test() {
         // Get the id of the current user.
@@ -109,11 +224,17 @@ class PointsProgressionRepo(context: Context) {
             }
     }
 
-
+    /*
     // Method to return a reference to the user's account
-    private fun getUserAccount(): DocumentReference {
+    private fun getUserAccount(): DocumentReference? {
         return db.collection("accounts").document(auth.currentUser?.uid.toString())
     }
+     */
 
+}
+
+data class PointsPrestige(val userExperience: Long, val userPrestige: Long) {
+    val experience = userExperience
+    val prestige = userPrestige
 }
 

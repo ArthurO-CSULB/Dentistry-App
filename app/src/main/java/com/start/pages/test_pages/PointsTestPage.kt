@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun PointsTestPage(modifier: Modifier, navController: NavController, pointsProgressionViewModel: PointsProgressionViewModel) {
 
     var currPrestige by remember { mutableStateOf("")}
+
+    val experience = pointsProgressionViewModel.experience.collectAsState()
+    val prestige = pointsProgressionViewModel.prestige.collectAsState()
     
     Column(
         modifier = modifier.fillMaxSize(),
@@ -46,6 +50,9 @@ fun PointsTestPage(modifier: Modifier, navController: NavController, pointsProgr
         }) {
             Text("Get Prestige")
         }
+
+        Text("DB Experience Test: ${experience.value}")
+        Text("DB Prestige Test: ${prestige.value}")
 
     }
 }

@@ -1,10 +1,17 @@
 package com.start.viewmodels
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.start.repos.PointsPrestige
 import com.start.repos.PointsProgressionRepo
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
@@ -37,9 +44,48 @@ import java.lang.IllegalArgumentException
 
  */
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgressionRepo): ViewModel() {
 
     // TODO: When adding points, implement the functionality that limits the amount of points for each prestige
+
+    private val _experience = MutableStateFlow(0L)
+    val experience: StateFlow<Long> = _experience
+    private val _prestige = MutableStateFlow(0L)
+    val prestige: StateFlow<Long> = _prestige
+
+    init {
+        // We collect the logged in state from the repo by calling the function that emits
+        // the logged in state. FlatMapLatest will be used to dynamically switch between
+        // the flow that emits data from the user's account, and the flow that emits data
+        // when the user is logged out.
+        viewModelScope.launch {
+            pointsProgressionRepo.loggedInFlow().flatMapLatest { isLoggedIn ->
+                // If the user is logged in, we can begin collecting the state of the user's
+                // account for the UI to observe.
+                if (isLoggedIn) {
+                    // Method to attach a listener to the user's account and emit changes to
+                    // points and prestige.
+                    pointsProgressionRepo.userLevelFlow()
+                }
+                else {
+                    flow {
+                        // Detach listener from the user's account if no user is logged in.
+                        pointsProgressionRepo.detachPointsPrestigeListener()
+                        // Emit 0 points and 0 prestige if no user is logged in.
+                        emit(PointsPrestige(0L, 0L))
+                        // Detach the listener from the user's account if no user is logged in.
+                        Log.d(TAG, "user not logged in anymore so detaching listener, emitting values of 0")
+                    }
+
+                }
+            }.collect {pointsPrestige ->
+                // Update the experience and prestige state.
+                _experience.value = pointsPrestige.experience
+                _prestige.value = pointsPrestige.prestige
+            }
+        }
+    }
 
 
     // Pass in the number of questions that were answered correctly by the user. Each
