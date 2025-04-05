@@ -1,4 +1,4 @@
-package com.start.pages
+package com.start.pages.profile_pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -140,6 +140,14 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         }) {
             Text(text = "Clinic Bookmarks", fontSize = 20.sp)
         }
+
+        // Button to go to points prestige page.
+        TextButton(onClick = {
+            navController.navigate("points_progression")
+        }) {
+            Text(text = "Points and Progression", fontSize = 20.sp)
+        }
+
     }
     Column(
         // We fill the column to the entire screen

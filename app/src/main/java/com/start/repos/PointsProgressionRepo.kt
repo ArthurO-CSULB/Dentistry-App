@@ -193,6 +193,17 @@ class PointsProgressionRepo(context: Context) {
             }
     }
 
+    // Method to reset the user's points.
+    fun resetPoints() {
+        userAccount?.update("experience", 0)
+            ?.addOnSuccessListener {
+                Log.d("Resetting Points", "Points reset successfully")
+            }
+            ?.addOnFailureListener { e ->
+                Log.e("Resetting Points", "Error resetting points", e)
+            }
+    }
+
     // Method to prestige the user's account
     fun prestige() {
         // Get the user's

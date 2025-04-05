@@ -15,7 +15,7 @@ import com.start.pages.ChangeUserDetailsPage
 import com.start.pages.ClinicSearchPage
 import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
-import com.start.pages.ProfilePage
+import com.start.pages.profile_pages.ProfilePage
 import com.start.pages.ReauthenticationPage
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
@@ -39,6 +39,7 @@ import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFinished
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPagePoints
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
+import com.start.pages.profile_pages.PointsProgressionPage
 import com.start.pages.timer_pages.TimerPageCounting
 import com.start.pages.timer_pages.TimerPageFinish
 import com.start.viewmodels.HygieneTriviaViewModel
@@ -152,6 +153,10 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
 
         composable("trivia_points") {
             HygieneTriviaPagePoints(modifier, navController, hygieneTriviaViewModel, pointsProgressionViewModel)
+        }
+
+        composable("points_progression") {
+            PointsProgressionPage(modifier, navController, pointsProgressionViewModel)
         }
 
 

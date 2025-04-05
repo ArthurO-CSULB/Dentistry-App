@@ -42,14 +42,6 @@ fun PointsTestPage(modifier: Modifier, navController: NavController, pointsProgr
         Button(onClick = {pointsProgressionViewModel.prestige()}) {
             Text("Prestige")
         }
-        Button(onClick = {
-            // Get prestige
-            pointsProgressionViewModel.getPrestige {
-                prestige -> currPrestige = prestige.toString()
-            }
-        }) {
-            Text("Get Prestige")
-        }
 
         Text("DB Experience Test: ${experience.value}")
         Text("DB Prestige Test: ${prestige.value}")

@@ -31,7 +31,7 @@ import java.lang.IllegalArgumentException
     For instance, a level 0 prestige can only possess 1000 points maximum, whereas a level 1
     prestige can only possess 2500 points maximum.
     6. Prestiging will be harder after every prestige as a result of the increasing maximum points.
-    7. There will be prestiges 0 - 11 where max points for that prestige will be as follows:
+    7. There will be prestiges 0 - 7 where max points for that prestige will be as follows:
     - Prestige 0: 1000 points
     - Prestige 1: 2500 points
     - Prestige 2: 5000 points
@@ -54,6 +54,15 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
     val experience: StateFlow<Long> = _experience
     private val _prestige = MutableStateFlow(0L)
     val prestige: StateFlow<Long> = _prestige
+    // A list of prestiges that will be used to access certain info on the prestige.
+    // Prestige number will be used to index the prestiges list. Makes sure to convert the prestige
+    // to an int before trying to access the prestige info. For instance, using the prestige flow
+    // above, prestigeName: String = prestiges[prestige.value.toInt()]
+    val prestiges: List<Prestige> = listOf(Prestige.Prestige0,
+        Prestige.Prestige1,
+        Prestige.Prestige2, Prestige.Prestige3,
+        Prestige.Prestige4, Prestige.Prestige5, Prestige.Prestige6, Prestige.MaxPrestige
+    )
 
     init {
         // We collect the logged in state from the repo by calling the function that emits
@@ -116,18 +125,28 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
         }
     }
 
-
+    // Method to increase the prestige value.
     fun prestige() {
         viewModelScope.launch {
             pointsProgressionRepo.prestige()
         }
     }
 
+    // Method to reset the user's experience to zero.
+    fun resetPoints() {
+        viewModelScope.launch {
+            pointsProgressionRepo.resetPoints()
+        }
+    }
+
+    /*
+    Not in user since we have a prestige attribute in the view model.
     fun getPrestige(onResult: (Long) -> Unit) {
         pointsProgressionRepo.getPrestige { prestige ->
             onResult(prestige)
         }
     }
+     */
 
     // We create this view model with a factory so that it can pass in arguments to specific repos.
     // The trivia view model will pass in a repository with the trivia.
@@ -147,48 +166,42 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
     }
 }
 
-// TODO: Not confirmed of how its going to be structured.
 // Prestige Objects that define types of ranks
 sealed class Prestige {
+    abstract val maxExp: Long
+
     data object Prestige0: Prestige() {
-        override fun toString(): String {
-            return "Prestige 0 Name"
-        }
+        override val maxExp = 1000L
+        override fun toString() = "Prestige 0 Name"
     }
+
     data object Prestige1: Prestige() {
-        override fun toString(): String {
-            return "Prestige 1 Name"
-        }
+        override val maxExp = 2500L
+        override fun toString() = "Prestige 1 Name"
     }
     data object Prestige2: Prestige() {
-        override fun toString(): String {
-            return "Prestige 2 Name"
-        }
+        override val maxExp = 5000L
+        override fun toString() = "Prestige 2 Name"
     }
     data object Prestige3: Prestige() {
-        override fun toString(): String {
-            return "Prestige 3 Name"
-        }
+        override val maxExp = 10000L
+        override fun toString() = "Prestige 3 Name"
     }
     data object Prestige4: Prestige() {
-        override fun toString(): String {
-            return "Prestige 4 Name"
-        }
+        override val maxExp = 25000L
+        override fun toString() = "Prestige 4 Name"
     }
     data object Prestige5: Prestige() {
-        override fun toString(): String {
-            return "Prestige 5 Name"
-        }
+        override val maxExp = 50000L
+        override fun toString() = "Prestige 5 Name"
     }
     data object Prestige6: Prestige() {
-        override fun toString(): String {
-            return "Prestige 6 Name"
-        }
+        override val maxExp = 100000L
+        override fun toString() = "Prestige 6 Name"
     }
     data object MaxPrestige: Prestige() {
-        override fun toString(): String {
-            return "Max Prestige Name"
-        }
-
+        override val maxExp = 1000000L
+        override fun toString() = "Max Prestige Name"
     }
+
 }
