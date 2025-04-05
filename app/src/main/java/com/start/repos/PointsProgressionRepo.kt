@@ -172,10 +172,6 @@ class PointsProgressionRepo(context: Context) {
         userAccountListener = null
     }
 
-    fun test() {
-        // Get the id of the current user.
-        Log.d("Current User ID", auth.currentUser?.uid.toString())
-    }
 
     // Method to Add points to the user's account
     fun addPoints(points: Long) {
@@ -193,6 +189,16 @@ class PointsProgressionRepo(context: Context) {
             }
     }
 
+    fun subtractPoints(points: Long) {
+        userAccount?.update("experience", FieldValue.increment(-points))
+            ?.addOnSuccessListener {
+                Log.d("Subtracting Points", "Points subtracted successfully")
+            }
+            ?.addOnFailureListener { e ->
+                Log.w("Subtracting Points", "Error subtracting points", e)
+            }
+    }
+
     // Method to reset the user's points.
     fun resetPoints() {
         userAccount?.update("experience", 0)
@@ -204,6 +210,17 @@ class PointsProgressionRepo(context: Context) {
             }
     }
 
+    // Method to set the user's points to a specific value.
+    fun setPoints(points: Long) {
+        userAccount?.update("experience", points)
+            ?.addOnSuccessListener {
+                Log.d("Setting Points", "Points set successfully")
+            }
+            ?.addOnFailureListener { e ->
+                Log.e("Setting Points", "Error setting points", e)
+            }
+    }
+
     // Method to prestige the user's account
     fun prestige() {
         // Get the user's
@@ -211,6 +228,8 @@ class PointsProgressionRepo(context: Context) {
         // Increment the user's prestige by 1.
         userAccount?.update("prestige", FieldValue.increment(1))
     }
+
+    /*
 
     // Method to get the prestige of the user.
     fun getPrestige(onResult: (Long) -> Unit) {
@@ -235,6 +254,8 @@ class PointsProgressionRepo(context: Context) {
                 onResult(0L)
             }
     }
+
+     */
 
     /*
     // Method to return a reference to the user's account

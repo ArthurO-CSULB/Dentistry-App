@@ -47,8 +47,6 @@ import java.lang.IllegalArgumentException
 @OptIn(ExperimentalCoroutinesApi::class)
 class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgressionRepo): ViewModel() {
 
-    // TODO: When adding points, implement the functionality that limits the amount of points for each prestige
-
     // Store the experience and prestige of the user.
     private val _experience = MutableStateFlow(0L)
     val experience: StateFlow<Long> = _experience
@@ -58,10 +56,15 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
     // Prestige number will be used to index the prestiges list. Makes sure to convert the prestige
     // to an int before trying to access the prestige info. For instance, using the prestige flow
     // above, prestigeName: String = prestiges[prestige.value.toInt()]
-    val prestiges: List<Prestige> = listOf(Prestige.Prestige0,
+    val prestiges: List<Prestige> = listOf(
+        Prestige.Prestige0,
         Prestige.Prestige1,
-        Prestige.Prestige2, Prestige.Prestige3,
-        Prestige.Prestige4, Prestige.Prestige5, Prestige.Prestige6, Prestige.MaxPrestige
+        Prestige.Prestige2,
+        Prestige.Prestige3,
+        Prestige.Prestige4,
+        Prestige.Prestige5,
+        Prestige.Prestige6,
+        Prestige.MaxPrestige
     )
 
     init {
@@ -110,23 +113,61 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
     // Pass in the number of questions that were answered correctly by the user. Each
     // question answered correctly, multiplied by 10 will be the number of points awarded.
     fun addTriviaPoints(numCorrect: Long) {
-        // Add points to Firestore database asynchronously
-        viewModelScope.launch {
-            // Add points to the user's account. Convert 10 to a long.
-            pointsProgressionRepo.addPoints(numCorrect * 10L)
+        // Initialize the points to be added.
+        val points = numCorrect * 10L
+        // If the number of points that will be added to the user's account make them exceed
+        // their point limit, set their points to the point limit for their current prestige.
+        if (_experience.value.toInt() + points.toInt() >= prestiges[_prestige.value.toInt()].maxExp) {
+            // Set points to the Firestore database asynchronously
+            viewModelScope.launch {
+                pointsProgressionRepo.setPoints(prestiges[prestige.value.toInt()].maxExp)
+            }
+        }
+        // Else, we just add the the standard amount of points.
+        else {
+            // Add points to the Firestore database asynchronously
+            viewModelScope.launch {
+                // Add points to the user's account. Convert 10 to a long.
+                pointsProgressionRepo.addPoints(numCorrect * 10L)
+            }
         }
     }
 
     // Add 100 points to the user's account when they have successfully completed the timer.
     fun addTimerPoints() {
-        // Add points to the Firestore database asynchronously
-        viewModelScope.launch {
-            pointsProgressionRepo.addPoints(100L)
+        val points = 100L
+        // If the number of points that will be added to the user's account make them exceed
+        // their point limit, set their points to the point limit for their current prestige.
+        if (_experience.value.toInt() + points.toInt() >= prestiges[_prestige.value.toInt()].maxExp) {
+            // Set points to the Firestore database asynchronously
+            viewModelScope.launch {
+                pointsProgressionRepo.setPoints(prestiges[prestige.value.toInt()].maxExp)
+            }
         }
+        // Else, we just add the the standard amount of points.
+        else {
+            // Add points to the Firestore database asynchronously
+            viewModelScope.launch {
+                pointsProgressionRepo.addPoints(100L)
+            }
+        }
+
     }
+
+    // TODO: preferably we should pass in an object of an item which contains how much the item costs
+    //  or pass in the cost of an item. If the user has enough points, subtract the cost of the
+    //  item from their points. Use pointsProgressionRepo.subtractPoints('points') when subtracting
+    //  points.
+    // Method to spend points.
+    fun buyItem() {}
 
     // Method to increase the prestige value.
     fun prestige() {
+        // If prestige is already at max prestige, user can't prestige.
+        if (_prestige.value == prestiges.last().maxExp) {
+            return
+        }
+        // Add points to the user's account.
         viewModelScope.launch {
             pointsProgressionRepo.prestige()
         }
@@ -138,6 +179,8 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
             pointsProgressionRepo.resetPoints()
         }
     }
+
+    //
 
     /*
     Not in user since we have a prestige attribute in the view model.
@@ -169,38 +212,47 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
 // Prestige Objects that define types of ranks
 sealed class Prestige {
     abstract val maxExp: Long
+    abstract val prestigeLevel: Long
 
     data object Prestige0: Prestige() {
         override val maxExp = 1000L
+        override val prestigeLevel = 0L
         override fun toString() = "Prestige 0 Name"
     }
 
     data object Prestige1: Prestige() {
         override val maxExp = 2500L
+        override val prestigeLevel = 1L
         override fun toString() = "Prestige 1 Name"
     }
     data object Prestige2: Prestige() {
         override val maxExp = 5000L
+        override val prestigeLevel = 2L
         override fun toString() = "Prestige 2 Name"
     }
     data object Prestige3: Prestige() {
         override val maxExp = 10000L
+        override val prestigeLevel = 3L
         override fun toString() = "Prestige 3 Name"
     }
     data object Prestige4: Prestige() {
         override val maxExp = 25000L
+        override val prestigeLevel = 4L
         override fun toString() = "Prestige 4 Name"
     }
     data object Prestige5: Prestige() {
         override val maxExp = 50000L
+        override val prestigeLevel = 5L
         override fun toString() = "Prestige 5 Name"
     }
     data object Prestige6: Prestige() {
         override val maxExp = 100000L
+        override val prestigeLevel = 6L
         override fun toString() = "Prestige 6 Name"
     }
     data object MaxPrestige: Prestige() {
         override val maxExp = 1000000L
+        override val prestigeLevel = 7L
         override fun toString() = "Max Prestige Name"
     }
 

@@ -57,6 +57,9 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
     // Coroutine scope to launch the coroutine to update the progress bar.
     val scope = rememberCoroutineScope()
 
+    // Boolean to store if the progress bar is moving or not.
+    var progressMoving by remember {mutableStateOf(false)}
+
     LaunchedEffect(exp.value) {
 
     }
@@ -103,35 +106,44 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                 lineHeight = 1.5.em,
                 fontSize = 24.sp
             )
-            // Button to prestige/rank up the user.
-            Button(
-                onClick= {
-                    // If the user has enough points for their particular prestige, initiate
-                    // the progress bar to decrease from the max to zero.
-                    if (exp.value >= maxExp) {
-                        // Launch the coroutine that will reset the progress bar.
-                        scope.launch {
-                            // Call resetProgress to reset the progress bar asynchonously.
-                            resetProgress { progress ->
-                                levelProgress = progress
+            // Button to prestige/rank up the user. Only show button if user is not at max prestige.
+            if (prestige.value < pointsProgressionViewModel.prestiges.last().prestigeLevel) {
+                Button(
+                    onClick= {
+                        // If the user has enough points for their particular prestige, initiate
+                        // the progress bar to decrease from the max to zero.
+                        if (exp.value >= maxExp) {
+                            // Boolean to store if the progress bar is moving or not. Disable.
+                            progressMoving = true
+                            // Launch the coroutine that will reset the progress bar.
+                            scope.launch {
+                                // Call resetProgress to reset the progress bar asynchonously.
+                                resetProgress { progress ->
+                                    levelProgress = progress
+                                }
+                                // Increase the prestige of the user by one and reset the points to zero.
+                                pointsProgressionViewModel.prestige()
+                                pointsProgressionViewModel.resetPoints()
+                                // Enable the progress bar again.
+                                progressMoving = false
                             }
-                            // Increase the prestige of the user by one and reset the points to zero.
-                            pointsProgressionViewModel.prestige()
-                            pointsProgressionViewModel.resetPoints()
                         }
-                    }
-
+                    },
+                    enabled = !progressMoving
+                ) {
+                    Text("Next Level")
                 }
-
-            ) {
-                Text("Next Level")
             }
         }
+
 
         Text("${exp.value.toInt()} / ${maxExp.toInt()}")
         LinearProgressIndicator(
             progress = {levelProgress},
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier
+                .fillMaxWidth()
+                .height(12.dp),
+            color = Color.Green
         )
 
     }
