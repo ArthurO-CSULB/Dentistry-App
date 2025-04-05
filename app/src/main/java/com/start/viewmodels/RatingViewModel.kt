@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
@@ -99,16 +98,17 @@ class RatingViewModel: ViewModel() {
 
         // rating details that will be put in the ratings class
         // currently deprecated since it will be too much reading and writing for the time being
-        /*
+
         val ratingDetails = hashMapOf(
             "creatorID" to userID,
+            "firstName" to userFirstName,
+            "lastName" to userLastName,
             "clinicID" to clinicID,
             "clinicName" to clinicName,
             "createdAt" to createdAt,
             "ratingScore" to rating,
             "review" to review,
         )
-         */
 
         // rating details to be appended to the user
         val userRatingRecord = hashMapOf(
@@ -146,7 +146,7 @@ class RatingViewModel: ViewModel() {
                 awaitAll(
                     // create a rating on the ratings collection
                     // currently deprecated since it will be too much reading and writing for the time being
-                    // async { db.collection("ratings").document(ratingID).set(ratingDetails).await() },
+                    async { db.collection("ratings").document(_ratingID.toString()).set(ratingDetails).await() },
 
                     // create a rating in the users collection
                     // user can only rate once per clinic, will replace old rating if done again
@@ -168,11 +168,6 @@ class RatingViewModel: ViewModel() {
                 _ratingState.value = RatingState.Error(e.message.toString())
             }
         }
-    }
-
-    // function call for updating a rating
-    fun updateRating(clinicReview: ClinicReview) {
-
     }
 
     // function that handles getting all ratings on a clinic
@@ -199,6 +194,7 @@ class RatingViewModel: ViewModel() {
                     // and the like/dislikes
                     val raterFirstName = data["firstName"] as? String ?: ""
                     val raterLastName = data["lastName"] as? String ?: ""
+                    val raterID = data["userID"] as? String ?: ""
                     val ratingScore = (data["ratingScore"] as? Long)?.toInt() ?: 0
                     val review = data["review"] as? String ?: ""
                     val ratingID = data["ratingID"] as? String ?: ""
@@ -216,7 +212,7 @@ class RatingViewModel: ViewModel() {
 
                     // store them into a ClinicRating data class then append it to the handler
                     val processedRating = ClinicReview(raterFirstName, raterLastName,
-                        ratingScore, review, createdAt, netLikes,
+                        raterID, ratingScore, review, createdAt, netLikes,
                         likes, dislikes, ratingID
                     )
                     processedRatings.add(processedRating)
@@ -238,17 +234,27 @@ class RatingViewModel: ViewModel() {
         }
     }
 
+    // fetches all user ratings made by a user
+    // used in fetching all reviews in User Reviews Page
     @RequiresApi(Build.VERSION_CODES.O)
     fun getUserRatings() {
+
+        // get user ID and document reference for the fetch
         val userID = auth.uid.toString()
         val userDocRef = db.collection(ACCOUNTS).document(userID).collection(USER_RATINGS)
 
+        // use a seperate thread for fetching
         CoroutineScope(Dispatchers.IO).launch {
             try {
+
+                // get all the ratings in the database
                 val ratings = userDocRef.get().await()
+                // create a container for handling the processed items
                 val processedRatings = mutableListOf<UserReview>()
 
+                // iterate through each fetched rating in the database
                 for (rating in ratings) {
+                    // get all the required info and transform them to their valid forms
                     val rawData = rating.data
                     val clinicID = rawData["clinicID"] as? String?: ""
                     val clinicName = rawData["clinicName"] as? String?: ""
@@ -260,11 +266,12 @@ class RatingViewModel: ViewModel() {
                     //val userID = rawData["userID"] as? String?: ""
                     val ratingID = rawData["ratingID"] as? String?: ""
 
+                    // create a LocalDateTime object from the fetched time value in the database
                     val createdAtMap = rawData["createdAt"] as? Map<String, Any>
                     val createdAt =
                         createdAtMap?.let { mapToLocalDateTime(it) } ?: LocalDateTime.now()
 
-
+                    // create the UserReview item then add it to the container
                     val processedRating = UserReview(
                         clinicID = clinicID,
                         clinicName = clinicName,
@@ -276,10 +283,10 @@ class RatingViewModel: ViewModel() {
                         dislikeCount = dislikeCount,
                         ratingID = ratingID
                     )
-
                     processedRatings.add(processedRating)
                 }
 
+                // once loop is over, replace previous list and its size
                 _userRatingsList.value = processedRatings
                 _userRatingsCount.value = processedRatings.size
                 Log.d("User Ratings Fetching", "Clinic Ratings successfully fetched")
@@ -544,17 +551,34 @@ class RatingViewModel: ViewModel() {
             }
         }
     }
-    // get the clinicLikesAverage
-    fun getClinicLikesAverage(): Float {
-        return _clinicLikesAverage.value
+
+    // Delete a rating a user has made in the clinic page
+    fun deleteClinicReview(ratingID: String) {
+
+        // create variables for the query
+        val userReviewRef = db.collection(ACCOUNTS).document(auth.uid.toString()).collection(USER_RATINGS)
+        val userReviewQuery = userReviewRef.whereEqualTo("ratingID", ratingID)
+        var clinicID: String
+
+        //get the clinicID of the rating
+        CoroutineScope(Dispatchers.IO).launch() {
+            val clinicRating = userReviewQuery.get().await()
+            val clinic = clinicRating.first()
+            clinicID = clinic["clinicID"] as? String?: ""
+
+            // delete the review in both the clinic and user collection
+            // does not delete the ones in the ratings collection for safekeeping
+            deleteUserReview(clinicID)
+        }
     }
 
-    // Delete a rating a user has made
-    // Should only delete ratings the user has made, not other reviews
-    fun deleteReview() {
+    // Delete a rating a user has made in the user page
+    fun deleteUserReview(clinicID: String) {
+        db.collection(ACCOUNTS).document(auth.uid.toString()).collection(USER_RATINGS).document(clinicID).delete()
+        db.collection(CLINICS).document(clinicID).collection(CLINIC_RATINGS).document(auth.uid.toString()).delete()
     }
 
-    // Sort ratings based on the specification user choose
+    // Sort ratings based on the specification user choose in the clinic ratings page
     fun sortClinicReviews(sortedBy: String) {
 
         //sort the list by the most recent ratings
@@ -572,13 +596,21 @@ class RatingViewModel: ViewModel() {
         }
     }
 
+    // Sort ratings based on the specification user chose in the user reviews page
     fun sortUserReviews(sortedBy: String) {
-
+        // sort by how recent the review was made
         if (sortedBy == "Most Recent")
             _userRatingsList.value = _userRatingsList.value.sortedWith(compareByDescending<UserReview> {it.createdAt})
 
+        // sort based on the clinic name in ascending order
         if (sortedBy == "Clinic Name")
             _userRatingsList.value = _userRatingsList.value.sortedWith(compareBy<UserReview> {it.clinicName})
+    }
+
+    // checks if the rater ID is the same as current ID
+    // used for displaying option to delete reviews in the clinic details page
+    fun checkClinicReviewOwnership(raterID: String): Boolean {
+        return raterID == auth.uid.toString()
     }
 
     // Function that changes the state when user starts creating a rating
@@ -596,6 +628,7 @@ class RatingViewModel: ViewModel() {
 data class ClinicReview(
     val raterFirstName: String,
     val raterLastName: String,
+    val raterID: String,
     val rating: Int,
     val review: String,
     val createdAt: LocalDateTime,
@@ -605,6 +638,7 @@ data class ClinicReview(
     val ratingID: String
 )
 
+// Data class for displaying user ratings in the app
 data class UserReview(
     val clinicID: String,
     val clinicName: String,

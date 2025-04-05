@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ThumbUp
+import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Button
@@ -58,7 +59,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -68,8 +68,11 @@ import com.start.viewmodels.RatingState
 import com.start.viewmodels.RatingViewModel
 import com.start.ui.theme.Purple80
 import com.start.ui.theme.PurpleGrey40
+import kotlinx.coroutines.runBlocking
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.concurrent.TimeUnit
+import kotlin.toString
 
 // Function that handles UI for the ClinicDetails Page (at least on my branch)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -289,6 +292,31 @@ fun ClinicReviewItem(clinicReview: ClinicReview, ratingViewModel: RatingViewMode
                     fontSize = 18.sp
                 )
             }
+
+            Spacer(Modifier.weight(1f))
+            // Implementation of delete button
+            // First checks if the current user owns the review
+            // If yes, present the delete button on the review
+            if (ratingViewModel.checkClinicReviewOwnership(clinicReview.raterID)) {
+
+                // If the delete button is clicked, delete the review then refresh the user ratings list
+                IconButton(onClick = {
+                    runBlocking{
+                        ratingViewModel.deleteClinicReview(clinicReview.ratingID)
+                        TimeUnit.SECONDS.sleep(2L)
+                    }
+                    ratingViewModel.getClinicRatings(clinicID.toString()) // get all the ratings of the clinic
+                    ratingViewModel.calculateClinicRatingAverage(clinicID.toString()) // calculate the rating average of the clinic
+
+                })
+                {
+                    Icon(
+                        modifier = Modifier.size(50.dp),
+                        imageVector = Icons.TwoTone.Delete,
+                        contentDescription = "Delete Rating",
+                    )
+                }
+            }
         }
         // star bar that specifies how much rating it got on this review
         StarBar(
@@ -411,7 +439,7 @@ fun ClinicSortingDropdownMenu(ratingViewModel: RatingViewModel) {
                 Icon(
                     // if the menu is open, display a down arrow, otherwise display an up arrow
                     imageVector = if (!expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = if (!expanded) "In Ascending Order" else "In Descending Order",
+                    contentDescription = if (!expanded) "Showing" else "Closed",
                     modifier = Modifier.size(24.dp)
                 )
             }

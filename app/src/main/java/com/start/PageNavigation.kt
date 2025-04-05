@@ -16,7 +16,6 @@ import com.start.pages.ClinicSearchPage
 import com.start.pages.ProfilePage
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.start.pages.AddEventPage
@@ -164,6 +163,7 @@ TimerViewModel, ratingViewModel: RatingViewModel) {
             SettingsPage(modifier, navController)
         }
 
+        // User Ratings Page
         composable("userRatings") {
             UserRatingsPage(navController, ratingViewModel)
         }
