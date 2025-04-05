@@ -154,6 +154,13 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
 
     }
 
+    // Set the points of the user.
+    fun setPoints(points: Long) {
+        viewModelScope.launch {
+            pointsProgressionRepo.setPoints(points)
+        }
+    }
+
     // TODO: preferably we should pass in an object of an item which contains how much the item costs
     //  or pass in the cost of an item. If the user has enough points, subtract the cost of the
     //  item from their points. Use pointsProgressionRepo.subtractPoints('points') when subtracting

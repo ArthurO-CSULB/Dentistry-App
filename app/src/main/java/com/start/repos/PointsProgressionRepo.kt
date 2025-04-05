@@ -266,6 +266,7 @@ class PointsProgressionRepo(context: Context) {
 
 }
 
+// Data that will be emitted to the view model.
 data class PointsPrestige(val userExperience: Long, val userPrestige: Long) {
     val experience = userExperience
     val prestige = userPrestige
