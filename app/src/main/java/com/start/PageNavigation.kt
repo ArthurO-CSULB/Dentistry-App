@@ -18,6 +18,7 @@ import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.start.pages.AddEventPage
 import com.start.pages.ClinicDetailsPage
 import com.start.pages.ClinicRatingsPage
@@ -26,9 +27,11 @@ import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.SettingsPage
 import com.start.pages.UserRatingsPage
+import com.start.pages.BookmarkPage
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
 import com.start.viewmodels.RatingViewModel
+import com.start.viewmodels.BookmarksViewModel
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -121,10 +124,12 @@ TimerViewModel, ratingViewModel: RatingViewModel) {
             ClinicSearchPage(modifier, navController = navController)
         }
         composable("clinicDetails/{placeId}") {backStackEntry ->
+            val bookmarksViewModel: BookmarksViewModel = viewModel()
             ClinicDetailsPage(
                 placeId = backStackEntry.arguments?.getString("placeId"),
                 navController = navController,
-                ratingViewModel = ratingViewModel)
+                ratingViewModel = ratingViewModel,
+                bookmarksViewModel = bookmarksViewModel)
         }
 
         // clinic ratings page navigation
@@ -150,6 +155,11 @@ TimerViewModel, ratingViewModel: RatingViewModel) {
         // Profile screen.
         composable("profile"){
             ProfilePage(modifier, navController)
+        }
+
+        // Bookmark screen.
+        composable("bookmark"){
+            BookmarkPage(modifier, navController)
         }
 
         // Verification Screen

@@ -67,12 +67,9 @@ class RatingViewModel: ViewModel() {
     private val _clinicRatingAverage = MutableStateFlow<Float>(0f)
     val clinicRatingAverage: StateFlow<Float> get() = _clinicRatingAverage
 
-
-
     // handling fields for rating states
     private val _ratingState = MutableStateFlow<RatingState>(RatingState.Idle)
     val ratingState: StateFlow<RatingState> get() = _ratingState
-
 
     // function call when creating a rating
     @RequiresApi(Build.VERSION_CODES.O)
@@ -140,7 +137,7 @@ class RatingViewModel: ViewModel() {
         val userRatingRef = db.collection(ACCOUNTS).document(userID).collection(USER_RATINGS).document(clinicID)
         val clinicRatingRef = db.collection(CLINICS).document(clinicID).collection(CLINIC_RATINGS).document(userID)
 
-        //handle all of the updates concurrently via the use of a coroutine
+        // handle all of the updates concurrently via the use of a coroutine
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 awaitAll(
