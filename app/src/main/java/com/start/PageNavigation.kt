@@ -19,12 +19,15 @@ import com.start.pages.profile_pages.ProfilePage
 import com.start.pages.ReauthenticationPage
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
+import com.start.viewmodels.ClinicDetailsViewModel
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import com.start.pages.AddEventPage
 import com.start.pages.BookmarkPage
+import com.start.pages.ClinicDetailsPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.test_pages.PointsTestPage
@@ -57,7 +60,7 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressionViewModel: PointsProgressionViewModel
+TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressionViewModel: PointsProgressionViewModel
 ) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
@@ -197,7 +200,15 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
 
         // Search screen.
         composable("search"){
-            ClinicSearchPage(modifier, navController)
+            ClinicSearchPage(modifier, navController = navController)
+        }
+
+        // Detail screen
+        composable("clinicDetails/{placeId}") {backStackEntry ->
+            ClinicDetailsPage(
+                placeId = backStackEntry.arguments?.getString("placeId"),
+                navController = navController,
+                clinicDetailsViewModel = clinicDetailsViewModel)
         }
 
         // Profile screen.

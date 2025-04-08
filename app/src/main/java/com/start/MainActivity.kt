@@ -11,10 +11,12 @@ import androidx.compose.ui.Modifier
 import com.start.ui.theme.DentalHygieneTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import com.start.repos.TimerFunFactsRepo
 //import com.start.repos.TimerFunFactsRepo
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
+import com.start.viewmodels.ClinicDetailsViewModel
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
 import com.start.repos.HygieneTriviaRepo
@@ -63,6 +65,7 @@ class MainActivity : ComponentActivity(){
             // Use factory to create view model to pass in the fun facts repository
             TimerViewModel.TimerViewModelFactory(funFactsRepo)
         }
+        val clinicDetailsViewModel : ClinicDetailsViewModel by viewModels()
         val hygieneTriviaViewModel: HygieneTriviaViewModel by viewModels() {
             // Use factory to create view model to pass in the fun facts repository
             HygieneTriviaViewModel.HygieneTriviaViewModelFactory(hygieneTriviaRepo)
@@ -84,6 +87,7 @@ class MainActivity : ComponentActivity(){
                         authViewModel = authViewModel,
                         timerViewModel = timerViewModel,
                         hygieneTriviaViewModel = hygieneTriviaViewModel,
+                        clinicDetailsViewModel = clinicDetailsViewModel,
                         pointsProgressionViewModel = pointsProgressionViewModel)
                 }
             }

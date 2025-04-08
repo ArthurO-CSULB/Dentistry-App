@@ -139,5 +139,6 @@ dependencies {
     implementation("com.google.maps.android:maps-compose-widgets:$mapsComposeVersion")
     // Places API
     implementation("com.google.android.libraries.places:places:3.3.0")
-
+    //Coil for AsyncImage (for clinic photos)
+    implementation("io.coil-kt:coil-compose:2.1.0")
 }
