@@ -1,9 +1,7 @@
 package com.start.pages.profile_pages
 
 import android.util.Log
-import android.util.MutableInt
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -33,7 +31,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dentalhygiene.R
-import com.google.common.math.DoubleMath.roundToInt
 import com.start.viewmodels.PointsProgressionViewModel
 import com.start.viewmodels.Prestige
 import kotlinx.coroutines.delay
@@ -114,9 +111,10 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                 //.border(width = 1.dp, color = Color.Black)
         ) {
             // TODO: This image should be an emblem that a user can buy/unlock. Customizable.
+            // Emblem should also be a 512 x 512 png
             // Image for the prestige/user
             Image(
-                painter = painterResource(id = R.drawable.basicprofilepic),
+                painter = painterResource(R.drawable.toothpick_emblem),
                 contentDescription = "Profile Picture",
                 modifier = modifier.size(160.dp)
             )

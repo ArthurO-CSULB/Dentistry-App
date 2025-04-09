@@ -1,4 +1,4 @@
-package com.start
+package com.start.pages
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

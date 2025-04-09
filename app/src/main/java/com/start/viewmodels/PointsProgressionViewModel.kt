@@ -166,7 +166,14 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
     //  item from their points. Use pointsProgressionRepo.subtractPoints('points') when subtracting
     //  points.
     // Method to spend points.
-    fun buyItem() {}
+    fun buyItem(emblem: Emblem) {
+        if (_experience.value >= emblem.price) {
+            viewModelScope.launch {
+                pointsProgressionRepo.subtractPoints(emblem.price)
+                //pointsProgressionRepo.addEmblemToUser(emblem.id)
+            }
+        }
+    }
 
     // Method to increase the prestige value.
     fun prestige() {
@@ -264,3 +271,15 @@ sealed class Prestige {
     }
 
 }
+
+data class Emblem (
+    val id: String,
+    val name: String,
+    val emblemPic: String,
+    val price: Long
+)
+
+data class Badge (
+    val prestigeLevel: Long,
+    val badge: String
+)
