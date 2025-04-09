@@ -116,6 +116,11 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController, authVi
         Button(onClick={navController.navigate("settings")}) {
             Text(text = "Prototype Settings")
         }
+
+        Spacer(Modifier.height(8.dp))
+        Button(onClick={navController.navigate("userRatings")}) {
+            Text("User Ratings")
+        }
     }
 
     //Arrange another column only for Sign Out button

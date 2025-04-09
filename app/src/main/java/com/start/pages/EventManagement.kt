@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.start.EventViewModel
 import com.start.notificationhandlers.TimerNotificationHandler
 import java.util.Calendar
 import java.util.Locale
@@ -60,7 +61,7 @@ fun AddEventPage(navController: NavController, date: String, eventViewModel: Eve
 
         // Save Event
         Button(onClick = {
-            eventViewModel.addEvent(title, description, date, time)
+            //eventViewModel.addEvent(title, description, date, time)
             // For notification
             scheduleNotification(context, title, description, date, time)
             navController.popBackStack()

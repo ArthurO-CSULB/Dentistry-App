@@ -96,7 +96,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         )
 
         // Button to edit profile NOT IMPLEMENTED.
-        Button(onClick={navController.navigate("home")}) {
+        Button(onClick = { navController.navigate("home") }) {
             Text(text = "Edit Profile")
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -108,8 +108,9 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
             modifier = Modifier
                 .background(color = Color.LightGray)
                 .padding(8.dp)
-        ){
-        Text(text = "$firstName $lastName", fontSize = 20.sp)}
+        ) {
+            Text(text = "$firstName $lastName", fontSize = 20.sp)
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
         // Email
@@ -132,6 +133,14 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         ) {
             Text(text = experience, fontSize = 20.sp)
             Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // Button to go to Bookmark page.
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
+            navController.navigate("bookmark")
+        }) {
+            Text(text = "Clinic Bookmarks", fontSize = 20.sp)
         }
 
     }

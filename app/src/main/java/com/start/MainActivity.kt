@@ -1,10 +1,12 @@
 package com.start
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.start.ui.theme.DentalHygieneTheme
@@ -18,6 +20,7 @@ import com.start.viewmodels.TimerViewModel
 import com.start.viewmodels.ClinicDetailsViewModel
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
+import com.start.viewmodels.RatingViewModel
 
 /*
 We have our main and sole activity where the app will navigate through various composable screens
@@ -31,6 +34,7 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 class MainActivity : ComponentActivity(){
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,6 +57,7 @@ class MainActivity : ComponentActivity(){
             TimerViewModel.TimerViewModelFactory(funFactsRepo)
         }
         val clinicDetailsViewModel : ClinicDetailsViewModel by viewModels()
+        val ratingViewModel : RatingViewModel by viewModels()
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
             DentalHygieneTheme {
@@ -62,7 +67,7 @@ class MainActivity : ComponentActivity(){
                     // inner padding to ensure page navigation respects the reserved space, as well
                     // as passing in the ViewModels.
                     PageNavigation(modifier = Modifier.padding(innerPadding),
-                        authViewModel = authViewModel, timerViewModel = timerViewModel, clinicDetailsViewModel = clinicDetailsViewModel)
+                        authViewModel = authViewModel, timerViewModel = timerViewModel, clinicDetailsViewModel = clinicDetailsViewModel, ratingViewModel = ratingViewModel)
                 }
             }
         }

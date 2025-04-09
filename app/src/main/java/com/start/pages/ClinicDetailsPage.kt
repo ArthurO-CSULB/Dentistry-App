@@ -1,14 +1,18 @@
 package com.start.pages
 
+import android.os.Build
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -60,15 +64,24 @@ import com.example.dentalhygiene.R
 import com.google.android.libraries.places.api.Places
 import com.start.PlacesApiService
 import com.start.model.PlaceDetails
+import com.start.viewmodels.BookmarksViewModel
+import com.start.viewmodels.RatingViewModel
 import com.start.viewmodels.ClinicDetailsViewModel
 
+// Function that handles UI for the ClinicDetails Page (at least on my branch)
+// This branch is also being implemented by Kevin so changes may appear in the future
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClinicDetailsPage(
     placeId: String?,// Place ID that is taken from one of the clinics in the Clinic Search Page
     navController: NavController,
     clinicDetailsViewModel : ClinicDetailsViewModel = viewModel() // Viewmodel to allow sending clinic data to the database
+    ratingViewModel: RatingViewModel,
+    bookmarksViewModel: BookmarksViewModel
 ) {
+
+    // context and ClinicDetails for fetching clinic data
     val context = LocalContext.current
     var clinicDetails by remember { mutableStateOf<PlaceDetails?>(null) }
     var isExpanded by remember {mutableStateOf(false)} //State for the collapsable Opening Hours list
@@ -84,10 +97,12 @@ fun ClinicDetailsPage(
             // Adds the clinic to the database with its PlaceID as a unique identifier
             clinicInfo?.let {
                 clinicDetailsViewModel.addClinicToDb(it)
+                ratingViewModel.getClinicRatings(it.placeId)
             }
         }
-        Log.d("ClinicDetails", "Received clinicId: $placeId") // For testing purposes
     }
+
+    // main UI handler
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -324,188 +339,59 @@ fun ClinicDetailsPage(
                 .fillMaxWidth()
                 .padding(24.dp)
         ) {
-            Button(onClick = { navController.popBackStack()}) {
+            // Button to see all ratings on a clinic
+            Button(
+                onClick = {
+                    navController.navigate("clinicRatings/$placeId,${clinicDetails?.name}")
+                },
+                modifier = Modifier.padding(10.dp)
+            )
+            {
+                Text("View Ratings")
+            }
+
+
+            // Button for creating a rating
+            Button(
+                onClick = {
+                    navController.navigate("createRating/$placeId,${clinicDetails?.name}")
+
+                },
+                modifier = Modifier.padding(10.dp)
+            )
+            {
                 Text("Make a Rating")
             }
-            Button(onClick = { navController.popBackStack()}) {
-                Text("Bookmark Clinic")
+        }
+
+        // Make another row for a button
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            // Button for bookmarking this clinic
+            Button(
+                onClick ={
+                    clinicDetails?.let { details ->
+                        bookmarksViewModel.addBookmark(
+                            clinicID = details.placeId,
+                            clinicName = details.name,
+                            rating = details.rating
+                        )
+                    }
+                    Toast.makeText(context, "Clinic successfully bookmarked", Toast.LENGTH_SHORT).show()
+                }
+            ) {
+                Text("Bookmark")
             }
         }
     }
 }
+
 
 // Makes the request to the API based on the clinic's photo reference
 fun getPhotoUrl(photoRef: String, apiKey: String): String {
     return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoRef&key=$apiKey"
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ClinicDetailsPageLayout(
-    navController: NavController
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        TopAppBar(
-            title =
-            {
-                Text(
-                    text = "Back to Map",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            navigationIcon = {
-                IconButton(onClick = {navController.popBackStack()}) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back Button",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            },
-            colors = TopAppBarDefaults. topAppBarColors(MaterialTheme.colorScheme.secondaryContainer)
-        )
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp)
-        )
-        {
-            Text(text = "Dinkleberg Dentistry", fontSize = 28.sp, fontWeight = FontWeight.Bold)
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp)
-        ){
-            Image(
-                painter = painterResource(id = R.drawable.dental_clinic_clipart),
-                contentDescription = "Clinic Picture",
-                modifier = Modifier
-                    .size(300.dp)
-                    .fillMaxSize()
-            )
-        }
-        Row(
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-        ){
-            Image(
-                painter = painterResource(id = R.drawable.address_pin),
-                contentDescription = "Address Pin",
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(end = 8.dp)
-            )
-            Text(text = "96024 Applebottom Ave.", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-        }
-        Row(
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-        ){
-            Image(
-                painter = painterResource(id = R.drawable.clinic_phone),
-                contentDescription = "Phone Icon",
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(end = 8.dp)
-            )
-            Text(text = "555-555-5555", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-        }
-            ?: Text("Loading clinic details...") //If details are null, shows this
-        //val hours: List<String> = listOf("Monday: 12AM-8PM", "Tuesday: 12AM-8PM", "Wednesday: 12AM-8PM", "Thursday: 12AM-8PM", "Friday: 12AM-8PM", "Saturday: 12AM-8PM" ,"Sunday: 12AM-8PM")
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {}
-                    .padding(12.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.clock),
-                    contentDescription = "Clock Icon",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .padding(end = 8.dp)
-                )
-                Text(
-                    text = "Opening Hours",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = "Expand/Collapse Icon",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .padding(start = 8.dp)
-                )
-                if (false) {
-                    Text(
-                        text = "Open",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Green,
-                        modifier = Modifier.padding(start = 12.dp)
-                    )
-                }
-                else{
-                    Text(
-                        text = "Closed",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Red,
-                        modifier = Modifier.padding(start = 12.dp)
-                    )
-                }
-            }
-        }
-        HorizontalDivider(
-            modifier = Modifier
-                .fillMaxWidth(),
-            thickness = 2.dp,
-            color = Color.Black
-        )
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
-        ) {
-            Button(onClick = { navController.popBackStack()}) {
-                Text("Make a Rating")
-            }
-            Button(onClick = { navController.popBackStack()}) {
-                Text("Bookmark Clinic")
-            }
-        }
-    }
-}
-@Preview(showBackground = true)
-@Composable
-fun ClinicDetailsPagePreview() {
-    ClinicDetailsPageLayout(rememberNavController())
 }

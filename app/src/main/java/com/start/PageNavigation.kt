@@ -20,13 +20,20 @@ import com.start.viewmodels.ClinicDetailsViewModel
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.start.pages.AddEventPage
 import com.start.pages.ClinicDetailsPage
+import com.start.pages.ClinicRatingsPage
+import com.start.pages.CreateRatingPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.SettingsPage
+import com.start.pages.UserRatingsPage
+import com.start.pages.BookmarkPage
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
+import com.start.viewmodels.RatingViewModel
+import com.start.viewmodels.BookmarksViewModel
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -40,7 +47,8 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel) {
+TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, ratingViewModel: RatingViewModel) {
+
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
     // is consistent throughout the lifecycle of NavHost. This prevents a NavController being
@@ -121,15 +129,43 @@ TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel) {
 
         // Detail screen
         composable("clinicDetails/{placeId}") {backStackEntry ->
+            val bookmarksViewModel: BookmarksViewModel = viewModel()
             ClinicDetailsPage(
                 placeId = backStackEntry.arguments?.getString("placeId"),
                 navController = navController,
-                clinicDetailsViewModel = clinicDetailsViewModel)
+                clinicDetailsViewModel = clinicDetailsViewModel
+                ratingViewModel = ratingViewModel,
+                bookmarksViewModel = bookmarksViewModel)
+        }
+
+        // clinic ratings page navigation
+        composable("clinicRatings/{placeID},{clinicName}") { backStackEntry ->
+            ClinicRatingsPage(
+                navController = navController,
+                ratingViewModel = ratingViewModel,
+                clinicID = backStackEntry.arguments?.getString("placeID").toString(),
+                clinicName = backStackEntry.arguments?.getString("clinicName").toString()
+            )
+        }
+
+        // rating creation page navigation
+        composable("createRating/{placeID},{clinicName}") { backStackEntry ->
+            CreateRatingPage(
+                navController = navController,
+                ratingViewModel = ratingViewModel,
+                clinicID = backStackEntry.arguments?.getString("placeID").toString(),
+                clinicName = backStackEntry.arguments?.getString("clinicName").toString()
+            )
         }
 
         // Profile screen.
         composable("profile"){
             ProfilePage(modifier, navController)
+        }
+
+        // Bookmark screen.
+        composable("bookmark"){
+            BookmarkPage(modifier, navController)
         }
 
         // Verification Screen
@@ -141,6 +177,11 @@ TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel) {
         // Settings Page
         composable("settings"){
             SettingsPage(modifier, navController)
+        }
+
+        // User Ratings Page
+        composable("userRatings") {
+            UserRatingsPage(navController, ratingViewModel)
         }
     })
 }
