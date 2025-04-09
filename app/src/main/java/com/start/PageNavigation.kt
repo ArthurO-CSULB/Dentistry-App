@@ -133,7 +133,7 @@ TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, ratingViewModel:
             ClinicDetailsPage(
                 placeId = backStackEntry.arguments?.getString("placeId"),
                 navController = navController,
-                clinicDetailsViewModel = clinicDetailsViewModel
+                clinicDetailsViewModel = clinicDetailsViewModel,
                 ratingViewModel = ratingViewModel,
                 bookmarksViewModel = bookmarksViewModel)
         }

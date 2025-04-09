@@ -76,7 +76,7 @@ import com.start.viewmodels.ClinicDetailsViewModel
 fun ClinicDetailsPage(
     placeId: String?,// Place ID that is taken from one of the clinics in the Clinic Search Page
     navController: NavController,
-    clinicDetailsViewModel : ClinicDetailsViewModel = viewModel() // Viewmodel to allow sending clinic data to the database
+    clinicDetailsViewModel : ClinicDetailsViewModel = viewModel(), // Viewmodel to allow sending clinic data to the database
     ratingViewModel: RatingViewModel,
     bookmarksViewModel: BookmarksViewModel
 ) {
