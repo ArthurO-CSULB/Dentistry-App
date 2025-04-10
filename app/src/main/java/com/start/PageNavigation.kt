@@ -25,9 +25,12 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.start.pages.AddEventPage
 import com.start.pages.BookmarkPage
 import com.start.pages.ClinicDetailsPage
+import com.start.pages.ClinicRatingsPage
+import com.start.pages.CreateRatingPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.test_pages.PointsTestPage
@@ -36,6 +39,8 @@ import com.start.pages.SettingsPage
 import com.start.pages.timer_pages.TimerPageBegin
 import com.start.pages.timer_pages.TimerPageCancel
 import com.start.pages.timer_pages.TimerPageCountingModel
+import com.start.pages.UserRatingsPage
+import com.start.pages.BookmarkPage
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
@@ -47,6 +52,8 @@ import com.start.pages.timer_pages.TimerPageCounting
 import com.start.pages.timer_pages.TimerPageFinish
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.PointsProgressionViewModel
+import com.start.viewmodels.RatingViewModel
+import com.start.viewmodels.BookmarksViewModel
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -60,7 +67,7 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressionViewModel: PointsProgressionViewModel
+TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressionViewModel: PointsProgressionViewModel, ratingViewModel: RatingViewModel
 ) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
@@ -205,10 +212,33 @@ TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, hygieneTriviaVie
 
         // Detail screen
         composable("clinicDetails/{placeId}") {backStackEntry ->
+            val bookmarksViewModel: BookmarksViewModel = viewModel()
             ClinicDetailsPage(
                 placeId = backStackEntry.arguments?.getString("placeId"),
                 navController = navController,
-                clinicDetailsViewModel = clinicDetailsViewModel)
+                clinicDetailsViewModel = clinicDetailsViewModel,
+                ratingViewModel = ratingViewModel,
+                bookmarksViewModel = bookmarksViewModel)
+        }
+
+        // clinic ratings page navigation
+        composable("clinicRatings/{placeID},{clinicName}") { backStackEntry ->
+            ClinicRatingsPage(
+                navController = navController,
+                ratingViewModel = ratingViewModel,
+                clinicID = backStackEntry.arguments?.getString("placeID").toString(),
+                clinicName = backStackEntry.arguments?.getString("clinicName").toString()
+            )
+        }
+
+        // rating creation page navigation
+        composable("createRating/{placeID},{clinicName}") { backStackEntry ->
+            CreateRatingPage(
+                navController = navController,
+                ratingViewModel = ratingViewModel,
+                clinicID = backStackEntry.arguments?.getString("placeID").toString(),
+                clinicName = backStackEntry.arguments?.getString("clinicName").toString()
+            )
         }
 
         // Profile screen.
@@ -255,6 +285,11 @@ TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, hygieneTriviaVie
 
         composable("points_test") {
             PointsTestPage(modifier, navController, pointsProgressionViewModel)
+        }
+
+        // User Ratings Page
+        composable("userRatings") {
+            UserRatingsPage(navController, ratingViewModel)
         }
     })
 }

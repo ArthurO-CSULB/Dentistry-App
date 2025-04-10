@@ -1,11 +1,13 @@
 package com.start
 
+import android.os.Build
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.start.ui.theme.DentalHygieneTheme
@@ -19,6 +21,7 @@ import com.start.viewmodels.TimerViewModel
 import com.start.viewmodels.ClinicDetailsViewModel
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
+import com.start.viewmodels.RatingViewModel
 import com.start.repos.HygieneTriviaRepo
 import com.start.repos.PointsProgressionRepo
 import com.start.viewmodels.HygieneTriviaViewModel
@@ -36,6 +39,7 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 class MainActivity : ComponentActivity(){
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -66,6 +70,7 @@ class MainActivity : ComponentActivity(){
             TimerViewModel.TimerViewModelFactory(funFactsRepo)
         }
         val clinicDetailsViewModel : ClinicDetailsViewModel by viewModels()
+        val ratingViewModel : RatingViewModel by viewModels()
         val hygieneTriviaViewModel: HygieneTriviaViewModel by viewModels() {
             // Use factory to create view model to pass in the fun facts repository
             HygieneTriviaViewModel.HygieneTriviaViewModelFactory(hygieneTriviaRepo)
@@ -88,7 +93,9 @@ class MainActivity : ComponentActivity(){
                         timerViewModel = timerViewModel,
                         hygieneTriviaViewModel = hygieneTriviaViewModel,
                         clinicDetailsViewModel = clinicDetailsViewModel,
-                        pointsProgressionViewModel = pointsProgressionViewModel)
+                        pointsProgressionViewModel = pointsProgressionViewModel,
+                        ratingViewModel = ratingViewModel
+                    )
                 }
             }
         }
