@@ -11,5 +11,8 @@ data class BookmarkInformation(
 
     // User-related information
     val rating: String = "",
+    val clinicID: String = "",
+    val clinicName: String = "",
+    val ratingScore: Float? = null,
     val review: String = ""
 )

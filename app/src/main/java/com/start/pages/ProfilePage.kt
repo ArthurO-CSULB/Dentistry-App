@@ -135,11 +135,13 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         }
 
         // Button to go to Bookmark page.
-        TextButton(onClick = {
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
             navController.navigate("bookmark")
         }) {
             Text(text = "Clinic Bookmarks", fontSize = 20.sp)
         }
+
     }
     Column(
         // We fill the column to the entire screen

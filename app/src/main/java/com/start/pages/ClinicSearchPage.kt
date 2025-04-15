@@ -1,11 +1,15 @@
 package com.start.pages
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.location.Location
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.TextView
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -22,13 +26,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,6 +80,8 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.start.PlacesApiService
+import com.start.model.Geometry
+import com.start.model.LocationLatLng
 import com.start.model.PlaceResult
 import kotlinx.coroutines.launch
 
@@ -78,6 +92,8 @@ NavController.
  */
 
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("PotentialBehaviorOverride")
 @Composable
 fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController) {
     val context = LocalContext.current
@@ -128,10 +144,13 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
 
 
     var toothIcon: BitmapDescriptor? by remember { mutableStateOf(null) }
-    //Creates custom bitmap for tooth marker icon and loads it before map is ready
+    // Creates custom bitmap for tooth marker icon and loads it before map is ready
     LaunchedEffect(Unit) {
         toothIcon = BitmapDescriptorFactory.fromResource(R.drawable.tooth_icon)
     }
+
+    // Variable for the double click feature
+    var lastClickedPlaceId by remember { mutableStateOf<String?>(null) }
 
     // Update camera when user location is set
     LaunchedEffect(userLoc, userRad, toothIcon) {
@@ -150,22 +169,53 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
                 //Log.d("ClinicSearch", "Clinics fetched: ${clinics.size}")
                 dentalClinics = clinics
 
-                // Add markers for clinics on the map
+                // Add markers for each clinic on the map
                 googleMapInstance?.let { map ->
-                    //clear previous markers in case of radius change
+                    // Clear previous markers in case of radius change
                     map.clear()
                     clinics.forEach { clinic ->
                         val clinicLatLng =
                             LatLng(clinic.geometry.location.lat, clinic.geometry.location.lng)
-                        map.addMarker(
+                        val marker = map.addMarker(
                             MarkerOptions()
                                 .position(clinicLatLng)
                                 .title(clinic.name)
-                                .icon(toothIcon)
+                                //.icon(toothIcon)
                         )
+                        marker?.tag = clinic.placeId // Sets the place_id as the tag of the marker
                     }
                 }
+                // Marker tap listener to switch to clinic details page upon double-click
+                googleMapInstance?.setOnMarkerClickListener { marker ->
+                    Log.d("MarkerClick", "Clicked on marker: ${marker.title}") // For testing purposes
+                    val clickedPlaceId = marker.tag as? String
+
+                    if (clickedPlaceId != null) {
+                        // If place was already clicked previously
+                        if (lastClickedPlaceId == clickedPlaceId) {
+                            // Navigate to details page on second click
+                            navController.navigate("clinicDetails/$clickedPlaceId")
+                            lastClickedPlaceId = null // Reset after navigation
+                        } else {
+                            // Store the first click for reference
+                            lastClickedPlaceId = clickedPlaceId
+                            marker.showInfoWindow() // Show marker info like normal
+                        }
+                    }
+                    false // Return false to revert back to default single click
+                }
             }
+            // For single click detail navigation
+            //googleMapInstance?.setOnMarkerClickListener { marker ->
+            //    val clickedClinic = dentalClinics.find {
+            //        it.name == marker.title
+            //    }
+            //    clickedClinic?.let { clinic ->
+            //        Log.d("ClinicNavigation", "Navigating to details page with ID: ${clinic.placeId}")
+            //        navController.navigate("clinicDetails/${clinic.placeId}")
+            //    }
+            //    true
+            //}
         }
     }
 
@@ -199,9 +249,10 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
             }
 
             // Test: Adds a marker for CSULB
-            val location = LatLng(33.7838, -118.1141)
-            googleMap.addMarker(MarkerOptions().position(location).title("CSULB"))
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 12f))
+            //val location = LatLng(33.7838, -118.1141)
+            //googleMap.addMarker(MarkerOptions().position(location).title("CSULB"))
+            //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 12f))
+
         }
     }
 
@@ -211,39 +262,36 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        // Title of Clinic Search Page
-        Text(
-            text = "Prototype Clinic Search Page", fontSize = 28.sp
+        TopAppBar(
+            title =
+            {
+                Text(
+                    text = "Find a Dental Clinic",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+            navigationIcon = {
+                IconButton(onClick = { navController.navigate("home") }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back Button",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(MaterialTheme.colorScheme.secondaryContainer)
         )
-
-        // Button to go back home
-        TextButton(onClick = {
-            navController.navigate("home")
-        }) {
-            Text(text = "Home")
-        }
-
         // Display map
-        Box(modifier = modifier
-            .height(400.dp)
-            .fillMaxWidth())
-        {
-            AndroidView(
-                factory = { mapView },
-                modifier = Modifier.height(330.dp)
-            )
-        }
-    }
-
-
-    //UI for the Search Bar and the Radius buttons
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(350.dp))
+        AndroidView(
+            factory = { mapView },
+            modifier = Modifier
+                .height(430.dp)
+        )
+        //UI for the Search Bar and the Radius buttons
+        Spacer(modifier = Modifier.height(10.dp))
         HorizontalDivider(
             thickness = 2.dp,
             color = Color.Black
@@ -253,32 +301,36 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
             thickness = 2.dp,
             color = Color.Black
         )
-        Text(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 8.dp),
-            text = "Locate: ",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-        SearchBar(placesClient) { latLng ->
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start){
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(),
+                text = "Locate: ",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        SearchBar(placesClient, googleMapInstance) { latLng ->
             googleMapInstance?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
         Text("Select Search Radius")
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
-        ){
+        ) {
             Button(
-                onClick = {userRad = 8047}){
+                onClick = { userRad = 8047 }) {
                 Text("5 miles")
             }
             Button(
-                onClick = {userRad = 16093}){
+                onClick = { userRad = 16093 }) {
                 Text("10 miles")
             }
             Button(
-                onClick = {userRad = 32187}) {
+                onClick = { userRad = 32187 }) {
                 Text("20 miles")
             }
         }
@@ -287,7 +339,7 @@ fun ClinicSearchPage(modifier: Modifier = Modifier, navController: NavController
 
 //Composable for the search bar with autocomplete
 @Composable
-fun SearchBar(placesClient: PlacesClient, onPlaceSelected: (LatLng) -> Unit) {
+fun SearchBar(placesClient: PlacesClient, googleMapInstance: GoogleMap?, onPlaceSelected: (LatLng) -> Unit) {
     var query by remember { mutableStateOf("") }
     var predictions by remember { mutableStateOf<List<AutocompletePrediction>>(emptyList()) }
 
@@ -310,10 +362,13 @@ fun SearchBar(placesClient: PlacesClient, onPlaceSelected: (LatLng) -> Unit) {
 
         predictions.forEach { prediction ->
             TextButton(onClick = {
-                fetchPlaceDetails(prediction.placeId, placesClient) { latLng ->
-                    onPlaceSelected(latLng)
-                    query = prediction.getPrimaryText(null).toString()
-                    predictions = emptyList()
+                googleMapInstance?.let {map ->
+                    fetchPlaceDetails(prediction.placeId, placesClient, map) { latLng ->
+                        onPlaceSelected(latLng)
+                        query = prediction.getPrimaryText(null).toString()
+                        predictions = emptyList()
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f)) // Moves map to the place searched
+                    }
                 }
             }) {
                 Text(prediction.getPrimaryText(null).toString())
@@ -335,13 +390,24 @@ fun fetchPlaceSuggestions(query: String, placesClient: PlacesClient, onResult: (
             Log.e("PlacesAPI", "Autocomplete request failed", exception)
         }
 }
-//Gets the place's details like name and address
-fun fetchPlaceDetails(placeId: String, placesClient: PlacesClient, onResult: (LatLng) -> Unit) {
-    val request = FetchPlaceRequest.builder(placeId, listOf(Place.Field.LAT_LNG)).build()
+// Gets the place's details like name and address
+fun fetchPlaceDetails(placeId: String, placesClient: PlacesClient, googleMap: GoogleMap, onResult: (LatLng) -> Unit) {
+    val request = FetchPlaceRequest.builder(placeId, listOf(Place.Field.LAT_LNG, Place.Field.NAME)).build()
 
     placesClient.fetchPlace(request)
         .addOnSuccessListener { response ->
-            response.place.latLng?.let { onResult(it) }
+            response.place.latLng?.let { latlng ->
+                onResult(latlng)
+
+                // Adds a marker when a place is searched
+                val marker = googleMap.addMarker(
+                    MarkerOptions()
+                        .position(latlng)
+                        .title(response.place.name)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))// Blue marker for searched places
+                )
+                marker?.tag = placeId
+            }
         }
         .addOnFailureListener { exception ->
             Log.e("PlacesAPI", "Place details request failed", exception)
@@ -366,6 +432,7 @@ private fun getUserLocation(
     }
 }
 //Test composable to see the layout in the preview without having to run the app
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClinicSearchLayout(modifier: Modifier = Modifier, navController: NavController) {
     Column(
@@ -373,33 +440,38 @@ fun ClinicSearchLayout(modifier: Modifier = Modifier, navController: NavControll
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        // Title of Clinic Search Page
-        Text(
-            text = "Prototype Clinic Search Page", fontSize = 28.sp
+        TopAppBar(
+            title =
+            {
+                Text(
+                    text = "Find a Clinic",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+            navigationIcon = {
+                IconButton(onClick = { navController.navigate("home") }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back Button",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(MaterialTheme.colorScheme.secondaryContainer)
         )
 
-        // Button to go back home
-        TextButton(onClick = {
-            navController.navigate("home")
-        }) {
-            Text(text = "Home")
-        }
-
         // Display map
-        Box(modifier = modifier
-            .height(400.dp)
-            .fillMaxWidth()
-            .background(Color.Blue))
-    }
+        Box(
+            modifier = modifier
+                .height(330.dp)
+                .fillMaxWidth()
+                .background(Color.Blue)
+        )
 
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(350.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         HorizontalDivider(
             thickness = 2.dp,
             color = Color.Black
@@ -409,14 +481,19 @@ fun ClinicSearchLayout(modifier: Modifier = Modifier, navController: NavControll
             thickness = 2.dp,
             color = Color.Black
         )
-        Text(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 8.dp),
-            text = "Locate: ",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start){
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(),
+                text = "Locate: ",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
         var query by remember { mutableStateOf("") }
 
         TextField(
@@ -433,17 +510,17 @@ fun ClinicSearchLayout(modifier: Modifier = Modifier, navController: NavControll
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
                 .fillMaxWidth()
-        ){
+        ) {
             Button(
-                onClick = {null}){
+                onClick = { null }) {
                 Text("5 miles")
             }
             Button(
-                onClick = {null}){
+                onClick = { null }) {
                 Text("10 miles")
             }
             Button(
-                onClick = {null}) {
+                onClick = { null }) {
                 Text("20 miles")
             }
         }
