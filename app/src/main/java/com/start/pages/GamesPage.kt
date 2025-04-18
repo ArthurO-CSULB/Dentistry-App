@@ -22,20 +22,29 @@ import kotlin.random.Random
 
 @Composable
 fun GamesPage(modifier: Modifier = Modifier, navController: NavController) {
+    // Game dimensions
+    val screenWidth = 1000f
+    val screenHeight = 1600f
+    val centerX = screenWidth / 2
+
     // Game state
-    var birdY by remember { mutableFloatStateOf(0f) }
-    var birdVelocity by remember { mutableFloatStateOf(0f) }
+    var birdY by remember { mutableStateOf(screenHeight / 2) }
+    var birdVelocity by remember { mutableStateOf(0f) }
     var isGameRunning by remember { mutableStateOf(false) }
-    var score by remember { mutableIntStateOf(0) }
-    var pipes by remember { mutableStateOf(listOf<Pipe>()) }
+    var score by remember { mutableStateOf(0) }
+    var pipes by remember { mutableStateOf(emptyList<Pipe>()) }
+    var showDebug by remember { mutableStateOf(false) }
 
     // Game constants
-    val gravity = 1.5f
-    val flapStrength = -20f
-    val birdSize = 30.dp
-    val pipeWidth = 100.dp
-    val pipeGap = 200.dp
-    val pipeSpeed = 5f
+    val gravity = 0.5f
+    val flapStrength = -12f
+    val birdSize = 40.dp
+    val pipeWidth = 80.dp
+    val pipeGap = 260.dp
+    val pipeSpeed = 6f
+    val pipeSpacing = 575f
+    val groundHeight = 100f
+    val ceilingHeight = 50f
 
     // Convert Dp to pixels
     val density = LocalDensity.current
@@ -43,121 +52,245 @@ fun GamesPage(modifier: Modifier = Modifier, navController: NavController) {
     val pipeWidthPx = with(density) { pipeWidth.toPx() }
     val pipeGapPx = with(density) { pipeGap.toPx() }
 
-    // Game loop
+    // Game loop with sub-frame collision checking
     LaunchedEffect(isGameRunning) {
         while (isGameRunning) {
-            // Update bird position
-            birdVelocity += gravity
-            birdY += birdVelocity
+            val frameTime = 16L // ms per frame
+            val steps = 3 // Check 3 positions per frame
+            var collisionOccurred = false
 
-            // Update pipes
-            pipes = pipes.map { pipe ->
-                pipe.copy(x = pipe.x - pipeSpeed)
+            // Using a label and explicit loop control
+            stepLoop@ for (i in 0 until steps) {
+                // Update physics in smaller steps
+                birdVelocity += gravity / steps
+                val newBirdY = birdY + birdVelocity / steps
+
+                // Check for collisions along the movement path
+                val collision = checkCollision(
+                    birdY = newBirdY,
+                    birdSizePx = birdSizePx,
+                    pipes = pipes,
+                    pipeWidthPx = pipeWidthPx,
+                    pipeGapPx = pipeGapPx,
+                    groundHeight = groundHeight,
+                    ceilingHeight = ceilingHeight,
+                    centerX = centerX,
+                    screenHeight = screenHeight
+                )
+
+                if (collision) {
+                    isGameRunning = false
+                    collisionOccurred = true
+                    break@stepLoop
+                } else {
+                    birdY = newBirdY.coerceIn(
+                        minimumValue = birdSizePx/2 + ceilingHeight,
+                        maximumValue = screenHeight - groundHeight - birdSizePx/2
+                    )
+                }
+
+                delay(frameTime / steps)
             }
 
-            // Add new pipes
-            if (pipes.isEmpty() || pipes.last().x < 0) {
+            if (collisionOccurred) {
+                continue
+            }
+
+            // Update pipes
+            pipes = pipes.map { it.copy(x = it.x - pipeSpeed) }
+                .filter { it.x + pipeWidthPx > 0 }
+
+            // Add new pipes with proper spacing
+            if (pipes.isEmpty() || pipes.last().x < screenWidth - pipeSpacing) {
                 pipes = pipes + Pipe(
-                    x = 1000f,
-                    gapY = Random.nextFloat() * 400 + 200
+                    x = screenWidth,
+                    gapY = Random.nextFloat() * (screenHeight - pipeGapPx - 200f) + 100f,
+                    passed = false
                 )
             }
 
-            // Check for collisions
-            val birdRect = Rect(500f, birdY, birdSizePx, birdSizePx)
-            for (pipe in pipes) {
-                val topPipeRect = Rect(pipe.x, 0f, pipeWidthPx, pipe.gapY)
-                val bottomPipeRect = Rect(pipe.x, pipe.gapY + pipeGapPx, pipeWidthPx, 1000f)
-                if (birdRect.overlaps(topPipeRect) || birdRect.overlaps(bottomPipeRect)) {
-                    isGameRunning = false
-                }
-                if (pipe.x + pipeWidthPx < 500f && !pipe.passed) {
-                    score++
-                    pipe.passed = true
+            // Score increment
+            pipes.firstOrNull { pipe ->
+                pipe.x + pipeWidthPx < centerX && !pipe.passed
+            }?.let { passedPipe ->
+                score++
+                pipes = pipes.map { pipe ->
+                    if (pipe == passedPipe) pipe.copy(passed = true) else pipe
                 }
             }
-
-            // Check if bird is out of bounds
-            if (birdY > 1000 || birdY < 0) {
-                isGameRunning = false
-            }
-
-            delay(16) // ~60 FPS
         }
     }
 
-    // Column for the UI
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(Color(0xFF87CEEB)) // Sky blue
             .pointerInput(Unit) {
                 detectTapGestures {
                     if (!isGameRunning) {
-                        // Reset game state
-                        birdY = 500f
+                        // Reset game
+                        birdY = screenHeight / 2
                         birdVelocity = 0f
                         pipes = emptyList()
                         score = 0
                         isGameRunning = true
+                    } else {
+                        birdVelocity = flapStrength
                     }
-                    birdVelocity = flapStrength // Flap on tap
                 }
-            },
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+            }
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Flappy Tooth", fontSize = 32.sp, color = Color.White
-        )
-        Text(
-            text = "Score: $score", fontSize = 24.sp, color = Color.White
-        )
-        TextButton(onClick = {
-            navController.navigate("home")
-        }) {
-            Text(text = "Home", color = Color.White)
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Score: $score",
+                fontSize = 24.sp,
+                color = Color.White,
+                modifier = Modifier.padding(16.dp)
+            )
+            TextButton(
+                onClick = { navController.navigate("home") },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Home", color = Color.White)
+            }
         }
 
         // Game Canvas
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(bottom = groundHeight.dp)
         ) {
-            // Draw the bird
+            // Draw ground
+            drawRect(
+                color = Color(0xFF8B4513), // Brown
+                topLeft = Offset(0f, size.height - groundHeight),
+                size = androidx.compose.ui.geometry.Size(size.width, groundHeight)
+            )
+
+            // Draw ceiling
+            drawRect(
+                color = Color(0xFF8B4513),
+                topLeft = Offset(0f, 0f),
+                size = androidx.compose.ui.geometry.Size(size.width, ceilingHeight)
+            )
+
+            // Draw bird
             drawCircle(
                 color = Color.White,
-                center = Offset(size.width / 2, birdY),
+                center = Offset(centerX, birdY),
                 radius = birdSizePx / 2
             )
 
             // Draw pipes
             for (pipe in pipes) {
+                // Top pipe
                 drawRect(
-                    color = Color.Green,
-                    topLeft = Offset(pipe.x, 0f),
-                    size = androidx.compose.ui.geometry.Size(pipeWidthPx, pipe.gapY)
+                    color = Color(0xFF00AA00), // Dark green
+                    topLeft = Offset(pipe.x, ceilingHeight),
+                    size = androidx.compose.ui.geometry.Size(pipeWidthPx, pipe.gapY - ceilingHeight)
                 )
+
+                // Bottom pipe
                 drawRect(
-                    color = Color.Green,
+                    color = Color(0xFF00AA00),
                     topLeft = Offset(pipe.x, pipe.gapY + pipeGapPx),
                     size = androidx.compose.ui.geometry.Size(pipeWidthPx, size.height)
                 )
+
+                // Debug collision boxes
+                if (showDebug) {
+                    // Bird
+                    drawRect(
+                        color = Color.Red.copy(alpha = 0.3f),
+                        topLeft = Offset(
+                            centerX - birdSizePx * 0.6f/2,
+                            birdY - birdSizePx * 0.6f/2
+                        ),
+                        size = androidx.compose.ui.geometry.Size(
+                            birdSizePx * 0.6f,
+                            birdSizePx * 0.6f
+                        )
+                    )
+
+                    // Pipes
+                    drawRect(
+                        color = Color.Red.copy(alpha = 0.3f),
+                        topLeft = Offset(pipe.x, ceilingHeight),
+                        size = androidx.compose.ui.geometry.Size(pipeWidthPx, pipe.gapY - ceilingHeight)
+                    )
+                    drawRect(
+                        color = Color.Red.copy(alpha = 0.3f),
+                        topLeft = Offset(pipe.x, pipe.gapY + pipeGapPx),
+                        size = androidx.compose.ui.geometry.Size(pipeWidthPx, size.height)
+                    )
+                }
             }
         }
     }
 }
 
-// Data class for pipes
+// Helper function for collision detection
+fun checkCollision(
+    birdY: Float,
+    birdSizePx: Float,
+    pipes: List<Pipe>,
+    pipeWidthPx: Float,
+    pipeGapPx: Float,
+    groundHeight: Float,
+    ceilingHeight: Float,
+    centerX: Float,
+    screenHeight: Float
+): Boolean {
+    val birdBox = Rect(
+        x = centerX - birdSizePx * 0.6f/2,
+        y = birdY - birdSizePx * 0.6f/2,
+        width = birdSizePx * 0.6f,
+        height = birdSizePx * 0.6f
+    )
+
+    // Ground collision
+    if (birdY + birdSizePx/2 > screenHeight - groundHeight) {
+        return true
+    }
+
+    // Ceiling collision
+    if (birdY - birdSizePx/2 < ceilingHeight) {
+        return true
+    }
+
+    // Pipe collisions
+    pipes.forEach { pipe ->
+        val topPipe = Rect(
+            x = pipe.x,
+            y = ceilingHeight,
+            width = pipeWidthPx,
+            height = pipe.gapY - ceilingHeight
+        )
+        val bottomPipe = Rect(
+            x = pipe.x,
+            y = pipe.gapY + pipeGapPx,
+            width = pipeWidthPx,
+            height = screenHeight
+        )
+        if (birdBox.overlaps(topPipe) || birdBox.overlaps(bottomPipe)) {
+            return true
+        }
+    }
+    return false
+}
+
+// Data classes
 data class Pipe(
     val x: Float,
     val gapY: Float,
     var passed: Boolean = false
 )
 
-// Rect class for collision detection
 data class Rect(
     val x: Float,
     val y: Float,
