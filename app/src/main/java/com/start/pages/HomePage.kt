@@ -278,6 +278,11 @@ private fun FeatureRow(features: List<FeatureItem>) {
                 onClick = feature.onClick
             )
         }
+
+        Spacer(Modifier.height(8.dp))
+        Button(onClick={navController.navigate("userRatings")}) {
+            Text("User Ratings")
+        }
     }
 }
 
