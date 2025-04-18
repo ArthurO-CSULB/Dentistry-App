@@ -156,7 +156,8 @@ private fun FeatureRows(
             ) {
                 navController.navigate("calendar")
             }
-        )
+        ),
+        navController = navController  // Moved inside the parentheses
     )
 
     Spacer(Modifier.height(24.dp))
@@ -191,7 +192,8 @@ private fun FeatureRows(
             ) {
                 navController.navigate("glossary")
             }
-        )
+        ),
+        navController = navController  // Moved inside the parentheses
     )
 
     Spacer(Modifier.height(24.dp))
@@ -214,10 +216,6 @@ private fun FeatureRows(
                 iconRes = R.drawable.ic_games,
                 label = "Games",
                 color = Color(0xFFD8BFD8),
-//                containerSize = ButtonSizes.GAMES_HEIGHT,
-//                iconSize = ButtonSizes.REGULAR_ICON,
-//                width = ButtonSizes.GAMES_WIDTH,
-//                shape = RoundedCornerShape(8.dp)
                 containerSize = ButtonSizes.REGULAR_CONTAINER,
                 iconSize = ButtonSizes.REGULAR_ICON,
                 width = ButtonSizes.REGULAR_WIDTH,
@@ -225,7 +223,8 @@ private fun FeatureRows(
             ) {
                 navController.navigate("games")
             }
-        )
+        ),
+        navController = navController  // Moved inside the parentheses
     )
 }
 
@@ -261,7 +260,10 @@ private fun ProfileButton(
 }
 
 @Composable
-private fun FeatureRow(features: List<FeatureItem>) {
+private fun FeatureRow(
+    features: List<FeatureItem>,
+    navController: NavController  // Add this parameter
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth()
@@ -280,7 +282,7 @@ private fun FeatureRow(features: List<FeatureItem>) {
         }
 
         Spacer(Modifier.height(8.dp))
-        Button(onClick={navController.navigate("userRatings")}) {
+        Button(onClick = { navController.navigate("userRatings") }) {
             Text("User Ratings")
         }
     }
