@@ -29,6 +29,7 @@ import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageBegin
 import com.start.pages.SettingsPage
+import com.start.pages.ToothbrushReplacementPage
 import com.start.pages.timer_pages.TimerPageBegin
 import com.start.pages.timer_pages.TimerPageCancel
 import com.start.pages.timer_pages.TimerPageCountingModel
@@ -40,6 +41,7 @@ import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
 import com.start.pages.timer_pages.TimerPageCounting
 import com.start.pages.timer_pages.TimerPageFinish
 import com.start.viewmodels.HygieneTriviaViewModel
+import com.start.viewmodels.ToothbrushTrackerViewModel
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -50,10 +52,10 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 
-@RequiresApi(Build.VERSION_CODES.S)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel
+TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, toothbrushTrackerViewModel: ToothbrushTrackerViewModel
 ) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
@@ -84,14 +86,8 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel
         // Timer screen. Not in use
         composable("timer"){
             // If the current build is at least API level 33...
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                // Timer Page is implemented.
-                TimerPage(modifier, navController, timerViewModel)
-            }
-            else {
-                // Else the timer will display an error page.
-                ErrorPage(modifier, navController)
-            }
+            // Timer Page is implemented.
+            TimerPage(modifier, navController, timerViewModel)
         }
 
         composable("timer_begin") {
@@ -227,6 +223,10 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel
         // Change User Details Page
         composable("changeUserDetails"){
             ChangeUserDetailsPage(modifier, navController, authViewModel)
+        }
+
+        composable("toothbrushTracker") {
+            ToothbrushReplacementPage(navController, toothbrushTrackerViewModel)
         }
     })
 }

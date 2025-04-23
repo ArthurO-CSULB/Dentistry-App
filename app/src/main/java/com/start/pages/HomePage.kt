@@ -151,6 +151,13 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController,
         Button(onClick={navController.navigate("settings")}) {
             Text(text = "Prototype Settings")
         }
+
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Profile page.
+        Button(onClick={navController.navigate("toothbrushTracker")}) {
+            Text(text = "Prototype Toothbrush Tracker")
+        }
     }
 
     //Arrange another column only for Sign Out button

@@ -1,11 +1,13 @@
 package com.start
 
+import android.os.Build
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.start.ui.theme.DentalHygieneTheme
@@ -20,6 +22,7 @@ import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
 import com.start.repos.HygieneTriviaRepo
 import com.start.viewmodels.HygieneTriviaViewModel
+import com.start.viewmodels.ToothbrushTrackerViewModel
 
 /*
 We have our main and sole activity where the app will navigate through various composable screens
@@ -33,6 +36,7 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 class MainActivity : ComponentActivity(){
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,6 +68,9 @@ class MainActivity : ComponentActivity(){
         val hygieneTriviaViewModel: HygieneTriviaViewModel by viewModels() {
             HygieneTriviaViewModel.HygieneTriviaViewModelFactory(hygieneTriviaRepo)
         }
+
+        val toothbrushTrackerViewModel: ToothbrushTrackerViewModel by viewModels()
+
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
             DentalHygieneTheme {
@@ -73,7 +80,7 @@ class MainActivity : ComponentActivity(){
                     // inner padding to ensure page navigation respects the reserved space, as well
                     // as passing in the ViewModels.
                     PageNavigation(modifier = Modifier.padding(innerPadding),
-                        authViewModel = authViewModel, timerViewModel = timerViewModel, hygieneTriviaViewModel = hygieneTriviaViewModel)
+                        authViewModel = authViewModel, timerViewModel = timerViewModel, hygieneTriviaViewModel = hygieneTriviaViewModel, toothbrushTrackerViewModel)
                 }
             }
         }
