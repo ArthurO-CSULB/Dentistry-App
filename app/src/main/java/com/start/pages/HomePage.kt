@@ -82,6 +82,12 @@ fun HomePage(
                 iconSize = ButtonSizes.PROFILE_ICON,
                 backgroundColor = Color(0xFFFFB6C1)
             )
+            // Space
+            Spacer(modifier=Modifier.height(16.dp))
+            // Button to the timer page.
+            Button(onClick={navController.navigate("productrecs")}) {
+                Text(text = "Product Recommendations")
+            }
 
             Spacer(Modifier.height(40.dp))
 

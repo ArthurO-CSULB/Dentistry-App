@@ -40,6 +40,7 @@ import com.start.pages.timer_pages.TimerPageCancel
 import com.start.pages.timer_pages.TimerPageCountingModel
 import com.start.pages.UserRatingsPage
 import com.start.pages.BookmarkPage
+import com.start.pages.ProductRecommendations
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
@@ -236,6 +237,10 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         // Bookmark screen.
         composable("bookmark"){
             BookmarkPage(modifier, navController)
+        }
+
+        composable("productrecs") {
+            ProductRecommendations(modifier, navController)
         }
 
         // Verification Screen
