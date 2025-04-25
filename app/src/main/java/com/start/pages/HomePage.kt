@@ -7,6 +7,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -54,13 +63,20 @@ fun HomePage(
     hygieneTriviaViewModel: HygieneTriviaViewModel
 ) {
     val authState = authViewModel.authState.observeAsState()
+    // We get the timer state.
     val timerState = timerViewModel.timerState.collectAsState()
+    // We get the state of the trivia.
     val hygieneTriviaState = hygieneTriviaViewModel.hygieneTriviaState.collectAsState()
 
+    // We create a launched effect that passes in the value of the authentication state. Upon
+    // the value changing when calling authViewModel methods, the block of code will execute.
     LaunchedEffect(authState.value) {
-        when (authState.value) {
+        when (authState.value){
+            // When the user is unauthenticated by singing out, navigate to the login screen.
             is AuthState.UnAuthenticated -> navController.navigate("login")
+            // When the user is unverified, navigate to verification screen.
             is AuthState.Unverified -> navController.navigate("verification")
+            // Else nothing.
             else -> Unit
         }
     }
@@ -285,8 +301,21 @@ private fun FeatureRow(
         Button(onClick = { navController.navigate("userRatings") }) {
             Text("User Ratings")
         }
+
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Profile page.
+        Button(onClick={navController.navigate("settings")}) {
+            Text(text = "Prototype Settings")
+        }
+
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+        // Button to the Toothbrush Tracker Page.
+        Button(onClick={navController.navigate("toothbrushTracker")}) {
+            Text(text = "Prototype Toothbrush Tracker")
+        }
     }
-}
 
 @Composable
 private fun IconButtonWithLabel(
