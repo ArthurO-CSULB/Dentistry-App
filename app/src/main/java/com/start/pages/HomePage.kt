@@ -87,7 +87,7 @@ fun HomePage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(32.dp))
-            Text("Prototype Home Page", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Text("Home Page", fontSize = 24.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(24.dp))
 
             // Profile (Centered Circle)
@@ -141,7 +141,7 @@ private fun FeatureRows(
     timerState: TimerState,
     hygieneTriviaState: HygieneTriviaState
 ) {
-    // Timer and Calendar
+    // Timer and Calendar and Toothbrush Replacement
     FeatureRow(
         features = listOf(
             FeatureItem(
@@ -171,6 +171,18 @@ private fun FeatureRows(
                 shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
             ) {
                 navController.navigate("calendar")
+            },
+            FeatureItem(
+                iconRes = R.drawable.tooth_icon,
+                label = "Toothbrush Replacement",
+                color = Color(0xFF88CEDA),
+                containerSize = ButtonSizes.REGULAR_CONTAINER,
+                iconSize = ButtonSizes.REGULAR_ICON,
+                width = ButtonSizes.REGULAR_WIDTH,
+                shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS),
+            )
+            {
+                navController.navigate("toothbrushTracker")
             }
         ),
         navController = navController  // Moved inside the parentheses
@@ -296,93 +308,75 @@ private fun FeatureRow(
                 onClick = feature.onClick
             )
         }
-
-        Spacer(Modifier.height(8.dp))
-        Button(onClick = { navController.navigate("userRatings") }) {
-            Text("User Ratings")
-        }
-
-        // Space
-        Spacer(modifier=Modifier.height(8.dp))
-        // Button to the Profile page.
-        Button(onClick={navController.navigate("settings")}) {
-            Text(text = "Prototype Settings")
-        }
-
-        // Space
-        Spacer(modifier=Modifier.height(8.dp))
-        // Button to the Toothbrush Tracker Page.
-        Button(onClick={navController.navigate("toothbrushTracker")}) {
-            Text(text = "Prototype Toothbrush Tracker")
-        }
     }
+}
 
-@Composable
-private fun IconButtonWithLabel(
-    iconRes: Int,
-    label: String,
-    backgroundColor: Color,
-    containerSize: Dp,
-    iconSize: Dp,
-    width: Dp,
-    shape: Shape,
-    onClick: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(width)
+    @Composable
+    private fun IconButtonWithLabel(
+        iconRes: Int,
+        label: String,
+        backgroundColor: Color,
+        containerSize: Dp,
+        iconSize: Dp,
+        width: Dp,
+        shape: Shape,
+        onClick: () -> Unit
     ) {
-        Surface(
-            shape = shape,
-            color = backgroundColor,
-            modifier = Modifier.size(containerSize),
-            shadowElevation = 4.dp
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.width(width)
         ) {
-            IconButton(
-                onClick = onClick,
-                modifier = Modifier.fillMaxSize()
+            Surface(
+                shape = shape,
+                color = backgroundColor,
+                modifier = Modifier.size(containerSize),
+                shadowElevation = 4.dp
             ) {
-                Image(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = label,
-                    modifier = Modifier.size(iconSize)
-                )
+                IconButton(
+                    onClick = onClick,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Image(
+                        painter = painterResource(id = iconRes),
+                        contentDescription = label,
+                        modifier = Modifier.size(iconSize)
+                    )
+                }
             }
+            Spacer(Modifier.height(8.dp))
+            Text(label, fontSize = 16.sp, fontWeight = FontWeight.Medium)
         }
-        Spacer(Modifier.height(8.dp))
-        Text(label, fontSize = 16.sp, fontWeight = FontWeight.Medium)
     }
-}
 
-@Composable
-private fun SettingsButton(
-    iconRes: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    IconButton(
-        onClick = onClick,
-        modifier = modifier.size(ButtonSizes.SETTINGS_CONTAINER),
-        colors = IconButtonDefaults.iconButtonColors(
-            containerColor = Color(0xFFE6E6FA),
-            contentColor = Color.Black
-        )
+    @Composable
+    private fun SettingsButton(
+        iconRes: Int,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier
     ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = "Settings",
-            modifier = Modifier.size(ButtonSizes.SETTINGS_ICON)
-        )
+        IconButton(
+            onClick = onClick,
+            modifier = modifier.size(ButtonSizes.SETTINGS_CONTAINER),
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = Color(0xFFE6E6FA),
+                contentColor = Color.Black
+            )
+        ) {
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = "Settings",
+                modifier = Modifier.size(ButtonSizes.SETTINGS_ICON)
+            )
+        }
     }
-}
 
-data class FeatureItem(
-    val iconRes: Int,
-    val label: String,
-    val color: Color,
-    val containerSize: Dp,
-    val iconSize: Dp,
-    val width: Dp,
-    val shape: Shape,
-    val onClick: () -> Unit
-)
+    data class FeatureItem(
+        val iconRes: Int,
+        val label: String,
+        val color: Color,
+        val containerSize: Dp,
+        val iconSize: Dp,
+        val width: Dp,
+        val shape: Shape,
+        val onClick: () -> Unit
+    )
