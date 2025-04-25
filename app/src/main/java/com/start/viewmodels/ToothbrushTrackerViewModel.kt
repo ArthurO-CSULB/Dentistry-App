@@ -7,14 +7,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 
+// constants for faster querying
 const val ACCOUNTS = "accounts"
 
 // Viewmodel that checks how long have they been using their toothbrush
 class ToothbrushTrackerViewModel(): ViewModel() {
 
+    // state holders for the toothbrush acquisition date
     private val _toothbrushGetDate = MutableStateFlow<Long?>(null)
     val toothbrushGetDate: StateFlow<Long?> get() = _toothbrushGetDate
 
+    // Firebase auth and database session declarations
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
@@ -22,11 +25,13 @@ class ToothbrushTrackerViewModel(): ViewModel() {
     fun setToothbrushGetDate(getDate: Long?, replacementDate: Long?) {
         val userID = auth.currentUser?.uid.toString()
         runBlocking {
-            db.collection(ACCOUNTS).document(userID).update("getDate", getDate, "replacementDate", replacementDate)
+            if (getDate == null) db.collection(ACCOUNTS).document(userID).update("getDate", getDate, "replacementDate", null)
+            else db.collection(ACCOUNTS).document(userID).update("getDate", getDate, "replacementDate", replacementDate)
         }
         _toothbrushGetDate.value = getDate
     }
 
+    // get the toothbrush date stored in the datrabase
     fun getToothbrushGetDate() {
         val userId = auth.currentUser?.uid.toString()
 
@@ -35,4 +40,5 @@ class ToothbrushTrackerViewModel(): ViewModel() {
             if (time != null) _toothbrushGetDate.value = time
         }
     }
+
 }

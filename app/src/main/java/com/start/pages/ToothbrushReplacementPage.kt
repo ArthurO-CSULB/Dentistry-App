@@ -27,54 +27,80 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.start.ui.theme.Purple80
 import com.start.ui.theme.PurpleGrey40
 import androidx.compose.material3.SelectableDates
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import com.start.viewmodels.ToothbrushTrackerViewModel
 import java.text.SimpleDateFormat
-import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
-import java.util.TimeZone
+import com.start.notificationhandlers.NotificationHelper
 
+// Constrants to be used for the program
 const val FONT_SIZE = 18
 const val THREE_MONTHS = 7889238000
+const val TOOTHBRUSH_UUID = "_toothbrushID"
+const val NOTIF_TITLE = "Toothbrush Replacement Reminder"
+const val NOTIF_DESC = "It has been 3 months since you last replaced your toothbrush. Replace it now."
 
+// Calculates the offset from UTC
+@RequiresApi(Build.VERSION_CODES.O)
+val OFFSET = OffsetDateTime.now(ZoneId.systemDefault()).offset.totalSeconds * 1000
+
+
+// Toothbrush Rep[acement Page whedre user can set a date on when they got their toothbrush.
+// User will then be notified 3 months after the set date as a reminder to change their toothbrujsh
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerViewModel: ToothbrushTrackerViewModel) {
 
+    // date acquired from the database
     val selectedDate by toothbrushTrackerViewModel.toothbrushGetDate.collectAsState()
+
+    // checks if the date picker should be displayed or not
     val openDialog = remember { mutableStateOf(false) }
+
+    // a date picker that handles the date selection
     val datePickerState = remember {
         DatePickerState(
             locale = Locale.getDefault(),
             initialSelectedDateMillis = selectedDate,
             selectableDates = PastOrPresentSelectableDates
     ) }
-    val date = datePickerState.selectedDateMillis
-    val replacementDate = datePickerState.selectedDateMillis?.plus(THREE_MONTHS)
 
+    // context to be used for notifications
+    val context = LocalContext.current
+
+    // handlers for showing the selected date and replacement date
+    // also used as paramters for setter functions
+    var setDate = datePickerState.selectedDateMillis
+    var replacementDate = setDate?.plus(THREE_MONTHS)
+
+    // when app is launched, get the get date from the database
     LaunchedEffect(selectedDate){
        toothbrushTrackerViewModel.getToothbrushGetDate()
     }
 
+    // Creation of a scaffold to have a top bar and navigation buttons automatically laid out
     Scaffold(
+
+        // topBar specifications
         topBar = {CenterAlignedTopAppBar(
-            title = {Text("Toothbrush Healthiness Tracker")},
+            title = {Text("Toothbrush Healthiness Tracker")} ,  // title
             navigationIcon = {
+                //  back button of the top bar
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -82,50 +108,51 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
                     )
                 }
             },
+            // colors of the top bar
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Purple80,
                 titleContentColor = PurpleGrey40
             ),
+            // scroll behaviour
             scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         )}
 
-    ) {innerpadding ->
+        // body of the scaffold
+    ) {innerPadding ->
+
+        // Creation of column composable that handles all the UI elements of the body
         Column(
             modifier = Modifier
-                .padding(innerpadding)
+                .padding(innerPadding)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+            // Segment that shows the get date of the toothbrush
             Spacer(Modifier.padding(20.dp))
-
             Text(
-                text = "You last replaced your toothbrush on: ",
+                text = "You last replaced your toothbrush on",
                 fontSize = FONT_SIZE.sp,
                 textAlign = TextAlign.Center)
-
             Spacer(Modifier.padding(8.dp))
-
-            Text(text = date.let {convertMillisToDate(it)}.toString(),
+            Text(text = if (setDate == null) convertMillisToDate(selectedDate) else convertMillisToDate(setDate),
                 fontSize = 22.sp,
                 textAlign = TextAlign.Center)
 
+            // segment that shows the replacement date of the toothbrush
             Spacer(Modifier.padding(8.dp))
-
             Text(
                 text = "When you should replace your toothbrush: ",
                 fontSize = FONT_SIZE.sp,
                 textAlign = TextAlign.Center)
-
             Spacer(Modifier.padding(8.dp))
-
             Text(
-                text = replacementDate.let {convertMillisToDate(it)}.toString(),
+                text = if (setDate == null) convertMillisToDate(selectedDate) else convertMillisToDate(replacementDate),
                 fontSize = 22.sp,
                 textAlign = TextAlign.Center)
 
+            // Rationale for making this page
             Spacer(Modifier.padding(12.dp))
-
             Text(text = "It is recommended that toothbrushes, both manual and mechanical," +
                     " should be replaced every three (3) months. This is to ensure that you are" +
                     " not brushing your teeth with a toothbrush infested by colonies of bacteria.",
@@ -133,8 +160,8 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
                 fontSize = FONT_SIZE.sp,
                 modifier = Modifier.padding(10.dp))
 
+            // Button for making the dialog picker appear
             Spacer(Modifier.padding(18.dp))
-
             Button(
                 onClick = {openDialog.value = true }
             )
@@ -143,13 +170,26 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
                     fontSize = FONT_SIZE.sp)
             }
 
+            // Button for saving the selected date
             Spacer(Modifier.padding(10.dp))
-
-            Button(onClick = {toothbrushTrackerViewModel.setToothbrushGetDate(date, replacementDate)}) {
-                Text(text = "Save Date", fontSize = FONT_SIZE.sp)
+            Button(
+                onClick = {
+                    // if date is saved, set date in database then set the two handlers to null
+                    toothbrushTrackerViewModel.setToothbrushGetDate(setDate, replacementDate)
+                    setDate = null
+                    replacementDate = null
+                },
+                // button only works if date picker date is different from get date in database
+                enabled = setDate != selectedDate && setDate != null
+            )
+            {
+                Text(text = "Save Date",
+                    fontSize = FONT_SIZE.sp)
             }
 
+            // logic if the diualog is open
             if (openDialog.value) {
+                //create a date picker dialog for handling user input for the date
                 DatePickerDialog(onDismissRequest = {
                 },
                     confirmButton = {
@@ -158,18 +198,14 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
                                 openDialog.value = false
                             },
                         ) {
-                            Text("OK")
+                            Text("Choose Date")
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { openDialog.value = false }) { Text("Cancel") }
                     }
                 ) {
-                    // The verticalScroll will allow scrolling to show the entire month in case there is not
-                    // enough horizontal space (for example, when in landscape mode).
-                    // Note that it's still currently recommended to use a DisplayMode.Input at the state in
-                    // those cases.
-
+                    // Pass the date picker to the date picker dialog so dialog can modify the state
                     DatePicker(
                         state = datePickerState,
                         modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -189,25 +225,23 @@ fun TestToothbrush() {
     ToothbrushReplacementPage(rememberNavController())
 } */
 
+// helper function for displayting the correct time to the user, regardless of time zone
+@RequiresApi(Build.VERSION_CODES.O)
 fun convertMillisToDate(millis: Long?): String {
-    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).apply {
-        timeZone = TimeZone.getTimeZone("UTC")
-    }
-
-    val time = if (millis == null) formatter.format(Date(System.currentTimeMillis())) else formatter.format(Date(millis))
-
+    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+    val time = if (millis ==  null)  "No date selected" else formatter.format(Date(millis - OFFSET))
     return time
 }
 
+// helper object for the date picker
 @OptIn(ExperimentalMaterial3Api::class)
 object PastOrPresentSelectableDates: SelectableDates {
-    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-        return utcTimeMillis <= System.currentTimeMillis()
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun isSelectableYear(year: Int): Boolean {
-        return year <= LocalDate.now().year
+
+    // limits the date picker to only let user select past dates up to three months before the current time
+    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+        return (utcTimeMillis <= System.currentTimeMillis()+OFFSET) and (utcTimeMillis >= System.currentTimeMillis() - THREE_MONTHS + OFFSET)
     }
 }
+
 

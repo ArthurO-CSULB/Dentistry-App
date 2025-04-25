@@ -13,7 +13,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -154,7 +153,7 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController,
 
         // Space
         Spacer(modifier=Modifier.height(8.dp))
-        // Button to the Profile page.
+        // Button to the Toothbrush Tracker Page.
         Button(onClick={navController.navigate("toothbrushTracker")}) {
             Text(text = "Prototype Toothbrush Tracker")
         }

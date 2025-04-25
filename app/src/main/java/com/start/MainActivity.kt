@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import com.start.ui.theme.DentalHygieneTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.lifecycle.viewmodel.MutableCreationExtras
 import com.start.repos.TimerFunFactsRepo
 //import com.start.repos.TimerFunFactsRepo
 import com.start.viewmodels.AuthViewModel
@@ -69,6 +68,7 @@ class MainActivity : ComponentActivity(){
             HygieneTriviaViewModel.HygieneTriviaViewModelFactory(hygieneTriviaRepo)
         }
 
+        // Create a toothbrushtrackerviewmodel for app
         val toothbrushTrackerViewModel: ToothbrushTrackerViewModel by viewModels()
 
         // We set the content of our activity to the PageNavigation to begin page navigation flow.

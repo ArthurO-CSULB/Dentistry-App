@@ -26,7 +26,6 @@ import androidx.compose.animation.fadeIn
 import com.start.pages.AddEventPage
 import com.start.pages.BookmarkPage
 import com.start.pages.EditEventPage
-import com.start.pages.ErrorPage
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageBegin
 import com.start.pages.SettingsPage
 import com.start.pages.ToothbrushReplacementPage
