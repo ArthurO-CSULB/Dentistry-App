@@ -52,15 +52,16 @@ const val FONT_SIZE = 18
 const val THREE_MONTHS = 7889238000
 const val TOOTHBRUSH_UUID = "_toothbrushID"
 const val NOTIF_TITLE = "Toothbrush Replacement Reminder"
-const val NOTIF_DESC = "It has been 3 months since you last replaced your toothbrush. Replace it now."
+const val NOTIF_DESC_SUCC = "It has been 3 months since you last replaced your toothbrush. Replace it now."
+const val NOTIF_DESC_FAIL = "There has been an issue setting your notification date. Please try again."
 
-// Calculates the offset from UTC
+// Calculates the offset from UTC in milliseconds
 @RequiresApi(Build.VERSION_CODES.O)
 val OFFSET = OffsetDateTime.now(ZoneId.systemDefault()).offset.totalSeconds * 1000
 
 
-// Toothbrush Rep[acement Page whedre user can set a date on when they got their toothbrush.
-// User will then be notified 3 months after the set date as a reminder to change their toothbrujsh
+// Toothbrush RepLacement Page where user can set a date on when they got their toothbrush.
+// User will then be notified 3 months after the set date as a reminder to change their toothbrush
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -174,8 +175,16 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
             Spacer(Modifier.padding(10.dp))
             Button(
                 onClick = {
-                    // if date is saved, set date in database then set the two handlers to null
+                    // if date is saved, set date in database\
+                    // create a notification scheduled in the replacement date
+                    // then set the two handlers to null
                     toothbrushTrackerViewModel.setToothbrushGetDate(setDate, replacementDate)
+                    NotificationHelper(context).cancelScheduledNotification(TOOTHBRUSH_UUID)
+                    NotificationHelper(context).scheduleNotification(
+                        eventID = TOOTHBRUSH_UUID,
+                        timeInMillis = replacementDate?.toLong() ?: (System.currentTimeMillis() + 5000),
+                        title = NOTIF_TITLE,
+                        description = if (replacementDate == null) NOTIF_DESC_FAIL else NOTIF_DESC_SUCC)
                     setDate = null
                     replacementDate = null
                 },
@@ -216,16 +225,7 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
     }
 }
 
-/*
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-
-fun TestToothbrush() {
-    ToothbrushReplacementPage(rememberNavController())
-} */
-
-// helper function for displayting the correct time to the user, regardless of time zone
+// helper function for displaying the correct time to the user, regardless of time zone
 @RequiresApi(Build.VERSION_CODES.O)
 fun convertMillisToDate(millis: Long?): String {
     val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
