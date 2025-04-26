@@ -346,6 +346,14 @@ private fun FeatureRow(
             Spacer(Modifier.height(8.dp))
             Text(label, fontSize = 16.sp, fontWeight = FontWeight.Medium)
         }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+
+        // Button to the points test page.
+        Button(onClick={navController.navigate("points_test")}) {
+            Text(text = "Points Test")
+        }
+
     }
 
     @Composable
