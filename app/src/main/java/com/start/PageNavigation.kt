@@ -66,7 +66,7 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 
-@RequiresApi(Build.VERSION_CODES.S)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
 TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressionViewModel: PointsProgressionViewModel,
@@ -209,6 +209,37 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
             ClinicSearchPage(modifier, navController)
         }
 
+        // Detail screen
+        composable("clinicDetails/{placeId}") {backStackEntry ->
+            val bookmarksViewModel: BookmarksViewModel = viewModel()
+            ClinicDetailsPage(
+                placeId = backStackEntry.arguments?.getString("placeId"),
+                navController = navController,
+                clinicDetailsViewModel = clinicDetailsViewModel,
+                ratingViewModel = ratingViewModel,
+                bookmarksViewModel = bookmarksViewModel)
+        }
+
+        // clinic ratings page navigation
+        composable("clinicRatings/{placeID},{clinicName}") { backStackEntry ->
+            ClinicRatingsPage(
+                navController = navController,
+                ratingViewModel = ratingViewModel,
+                clinicID = backStackEntry.arguments?.getString("placeID").toString(),
+                clinicName = backStackEntry.arguments?.getString("clinicName").toString()
+            )
+        }
+
+        // rating creation page navigation
+        composable("createRating/{placeID},{clinicName}") { backStackEntry ->
+            CreateRatingPage(
+                navController = navController,
+                ratingViewModel = ratingViewModel,
+                clinicID = backStackEntry.arguments?.getString("placeID").toString(),
+                clinicName = backStackEntry.arguments?.getString("clinicName").toString()
+            )
+        }
+
         // Profile screen.
         composable("profile"){
             ProfilePage(modifier, navController)
@@ -248,7 +279,6 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
         composable("reauthenticationAccountDeletion"){
             ReauthenticationPage(modifier, navController, authViewModel, "settings")
         }
-
 
         // Change User Details Page
         composable("changeUserDetails"){
