@@ -54,7 +54,7 @@ fun HygieneTriviaPageBegin(modifier: Modifier, navController: NavController, hyg
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text("Daily Trivia!", fontWeight = FontWeight.Bold, fontSize = 64.sp,
+        Text("Dental Trivia!", fontWeight = FontWeight.Bold, fontSize = 64.sp,
             lineHeight = 1.5.em)
         Text("Press the Button to Begin!", fontStyle = FontStyle.Italic, fontSize = 24.sp,
             lineHeight = 1.5.em)
