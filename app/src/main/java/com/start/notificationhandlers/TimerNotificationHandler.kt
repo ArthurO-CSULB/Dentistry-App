@@ -28,7 +28,7 @@ class TimerNotificationHandler(private val context: Context) {
         // upon user tap.
         val notification = NotificationCompat.Builder(context, notificationChannelTimer)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Morale")
+            .setContentTitle("mOral")
             .setContentText("Brushing is all done!")
             .setPriority(NotificationManager.IMPORTANCE_HIGH)
             .setAutoCancel(true)

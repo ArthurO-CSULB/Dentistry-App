@@ -22,9 +22,11 @@ import com.start.viewmodels.ClinicDetailsViewModel
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
 import com.start.repos.HygieneTriviaRepo
+import com.start.repos.PointsProgressionRepo
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.RatingViewModel
 import com.start.viewmodels.ToothbrushTrackerViewModel
+import com.start.viewmodels.PointsProgressionViewModel
 
 /*
 We have our main and sole activity where the app will navigate through various composable screens
@@ -58,6 +60,7 @@ class MainActivity : ComponentActivity(){
         // We create our repositories, passing in the Context for app resources.
         val funFactsRepo = TimerFunFactsRepo(applicationContext)
         val hygieneTriviaRepo = HygieneTriviaRepo(applicationContext)
+        val pointsProgressionRepo = PointsProgressionRepo(applicationContext)
 
         // We declare and initialize the view-models, delegating their initialization
         // and lifecycle management to Jetpack's viewModels function.
@@ -70,11 +73,16 @@ class MainActivity : ComponentActivity(){
         val clinicDetailsViewModel : ClinicDetailsViewModel by viewModels()
         val ratingViewModel : RatingViewModel by viewModels()
         val hygieneTriviaViewModel: HygieneTriviaViewModel by viewModels() {
+            // Use factory to create view model to pass in the fun facts repository
             HygieneTriviaViewModel.HygieneTriviaViewModelFactory(hygieneTriviaRepo)
         }
 
         // Create a toothbrushtrackerviewmodel for app
         val toothbrushTrackerViewModel: ToothbrushTrackerViewModel by viewModels()
+
+        val pointsProgressionViewModel: PointsProgressionViewModel by viewModels() {
+            PointsProgressionViewModel.PointsViewModelFactory(pointsProgressionRepo)
+        }
 
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
@@ -84,9 +92,15 @@ class MainActivity : ComponentActivity(){
                     // The page navigation is the main content of the scaffold. Modifier assigned
                     // inner padding to ensure page navigation respects the reserved space, as well
                     // as passing in the ViewModels.
-                    PageNavigation(modifier = Modifier.padding(innerPadding),
-                        authViewModel = authViewModel, timerViewModel = timerViewModel, hygieneTriviaViewModel = hygieneTriviaViewModel,
-                        clinicDetailsViewModel = clinicDetailsViewModel, ratingViewModel = ratingViewModel, toothbrushTrackerViewModel = toothbrushTrackerViewModel)
+                    PageNavigation(
+                        modifier = Modifier.padding(innerPadding),
+                        authViewModel = authViewModel,
+                        timerViewModel = timerViewModel,
+                        hygieneTriviaViewModel = hygieneTriviaViewModel,
+                        clinicDetailsViewModel = clinicDetailsViewModel,
+                        ratingViewModel = ratingViewModel,
+                        toothbrushTrackerViewModel = toothbrushTrackerViewModel,
+                        pointsProgressionViewModel = pointsProgressionViewModel)
                 }
             }
         }

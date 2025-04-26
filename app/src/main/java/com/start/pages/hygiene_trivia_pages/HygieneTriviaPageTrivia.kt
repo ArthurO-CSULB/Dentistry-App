@@ -1,5 +1,6 @@
 package com.start.pages.hygiene_trivia_pages
 
+import android.media.MediaPlayer
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -31,6 +32,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
@@ -38,12 +40,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dentalhygiene.R
 import com.start.viewmodels.HygieneTriviaState
 import com.start.viewmodels.HygieneTriviaViewModel
 
@@ -71,6 +75,23 @@ fun HygieneTriviaPageTrivia(modifier: Modifier, navController: NavController, hy
     //val choices: List<String> = hygieneTriviaViewModel.questions[triviaIndex.value].choices
     val answer: String = questions.value[triviaIndex.value].answer
     //val answer: String = hygieneTriviaViewModel.questions[triviaIndex.value].answer
+
+
+
+    // https://www.geeksforgeeks.org/play-audio-in-android-using-jetpack-compose/
+    // Create a media player for the trivia countdown audio
+    val context = LocalContext.current
+    val triviaMediaPlayer = remember {MediaPlayer.create(context, R.raw.trivia_countdown)}
+    // Play the media player when the page is loaded
+    LaunchedEffect(Unit) {
+        triviaMediaPlayer.start()
+    }
+    // Chat GPT. Clean up the media player when the page is disposed.
+    DisposableEffect(Unit) {
+        onDispose {
+            triviaMediaPlayer.release()
+        }
+    }
 
     // When the state is finished, go to the finished page. When the state is failed,
     // go to the failed page.

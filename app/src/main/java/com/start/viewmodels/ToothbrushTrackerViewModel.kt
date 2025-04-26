@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 
-// constants for faster querying
-const val ACCOUNTS = "accounts"
-
 // Viewmodel that checks how long have they been using their toothbrush
 class ToothbrushTrackerViewModel(): ViewModel() {
+
+    // constants for faster querying
+    val accounts = "accounts"
 
     // state holders for the toothbrush acquisition date
     private val _toothbrushGetDate = MutableStateFlow<Long?>(null)
@@ -25,8 +25,8 @@ class ToothbrushTrackerViewModel(): ViewModel() {
     fun setToothbrushGetDate(getDate: Long?, replacementDate: Long?) {
         val userID = auth.currentUser?.uid.toString()
         runBlocking {
-            if (getDate == null) db.collection(ACCOUNTS).document(userID).update("getDate", getDate, "replacementDate", null)
-            else db.collection(ACCOUNTS).document(userID).update("getDate", getDate, "replacementDate", replacementDate)
+            if (getDate == null) db.collection(accounts).document(userID).update("getDate", getDate, "replacementDate", null)
+            else db.collection(accounts).document(userID).update("getDate", getDate, "replacementDate", replacementDate)
         }
         _toothbrushGetDate.value = getDate
     }
@@ -35,10 +35,9 @@ class ToothbrushTrackerViewModel(): ViewModel() {
     fun getToothbrushGetDate() {
         val userId = auth.currentUser?.uid.toString()
 
-        db.collection(ACCOUNTS).document(userId).get().addOnSuccessListener { snapshot ->
+        db.collection(accounts).document(userId).get().addOnSuccessListener { snapshot ->
             val time = snapshot.get("getDate") as Long?
             if (time != null) _toothbrushGetDate.value = time
         }
     }
-
 }

@@ -47,17 +47,8 @@ import java.util.Date
 import java.util.Locale
 import com.start.notificationhandlers.NotificationHelper
 
-// Constrants to be used for the program
-const val FONT_SIZE = 18
-const val THREE_MONTHS = 7889238000
-const val TOOTHBRUSH_UUID = "_toothbrushID"
-const val NOTIF_TITLE = "Toothbrush Replacement Reminder"
-const val NOTIF_DESC_SUCC = "It has been 3 months since you last replaced your toothbrush. Replace it now."
-const val NOTIF_DESC_FAIL = "There has been an issue setting your notification date. Please try again."
 
-// Calculates the offset from UTC in milliseconds
-@RequiresApi(Build.VERSION_CODES.O)
-val OFFSET = OffsetDateTime.now(ZoneId.systemDefault()).offset.totalSeconds * 1000
+const val THREE_MONTHS = 7889238000
 
 
 // Toothbrush RepLacement Page where user can set a date on when they got their toothbrush.
@@ -66,6 +57,12 @@ val OFFSET = OffsetDateTime.now(ZoneId.systemDefault()).offset.totalSeconds * 10
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerViewModel: ToothbrushTrackerViewModel) {
+
+    val fontSize = 18
+    val toothbrushUuid = "_toothbrushID"
+    val notifTitle = "Toothbrush Replacement Reminder"
+    val notifDescSucc = "It has been 3 months since you last replaced your toothbrush. Replace it now."
+    val notifDescFail = "There has been an issue setting your notification date. Please try again."
 
     // date acquired from the database
     val selectedDate by toothbrushTrackerViewModel.toothbrushGetDate.collectAsState()
@@ -133,7 +130,7 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
             Spacer(Modifier.padding(20.dp))
             Text(
                 text = "You last replaced your toothbrush on",
-                fontSize = FONT_SIZE.sp,
+                fontSize = fontSize.sp,
                 textAlign = TextAlign.Center)
             Spacer(Modifier.padding(8.dp))
             Text(text = if (setDate == null) convertMillisToDate(selectedDate) else convertMillisToDate(setDate),
@@ -144,7 +141,7 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
             Spacer(Modifier.padding(8.dp))
             Text(
                 text = "When you should replace your toothbrush: ",
-                fontSize = FONT_SIZE.sp,
+                fontSize = fontSize.sp,
                 textAlign = TextAlign.Center)
             Spacer(Modifier.padding(8.dp))
             Text(
@@ -158,7 +155,7 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
                     " should be replaced every three (3) months. This is to ensure that you are" +
                     " not brushing your teeth with a toothbrush infested by colonies of bacteria.",
                 textAlign = TextAlign.Center,
-                fontSize = FONT_SIZE.sp,
+                fontSize = fontSize.sp,
                 modifier = Modifier.padding(10.dp))
 
             // Button for making the dialog picker appear
@@ -168,7 +165,7 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
             )
             {
                 Text(text = "Set Toothbrush Replacement Date",
-                    fontSize = FONT_SIZE.sp)
+                    fontSize = fontSize.sp)
             }
 
             // Button for saving the selected date
@@ -179,12 +176,12 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
                     // create a notification scheduled in the replacement date
                     // then set the two handlers to null
                     toothbrushTrackerViewModel.setToothbrushGetDate(setDate, replacementDate)
-                    NotificationHelper(context).cancelScheduledNotification(TOOTHBRUSH_UUID)
+                    NotificationHelper(context).cancelScheduledNotification(toothbrushUuid)
                     NotificationHelper(context).scheduleNotification(
-                        eventID = TOOTHBRUSH_UUID,
+                        eventID = toothbrushUuid,
                         timeInMillis = replacementDate?.toLong() ?: (System.currentTimeMillis() + 5000),
-                        title = NOTIF_TITLE,
-                        description = if (replacementDate == null) NOTIF_DESC_FAIL else NOTIF_DESC_SUCC)
+                        title = notifTitle,
+                        description = if (replacementDate == null) notifDescFail else notifDescSucc)
                     setDate = null
                     replacementDate = null
                 },
@@ -193,10 +190,24 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
             )
             {
                 Text(text = "Save Date",
-                    fontSize = FONT_SIZE.sp)
+                    fontSize = fontSize.sp)
             }
 
-            // logic if the diualog is open
+            Spacer(Modifier.padding(18.dp))
+            Button(
+                onClick = {NotificationHelper(context).scheduleNotification(
+                    eventID = "testNotification",
+                    timeInMillis = (System.currentTimeMillis() + 5000),
+                    title = notifTitle,
+                    description = if (replacementDate == null) notifDescFail else notifDescSucc)
+                }
+            )
+            {
+                Text(text = "Send Test Notification",
+                    fontSize = fontSize.sp)
+            }
+
+            // logic if the dialog is open
             if (openDialog.value) {
                 //create a date picker dialog for handling user input for the date
                 DatePickerDialog(onDismissRequest = {
@@ -228,8 +239,9 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
 // helper function for displaying the correct time to the user, regardless of time zone
 @RequiresApi(Build.VERSION_CODES.O)
 fun convertMillisToDate(millis: Long?): String {
+    val offset = OffsetDateTime.now(ZoneId.systemDefault()).offset.totalSeconds * 1000
     val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-    val time = if (millis ==  null)  "No date selected" else formatter.format(Date(millis - OFFSET))
+    val time = if (millis ==  null)  "No date selected" else formatter.format(Date(millis - offset))
     return time
 }
 
@@ -240,7 +252,8 @@ object PastOrPresentSelectableDates: SelectableDates {
 
     // limits the date picker to only let user select past dates up to three months before the current time
     override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-        return (utcTimeMillis <= System.currentTimeMillis()+OFFSET) and (utcTimeMillis >= System.currentTimeMillis() - THREE_MONTHS + OFFSET)
+        val offset = OffsetDateTime.now(ZoneId.systemDefault()).offset.totalSeconds * 1000
+        return (utcTimeMillis <= System.currentTimeMillis()+offset) and (utcTimeMillis >= System.currentTimeMillis() - THREE_MONTHS + offset)
     }
 }
 

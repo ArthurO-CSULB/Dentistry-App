@@ -1,4 +1,4 @@
-package com.start.pages
+package com.start.pages.profile_pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -106,7 +106,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Text(text = "Name: ")
         Box(
             modifier = Modifier
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .padding(8.dp)
         ){
         Text(text = "$firstName $lastName", fontSize = 20.sp)}
@@ -116,7 +116,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Text(text = "Email: ")
         Box(
             modifier = Modifier
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .padding(8.dp)
         ) {
             Text(text = email, fontSize = 20.sp)
@@ -127,7 +127,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Text(text = "Experience Points: ")
         Box(
             modifier = Modifier
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .padding(8.dp)
         ) {
             Text(text = experience, fontSize = 20.sp)
@@ -145,6 +145,14 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(Modifier.height(16.dp))
         Button(onClick = { navController.navigate("userRatings") }) {
             Text("User Ratings", fontSize = 20.sp)
+        }
+
+
+        // Button to go to points prestige page.
+        TextButton(onClick = {
+            navController.navigate("points_progression")
+        }) {
+            Text(text = "Points and Progression", fontSize = 20.sp)
         }
 
     }
