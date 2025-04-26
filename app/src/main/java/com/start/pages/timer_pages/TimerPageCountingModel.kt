@@ -5,11 +5,14 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,10 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dentalhygiene.R
 
 import com.start.viewmodels.TimerState
 import com.start.viewmodels.TimerModelState
@@ -101,6 +107,32 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         }
     }
 
+    // Image of play/pause button that acts as a button to pause and resume the timer.
+    val pauseResumeImage: @Composable () -> Unit = {
+        // Store the state of the pause button.
+
+        // If paused show play button. Else show pause button.
+        Image(
+            painter = painterResource(id = if (timerState.value == TimerState.Pause) R.drawable.timer_resume else R.drawable.timer_pause),
+            contentDescription = "Pause/Resume Button",
+            modifier = modifier
+                .size(48.dp)
+                .clickable {
+                    // Depending on the timer state...
+                    when (timerState.value) {
+                        // when the timer is counting or resumed, we pause the timer.
+                        TimerState.Counting, TimerState.Resumed -> {
+                            timerViewModel.pauseTimer()
+                        }
+                        // when the timer is paused, we start the timer.
+                        TimerState.Pause -> timerViewModel.startTimer()
+                        // else nothing.
+                        else -> Unit
+                    }
+                }
+        )
+    }
+
     // Button to pause and resume the timer.
     val pauseResumeButton: @Composable () -> Unit = {
         Button(
@@ -134,6 +166,20 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
             )
         }
     }
+
+    // Image of cancel button, acts as button to cancel the timer.
+    val cancelImage: @Composable () -> Unit = {
+        Image(
+            painter = painterResource(id = R.drawable.timer_cancel),
+            contentDescription = "Cancel Button",
+            modifier = modifier
+                .size(48.dp)
+                .clickable {
+                    timerViewModel.cancelTimer()
+                }
+        )
+    }
+
     // Button to cancel the timer.
     val cancelButton: @Composable () -> Unit = {
         Button(
@@ -151,6 +197,18 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         ) {
             Text(text="Demo Finish")
         }
+    }
+
+    val toggleTeethImage: @Composable () -> Unit = {
+        Image(
+            painter = painterResource(id = R.drawable.timer_teeth_toggle),
+            contentDescription = "Toggle Teeth Button",
+            modifier = modifier
+                .size(48.dp)
+                .clickable {
+                    timerViewModel.toggleTeeth()
+                }
+        )
     }
 
     // Button to toggle the teeth.
