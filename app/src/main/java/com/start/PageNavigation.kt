@@ -156,6 +156,10 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
             HygieneTriviaPageFinished(modifier, navController, hygieneTriviaViewModel)
         }
 
+        composable("trivia_points") {
+            HygieneTriviaPagePoints(modifier, navController, hygieneTriviaViewModel, pointsProgressionViewModel)
+        }
+
         composable(
             route = "trivia_fail",
             enterTransition = {
@@ -213,6 +217,10 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
         // Bookmark screen.
         composable("bookmark"){
             BookmarkPage(modifier, navController)
+        }
+
+        composable("points_progression") {
+            PointsProgressionPage(modifier, navController, pointsProgressionViewModel)
         }
 
         // Verification Screen
