@@ -133,6 +133,8 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         )
     }
 
+    /*
+
     // Button to pause and resume the timer.
     val pauseResumeButton: @Composable () -> Unit = {
         Button(
@@ -167,6 +169,8 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         }
     }
 
+     */
+
     // Image of cancel button, acts as button to cancel the timer.
     val cancelImage: @Composable () -> Unit = {
         Image(
@@ -180,6 +184,8 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         )
     }
 
+    /*
+
     // Button to cancel the timer.
     val cancelButton: @Composable () -> Unit = {
         Button(
@@ -190,6 +196,9 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
             Text(text="Cancel")
         }
     }
+
+     */
+
     // Button to demo the finish.
     val demoFinishButton: @Composable () -> Unit = {
         Button(
@@ -211,6 +220,7 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         )
     }
 
+    /*
     // Button to toggle the teeth.
     val toggleTeethButton: @Composable () -> Unit = {
         Button(
@@ -221,20 +231,25 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         }
     }
 
+     */
+
     // We create the column for the timer.
     Column(
         modifier = modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
-        // Row for the tooth model text.
-        Row(
+
+        // Row for the tooth model.
+        Column(
             modifier = modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+                .weight(2f)
+                .wrapContentWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
+
             // Display the text for the tooth model to tell the user what to brush.
             // Animate the text.
             AnimatedContent(
@@ -243,20 +258,13 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
                 label="Tooth Model Text Transitions"
             ) {
                 // No matter what the state is we display the text with animation.
-                timerModelStateValue ->
+                    timerModelStateValue ->
                 when(timerModelStateValue) {
                     is TimerModelState.Upper -> timerTextToothModel()
                     else -> timerTextToothModel()
                 }
             }
-        }
-        // Row for the tooth model.
-        Row(
-            modifier = modifier
-                .wrapContentWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+
             // We display the tooth model.
             ToothModelViewerScreen(LocalContext.current, timerViewModel)
             /*
@@ -272,35 +280,28 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
                     .clip(CircleShape)
             )
             */
-        }
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+
             // We display the time counting down right below the tooth model.
             timerTextModel()
+
         }
+
         Row(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
             // We display the time counting down right below the tooth model.
-            // We display the buttons to pause and cancel the timer.
-            pauseResumeButton()
-            demoFinishButton()
+            // We display the buttons to pause and cancel the timer and toggle teeth.
+            pauseResumeImage()
+            toggleTeethImage()
             // Button to cancel the timer.
-            cancelButton()
+            cancelImage()
         }
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Button to toggle teeth.
-            toggleTeethButton()
-        }
+
+        // Button to demo finish
+        demoFinishButton()
+
     }
 }
 

@@ -285,9 +285,11 @@ fun TimerPageCounting(modifier: Modifier, navController: NavController, timerVie
                 cancelImage()
             }
 
-            // Button to toggle the teeth.
-            demoFinishButton()
+
         }
+
+        // Button to toggle the teeth.
+        demoFinishButton()
 
     }
 }
