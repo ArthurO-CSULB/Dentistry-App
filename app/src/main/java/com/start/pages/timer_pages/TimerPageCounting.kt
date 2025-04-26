@@ -7,7 +7,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -155,29 +157,22 @@ fun TimerPageCounting(modifier: Modifier, navController: NavController, timerVie
 
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .fillMaxHeight(0.25f),
+            //.border(width = 2.dp, color = Color.Black)
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Row to display the timer
-        Row(
-            modifier=modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            // Display the timer above.
-            timerText()
-        }
-        // Row to display the dental fun facts.
-        Row(
+        // Display the timer above.
+        timerText()
+
+        Column(
             modifier = modifier
-                // Fill 50% of the available height space.
-                .fillMaxHeight(0.65f)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.Center
+                .weight(2f)
+                //.border(width = 2.dp, color = Color.Black)
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
             // Animate the fun facts.
             AnimatedContent(
@@ -186,7 +181,7 @@ fun TimerPageCounting(modifier: Modifier, navController: NavController, timerVie
                 transitionSpec= { fadeIn(animationSpec = tween(1000, 800)) togetherWith slideOutVertically{ height -> height} + fadeOut() },
                 label="Fun Fact Transitions"
             ) {
-                timerFunFactState ->
+                    timerFunFactState ->
                 // Display fun facts. When the fun fact changes from the
                 // view model, we display a new one animated.
                 Text(
@@ -199,29 +194,30 @@ fun TimerPageCounting(modifier: Modifier, navController: NavController, timerVie
                     lineHeight=2.em
                 )
             }
+        }
+        Column(
+            modifier = modifier
+                .weight(1f),
+                //.border(width = 2.dp, color = Color.Black)
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = modifier
+                    //.border(width = 2.dp, color = Color.Black)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                // Display the pauseResume button and the cancel button.
+                pauseResumeButton()
+                demoFinishButton()
+                cancelButton()
+            }
 
-        }
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.30f),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            // Display the pauseResume button and the cancel button.
-            pauseResumeButton()
-            demoFinishButton()
-            cancelButton()
-        }
-        // Row for toggle button.
-        Row(
-            modifier = modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.Center
-        ) {
             // Button to toggle the teeth.
             toggleTeethButton()
         }
+
     }
 }
