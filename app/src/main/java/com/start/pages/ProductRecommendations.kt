@@ -2,36 +2,40 @@ package com.start.pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
@@ -39,11 +43,15 @@ import androidx.navigation.NavController
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 */
+
+// This shows the page that the user sees
 @Composable
-fun ProductShopPage(products: List<Product>) {
+fun ProductShopPage(products: List<Product>, navController: NavController) {
+    // The top three products
     val topProducts = products.filter { it.isTopProduct }.take(3)
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp),
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(16.dp))
         Text("Top 3 Products of the Week", style = MaterialTheme.typography.titleMedium)
@@ -59,14 +67,15 @@ fun ProductShopPage(products: List<Product>) {
             }
         }
 
+        // Every product category
         Text("Browse Products", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
 
-        ProductCarousel(products)
+        ProductCarousel(products, navController)
     }
 }
 
-
+// Top products function
 @Composable
 fun TopProductCard(product: Product) {
     Column(
@@ -83,23 +92,24 @@ fun TopProductCard(product: Product) {
     }
 }
 
+// Button that would lead to new page based on the product category clicked
 @Composable
-fun ProductCarouselCard(product: Product) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
+fun ProductButton(iconRes: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+            .size(48.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(painter = painterResource(id = product.imageResId), contentDescription = null,
-            modifier = Modifier.height(180.dp).fillMaxWidth(), contentScale = ContentScale.Crop)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(product.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-        Text(product.description, fontSize = 14.sp, color = Color.Gray)
+        Icon(
+            painter = painterResource(id = iconRes),
+            contentDescription = "Click to go to product page",
+            modifier = Modifier.size(24.dp)
+        )
     }
 }
+
+// The card that will be shown in the carousel
 @Composable
 fun CarouselCard(product: Product) {
     Card(
@@ -110,31 +120,44 @@ fun CarouselCard(product: Product) {
             .background(Color.White),
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(product.imageResId),
-                contentDescription = null,
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(product.imageResId),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(product.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(product.description, fontSize = 14.sp, color = Color.Gray)
+            }
+
+            // Mini button that we click to go to page
+            ProductButton(
+                iconRes = android.R.drawable.ic_menu_camera,
+                onClick = {},
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
-                contentScale = ContentScale.Crop
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(product.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(product.description, fontSize = 14.sp, color = Color.Gray)
         }
     }
 }
 
+// The function for the carousel itself
 @Composable
-fun ProductCarousel(products: List<Product>) {
+fun ProductCarousel(products: List<Product>, navController: NavController) {
     val listState = rememberLazyListState()
 
-    LazyRow(
-        state = listState,
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        //state = listState,
         contentPadding = PaddingValues(horizontal = 32.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.fillMaxWidth()
@@ -179,13 +202,7 @@ fun ProductShopPaege(products: List<Producet>) {
 }
 */
 
-data class Product(
-    val name: String,
-    val imageResId: Int,
-    val description: String,
-    val isTopProduct: Boolean = false
-)
-
+// ALl the product categories
 @Composable
 fun ProductRecommendations(modifier: Modifier = Modifier, navController: NavController) {
     val mockProducts = listOf(
@@ -196,8 +213,6 @@ fun ProductRecommendations(modifier: Modifier = Modifier, navController: NavCont
         Product("Mouthwash", android.R.drawable.ic_menu_camera, "test")
     )
 
-    ProductShopPage(products = mockProducts)
-
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
@@ -205,6 +220,7 @@ fun ProductRecommendations(modifier: Modifier = Modifier, navController: NavCont
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+        ProductShopPage(products = mockProducts, navController = navController)
         // Button to go back home.
         TextButton(onClick = {
             navController.navigate("home")
@@ -213,6 +229,15 @@ fun ProductRecommendations(modifier: Modifier = Modifier, navController: NavCont
         }
     }
 }
+
+// Basic class of each product
+data class Product(
+    val name: String,
+    val imageResId: Int,
+    val description: String,
+    val isTopProduct: Boolean = false
+)
+
 /*
 @Preview(showBackground = true)
 @Composable
