@@ -83,7 +83,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
 
         // Title of Profile Page
         Text(
-            text = "Prototype Profile Page", fontSize = 32.sp
+            text = "Profile Page", fontSize = 32.sp
         )
 
         // Space between the title text and user information
@@ -140,6 +140,11 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
             navController.navigate("bookmark")
         }) {
             Text(text = "Clinic Bookmarks", fontSize = 20.sp)
+        }
+
+        Spacer(Modifier.height(16.dp))
+        Button(onClick = { navController.navigate("userRatings") }) {
+            Text("User Ratings", fontSize = 20.sp)
         }
 
     }

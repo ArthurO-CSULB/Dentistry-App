@@ -30,7 +30,6 @@ import kotlin.Long
 // avoids logical mistakes
 const val CLINICS = "clinics"
 const val CLINIC_RATINGS = "clinicRatings"
-const val ACCOUNTS = "accounts"
 const val USER_RATINGS = "userRatings"
 
 // class that handles ratings and updates

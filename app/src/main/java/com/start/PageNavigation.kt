@@ -35,6 +35,7 @@ import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageBegin
 import com.start.pages.SettingsPage
+import com.start.pages.ToothbrushReplacementPage
 import com.start.pages.timer_pages.TimerPageBegin
 import com.start.pages.timer_pages.TimerPageCancel
 import com.start.pages.timer_pages.TimerPageCountingModel
@@ -49,6 +50,7 @@ import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
 import com.start.pages.timer_pages.TimerPageCounting
 import com.start.pages.timer_pages.TimerPageFinish
 import com.start.viewmodels.HygieneTriviaViewModel
+import com.start.viewmodels.ToothbrushTrackerViewModel
 import com.start.viewmodels.RatingViewModel
 import com.start.viewmodels.BookmarksViewModel
 
@@ -61,10 +63,11 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 
-@RequiresApi(Build.VERSION_CODES.S)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, ratingViewModel: RatingViewModel) {
+TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsViewModel: ClinicDetailsViewModel,
+                   ratingViewModel: RatingViewModel, toothbrushTrackerViewModel: ToothbrushTrackerViewModel) {
 
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
@@ -278,6 +281,10 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         // User Ratings Page
         composable("userRatings") {
             UserRatingsPage(navController, ratingViewModel)
+        }
+
+        composable("toothbrushTracker") {
+            ToothbrushReplacementPage(navController, toothbrushTrackerViewModel)
         }
     })
 }

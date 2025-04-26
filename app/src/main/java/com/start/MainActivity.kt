@@ -24,6 +24,7 @@ import com.google.android.libraries.places.api.Places
 import com.start.repos.HygieneTriviaRepo
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.RatingViewModel
+import com.start.viewmodels.ToothbrushTrackerViewModel
 
 /*
 We have our main and sole activity where the app will navigate through various composable screens
@@ -37,7 +38,7 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 class MainActivity : ComponentActivity(){
-    @RequiresApi(Build.VERSION_CODES.S)
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -71,6 +72,10 @@ class MainActivity : ComponentActivity(){
         val hygieneTriviaViewModel: HygieneTriviaViewModel by viewModels() {
             HygieneTriviaViewModel.HygieneTriviaViewModelFactory(hygieneTriviaRepo)
         }
+
+        // Create a toothbrushtrackerviewmodel for app
+        val toothbrushTrackerViewModel: ToothbrushTrackerViewModel by viewModels()
+
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
             DentalHygieneTheme {
@@ -81,7 +86,7 @@ class MainActivity : ComponentActivity(){
                     // as passing in the ViewModels.
                     PageNavigation(modifier = Modifier.padding(innerPadding),
                         authViewModel = authViewModel, timerViewModel = timerViewModel, hygieneTriviaViewModel = hygieneTriviaViewModel,
-                        clinicDetailsViewModel = clinicDetailsViewModel, ratingViewModel = ratingViewModel)
+                        clinicDetailsViewModel = clinicDetailsViewModel, ratingViewModel = ratingViewModel, toothbrushTrackerViewModel = toothbrushTrackerViewModel)
                 }
             }
         }
