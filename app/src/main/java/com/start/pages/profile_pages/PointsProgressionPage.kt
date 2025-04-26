@@ -116,7 +116,7 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
             // TODO: This image should be an emblem that a user can buy/unlock. Customizable.
             // Image for the prestige/user
             Image(
-                painter = painterResource(id = R.drawable.basicprofilepic),
+                painter = painterResource(id = R.drawable.ic_profile),
                 contentDescription = "Profile Picture",
                 modifier = modifier.size(160.dp)
             )

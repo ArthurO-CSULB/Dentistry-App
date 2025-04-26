@@ -349,10 +349,12 @@ private fun FeatureRow(
         // Space
         Spacer(modifier=Modifier.height(8.dp))
 
+        /*
         // Button to the points test page.
         Button(onClick={navController.navigate("points_test")}) {
             Text(text = "Points Test")
         }
+         */
 
     }
 
