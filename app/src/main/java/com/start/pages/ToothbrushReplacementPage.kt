@@ -47,7 +47,7 @@ import java.util.Date
 import java.util.Locale
 import com.start.notificationhandlers.NotificationHelper
 
-// Constrants to be used for the program
+// Constants to be used for the program
 const val FONT_SIZE = 18
 const val THREE_MONTHS = 7889238000
 const val TOOTHBRUSH_UUID = "_toothbrushID"
@@ -60,7 +60,7 @@ const val NOTIF_DESC_FAIL = "There has been an issue setting your notification d
 val OFFSET = OffsetDateTime.now(ZoneId.systemDefault()).offset.totalSeconds * 1000
 
 
-// Toothbrush RepLacement Page where user can set a date on when they got their toothbrush.
+// Toothbrush Replacement Page where user can set a date on when they got their toothbrush.
 // User will then be notified 3 months after the set date as a reminder to change their toothbrush
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,7 +85,7 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
     val context = LocalContext.current
 
     // handlers for showing the selected date and replacement date
-    // also used as paramters for setter functions
+    // also used as parameters for setter functions
     var setDate = datePickerState.selectedDateMillis
     var replacementDate = setDate?.plus(THREE_MONTHS)
 
@@ -156,7 +156,8 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
             Spacer(Modifier.padding(12.dp))
             Text(text = "It is recommended that toothbrushes, both manual and mechanical," +
                     " should be replaced every three (3) months. This is to ensure that you are" +
-                    " not brushing your teeth with a toothbrush infested by colonies of bacteria.",
+                    " not brushing your teeth with a toothbrush infested by colonies of bacteria." +
+                    "If the bristles are worn down, bent, or broken, replace it immediately.",
                 textAlign = TextAlign.Center,
                 fontSize = FONT_SIZE.sp,
                 modifier = Modifier.padding(10.dp))
@@ -196,7 +197,7 @@ fun ToothbrushReplacementPage(navController: NavController, toothbrushTrackerVie
                     fontSize = FONT_SIZE.sp)
             }
 
-            // logic if the diualog is open
+            // logic if the dialog is open
             if (openDialog.value) {
                 //create a date picker dialog for handling user input for the date
                 DatePickerDialog(onDismissRequest = {
