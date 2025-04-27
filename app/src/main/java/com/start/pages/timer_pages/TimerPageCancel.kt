@@ -143,12 +143,12 @@ fun TimerPageCancel(modifier: Modifier, navController: NavController, timerViewM
             // We display the sad face.
             Image(
                 // Using the painter Resource API we display the image.
-                painter = painterResource(id = R.drawable.sadface_timer),
+                painter = painterResource(id = R.drawable.crying_tooth),
                 contentDescription = stringResource(id = R.string.tooth_model_initial),
                 // We crop the image to our liking.
                 contentScale = ContentScale.Crop,
                 modifier = modifier
-                    .size(200.dp)
+                    .size(250.dp)
                     .clip(CircleShape)
             )
 

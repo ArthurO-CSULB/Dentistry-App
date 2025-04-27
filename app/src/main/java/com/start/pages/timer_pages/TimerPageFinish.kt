@@ -151,13 +151,12 @@ fun TimerPageFinish(modifier: Modifier, navController: NavController, timerViewM
             // We display the tooth model.
             Image(
                 // Using the painter Resource API we display the image.
-                painter = painterResource(id = R.drawable.smileyface_timer),
+                painter = painterResource(id = R.drawable.smiling_tooth_2),
                 contentDescription = stringResource(id = R.string.tooth_model_initial),
                 // We crop the image to our liking.
                 contentScale = ContentScale.Crop,
                 modifier = modifier
-                    .size(200.dp)
-                    .clip(CircleShape)
+                    .size(250.dp)
             )
             // Text to congratulate.
             Text(
