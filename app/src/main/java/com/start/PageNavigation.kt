@@ -48,6 +48,7 @@ import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFinished
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPagePoints
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
+import com.start.pages.profile_pages.LeaderboardsStatsPage
 import com.start.pages.profile_pages.PointsProgressionPage
 import com.start.pages.timer_pages.TimerPageCounting
 import com.start.pages.timer_pages.TimerPageFinish
@@ -55,6 +56,7 @@ import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.ToothbrushTrackerViewModel
 import com.start.viewmodels.RatingViewModel
 import com.start.viewmodels.BookmarksViewModel
+import com.start.viewmodels.LeaderboardsStatsViewModel
 import com.start.viewmodels.PointsProgressionViewModel
 
 /*
@@ -68,10 +70,16 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressionViewModel: PointsProgressionViewModel,
-                   clinicDetailsViewModel: ClinicDetailsViewModel, ratingViewModel: RatingViewModel,
-                   toothbrushTrackerViewModel: ToothbrushTrackerViewModel
+fun PageNavigation(
+    modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel,
+    timerViewModel: TimerViewModel,
+    hygieneTriviaViewModel: HygieneTriviaViewModel,
+    pointsProgressionViewModel: PointsProgressionViewModel,
+    clinicDetailsViewModel: ClinicDetailsViewModel,
+    ratingViewModel: RatingViewModel,
+    toothbrushTrackerViewModel: ToothbrushTrackerViewModel,
+    leaderboardsStatsViewModel: LeaderboardsStatsViewModel
 ) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
@@ -252,6 +260,10 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
 
         composable("points_progression") {
             PointsProgressionPage(modifier, navController, pointsProgressionViewModel)
+        }
+
+        composable("leaderboards_stats") {
+            LeaderboardsStatsPage(modifier, navController, leaderboardsStatsViewModel)
         }
 
         // Verification Screen
