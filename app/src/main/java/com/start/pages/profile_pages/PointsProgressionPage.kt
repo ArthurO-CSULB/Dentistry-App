@@ -8,12 +8,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -23,20 +34,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.dentalhygiene.R
+import com.start.viewmodels.Emblem
 import com.start.viewmodels.PointsProgressionViewModel
 import com.start.viewmodels.Prestige
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                           pointsProgressionViewModel: PointsProgressionViewModel
@@ -54,6 +70,12 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
     // Get the max experience for the current prestige of the user from the array that
     // stores objects of prestiges.
     val maxExp: Long = pointsProgressionViewModel.prestiges[prestigeTemp.intValue].maxExp
+
+    // Gets the user's equipped emblem and loads it when the page loads
+    val emblem by pointsProgressionViewModel.equippedEmblem
+    LaunchedEffect(Unit) {
+        pointsProgressionViewModel.loadEquipped()
+    }
 
     // Variable to store the level progress of the progress bar. Will be updated iteratively
     // in a coroutine to display the progress increasing/decreasing. Initialize it with the initial
@@ -98,11 +120,33 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
     }
 
     Column (
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
 
     ) {
+        TopAppBar(
+            title =
+            {
+                Text(
+                    text = "Back to Profile Page",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+            navigationIcon = {
+                IconButton(onClick = {navController.popBackStack()}) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back Button",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            colors = TopAppBarDefaults. topAppBarColors(MaterialTheme.colorScheme.secondaryContainer)
+        )
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -113,11 +157,25 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
             // TODO: This image should be an emblem that a user can buy/unlock. Customizable.
             // Emblem should also be a 512 x 512 png
             // Image for the prestige/user
-            Image(
-                painter = painterResource(R.drawable.toothpick_emblem),
-                contentDescription = "Profile Picture",
-                modifier = modifier.size(160.dp)
-            )
+            // If the user doesn't have an equipped emblem, shows the default one
+            if (emblem == null){
+                Image(
+                    painter = painterResource(R.drawable.basicprofilepic),
+                    contentDescription = "Profile Picture",
+                    modifier = modifier.size(160.dp)
+                )
+            } else
+            {
+                // Displays the user's equipped emblem
+                AsyncImage(
+                    model = emblem,
+                    contentDescription = "Emblem",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(160.dp)
+                        //.clip(RoundedCornerShape(8.dp))
+                )
+            }
             Spacer(modifier = modifier.height(8.dp))
             Text(
                 text = "Current Rank:",
@@ -126,7 +184,7 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                 fontSize = 32.sp
             )
             Text(
-                text = prestigeInfo.toString(),
+                text = "Prestige ${prestigeInfo.prestigeLevel.toInt()} - ${prestigeInfo.toString()}",
                 fontSize = 24.sp,
                 lineHeight = 1.5.em
             )
@@ -172,6 +230,10 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                 ) {
                     Text("Next Level")
                 }
+            }
+            // Navigates to the Emblem Shop page
+            Button(onClick={navController.navigate("emblems")}) {
+                Text(text = "Emblems")
             }
         }
 

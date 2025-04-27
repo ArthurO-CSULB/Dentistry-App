@@ -47,6 +47,7 @@ import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFinished
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPagePoints
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
+import com.start.pages.profile_pages.EmblemsPage
 import com.start.pages.profile_pages.PointsProgressionPage
 import com.start.pages.timer_pages.TimerPageCounting
 import com.start.pages.timer_pages.TimerPageFinish
@@ -169,6 +170,10 @@ TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, hygieneTriviaVie
             PointsProgressionPage(modifier, navController, pointsProgressionViewModel)
         }
 
+        composable("emblems"){
+            EmblemsPage(modifier, navController, pointsProgressionViewModel)
+        }
+
 
         // Monthly Calendar screen.
         composable("calendar"){
@@ -243,7 +248,7 @@ TimerViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, hygieneTriviaVie
 
         // Profile screen.
         composable("profile"){
-            ProfilePage(modifier, navController)
+            ProfilePage(modifier, navController, pointsProgressionViewModel)
         }
 
         // Bookmark screen.
