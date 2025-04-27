@@ -154,6 +154,13 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
 
     }
 
+    // Add the score of flappy tooth to the user's points.
+    fun addFlappyToothPoints(score: Int) {
+        viewModelScope.launch {
+            pointsProgressionRepo.addPoints(score.toLong())
+        }
+    }
+
     // Set the points of the user.
     fun setPoints(points: Long) {
         viewModelScope.launch {

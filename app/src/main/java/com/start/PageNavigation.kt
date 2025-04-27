@@ -196,7 +196,7 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
 
         // Games screen.
         composable("games"){
-            GamesPage(modifier, navController)
+            GamesPage(modifier, navController, pointsProgressionViewModel)
         }
 
         // Glossary screen.
