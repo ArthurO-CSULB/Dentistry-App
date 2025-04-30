@@ -173,6 +173,7 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(160.dp)
+                        .padding(8.dp)
                         //.clip(RoundedCornerShape(8.dp))
                 )
             }

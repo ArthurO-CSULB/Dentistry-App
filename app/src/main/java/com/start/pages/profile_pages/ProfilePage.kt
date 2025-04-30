@@ -114,7 +114,8 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier
                     .size(160.dp)
-                //.clip(RoundedCornerShape(8.dp))
+                    .padding(8.dp)
+                    //.clip(RoundedCornerShape(8.dp))
             )
         }
 

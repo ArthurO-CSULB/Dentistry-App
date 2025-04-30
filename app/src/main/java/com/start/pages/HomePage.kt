@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
@@ -65,7 +66,7 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController,
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
         // We center the components of the column.
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Space between top of screen and title text
@@ -92,7 +93,7 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController,
             Text(text = "Prototype Toothbrush Timer")
         }
         // Space
-        Spacer(modifier=Modifier.height(8.dp))
+
 
         Button(onClick={
             when(hygieneTriviaState.value) {
@@ -105,54 +106,54 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController,
             Text(text = "Dental Hygiene Trivia")
         }
 
-        Spacer(modifier=Modifier.height(8.dp))
+
 
         // Button to the Calendar page.
         Button(onClick={navController.navigate("calendar")}) {
             Text(text = "Prototype Calendar")
         }
         // Space
-        Spacer(modifier=Modifier.height(8.dp))
+
         // Button to the Games page.
         Button(onClick={navController.navigate("games")}) {
             Text(text = "Prototype Games")
         }
         // Space
-        Spacer(modifier=Modifier.height(8.dp))
+
         // Button to the Glossary page.
         Button(onClick={navController.navigate("glossary")}) {
             Text(text = "Prototype Glossary")
         }
 
         // Space
-        Spacer(modifier=Modifier.height(8.dp))
+
         // Button to the Clinic Search page.
         Button(onClick={navController.navigate("search")}) {
             Text(text = "Prototype Clinic Search")
         }
 
         // Space
-        Spacer(modifier=Modifier.height(8.dp))
+
         // Button to the Profile page.
         Button(onClick={navController.navigate("profile")}) {
             Text(text = "Prototype Profile")
         }
 
         // Space
-        Spacer(modifier=Modifier.height(8.dp))
+
         // Button to the Profile page.
         Button(onClick={navController.navigate("verification")}) {
             Text(text = "Prototype Verification")
         }
 
         // Space
-        Spacer(modifier=Modifier.height(8.dp))
+
         // Button to the Profile page.
         Button(onClick={navController.navigate("settings")}) {
             Text(text = "Prototype Settings")
         }
         // Space
-        Spacer(modifier=Modifier.height(8.dp))
+
 
         // Button to the points test page.
         Button(onClick={navController.navigate("points_test")}) {
@@ -160,17 +161,26 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController,
         }
 
 
-        Spacer(Modifier.height(8.dp))
+
         Button(onClick={navController.navigate("userRatings")}) {
             Text("User Ratings")
         }
-    }
 
+        TextButton(onClick = {
+            authViewModel.signout()
+        }) {
+            Text(text = "Sign Out", fontSize = 32.sp, modifier = Modifier.align(Alignment.Bottom))
+        }
+    }
+}
+/**
     //Arrange another column only for Sign Out button
     //Always stays at bottom of screen
     Column(
         // We fill the column to the entire screen
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(top = 16.dp),
         // We center the components of the column.
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -182,4 +192,4 @@ fun HomePage(modifier: Modifier = Modifier, navController: NavController,
             Text(text = "Sign Out", fontSize = 32.sp)
         }
     }
-}
+}**/
