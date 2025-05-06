@@ -169,7 +169,7 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
             // If the user doesn't have an equipped emblem, shows the default one
             if (emblem == "" || emblem == null){
                 Image(
-                    painter = painterResource(R.drawable.basicprofilepic),
+                    painter = painterResource(R.drawable.ic_profile),
                     contentDescription = "Profile Picture",
                     contentScale = ContentScale.Crop,
                     modifier = modifier

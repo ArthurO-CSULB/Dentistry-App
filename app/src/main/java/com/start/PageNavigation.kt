@@ -42,6 +42,7 @@ import com.start.pages.timer_pages.TimerPageCancel
 import com.start.pages.timer_pages.TimerPageCountingModel
 import com.start.pages.UserRatingsPage
 import com.start.pages.BookmarkPage
+
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
@@ -50,6 +51,7 @@ import com.start.pages.hygiene_trivia_pages.HygieneTriviaPagePoints
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
 import com.start.pages.profile_pages.PointsProgressionPage
 import com.start.pages.timer_pages.TimerPageCounting
+import com.start.pages.profile_pages.EmblemsPage
 import com.start.pages.timer_pages.TimerPageFinish
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.ToothbrushTrackerViewModel
