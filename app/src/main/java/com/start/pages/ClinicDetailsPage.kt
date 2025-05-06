@@ -1,5 +1,6 @@
 package com.start.pages
 
+import android.media.Rating
 import android.os.Build
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility

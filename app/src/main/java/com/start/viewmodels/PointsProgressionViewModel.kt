@@ -1,10 +1,17 @@
 package com.start.viewmodels
 
 import android.content.ContentValues.TAG
+import android.graphics.drawable.Drawable
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.dentalhygiene.R
 import com.start.repos.PointsPrestige
 import com.start.repos.PointsProgressionRepo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,6 +59,14 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
     val experience: StateFlow<Long> = _experience
     private val _prestige = MutableStateFlow(0L)
     val prestige: StateFlow<Long> = _prestige
+
+    // Stores the list of all emblems owned by the user
+    private val _emblemList = mutableStateOf<List<Emblem>>(emptyList())
+    val emblemList : MutableState<List<Emblem>> = _emblemList
+
+    // Stores the user's currently equipped emblem
+    var equippedEmblem = mutableStateOf<String?>("")
+
     // A list of prestiges that will be used to access certain info on the prestige.
     // Prestige number will be used to index the prestiges list. Makes sure to convert the prestige
     // to an int before trying to access the prestige info. For instance, using the prestige flow
@@ -161,12 +176,39 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
         }
     }
 
-    // TODO: preferably we should pass in an object of an item which contains how much the item costs
-    //  or pass in the cost of an item. If the user has enough points, subtract the cost of the
-    //  item from their points. Use pointsProgressionRepo.subtractPoints('points') when subtracting
-    //  points.
-    // Method to spend points.
-    fun buyItem() {}
+    // Method to spend points when buying an emblem from the shop
+    fun buyEmblem(emblem: Emblem) {
+        // If the user has enough points to buy the emblem
+        if (_experience.value >= emblem.price) {
+            viewModelScope.launch {
+                pointsProgressionRepo.emblemOwned(emblem.name){ owned ->
+                    // If the user doesn't already own the emblem,
+                    // adds the emblem to the list of owned emblems
+                    // and subtracts the emblem points from the user's experience
+                    if (!owned)
+                    {
+                        pointsProgressionRepo.buyEmblem(emblem.name)
+                        pointsProgressionRepo.subtractPoints(emblem.price)
+                    }
+                }
+            }
+        }
+    }
+
+    // Function that shows  whether the inputted emblem is owned by the user or not
+    fun isOwned(emblemName: String, onResult: (Boolean) -> Unit)
+    {
+        pointsProgressionRepo.emblemOwned(emblemName){ owned ->
+            if (owned)
+            {
+                onResult(true)
+            }
+            else
+            {
+                onResult(false)
+            }
+        }
+    }
 
     // Method to increase the prestige value.
     fun prestige() {
@@ -177,6 +219,7 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
         // Add points to the user's account.
         viewModelScope.launch {
             pointsProgressionRepo.prestige()
+            // TODO: pointsProgressionRepo.rewardBadge()
         }
     }
 
@@ -187,7 +230,30 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
         }
     }
 
-    //
+    //Method to load all emblems according to the user's prestige
+    fun getEmblems(prestigeLevel: Long){
+        pointsProgressionRepo.getEmblemsForPrestige(prestigeLevel) { emblems ->
+            _emblemList.value = emblems
+        }
+        Log.d("Firebase", "Getting Emblems")
+    }
+
+    // Function to load the user's equipped emblem when the page loads
+    fun loadEquipped(){
+        pointsProgressionRepo.loadEquippedEmblem { equippedEmblem.value = it }
+    }
+
+    // Function to equip the given emblem and add it to the equipped emblem state
+    fun equipEmblem(emblem: Emblem){
+        pointsProgressionRepo.equipEmblem(emblem.imageUrl)
+        equippedEmblem.value = emblem.imageUrl
+    }
+
+    // Function to equip the given emblem and add it to the equipped emblem state
+    fun unequipEmblem(){
+        pointsProgressionRepo.equipEmblem("")
+        equippedEmblem.value = ""
+    }
 
     /*
     Not in user since we have a prestige attribute in the view model.
@@ -216,51 +282,98 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
     }
 }
 
-// Prestige Objects that define types of ranks
+// Prestige Objects that define types of tiers, each tier is color coded and has its own badge
 sealed class Prestige {
     abstract val maxExp: Long
     abstract val prestigeLevel: Long
+    abstract val badge: String
+    abstract val color: Color
 
     data object Prestige0: Prestige() {
         override val maxExp = 1000L
         override val prestigeLevel = 0L
-        override fun toString() = "Prestige 0 Name"
+        override fun toString() = "White Tier"
+        override val badge = "The Root"
+        override val color = Color(0xFFFAF9E8)
     }
-
     data object Prestige1: Prestige() {
         override val maxExp = 2500L
         override val prestigeLevel = 1L
-        override fun toString() = "Prestige 1 Name"
+        override fun toString() = "Green Tier"
+        override val badge = "Cavity Avoider"
+        override val color = Color(0xFF24E966)
     }
     data object Prestige2: Prestige() {
         override val maxExp = 5000L
         override val prestigeLevel = 2L
-        override fun toString() = "Prestige 2 Name"
+        override fun toString() = "Yellow Tier"
+        override val badge = "Tooth Brusher"
+        override val color = Color(0xFFFFEE06)
+
     }
     data object Prestige3: Prestige() {
         override val maxExp = 10000L
         override val prestigeLevel = 3L
-        override fun toString() = "Prestige 3 Name"
+        override fun toString() = "Orange Tier"
+        override val badge = "Calculus Destroyer"
+        override val color = Color(0xFFFD8C0A)
     }
     data object Prestige4: Prestige() {
         override val maxExp = 25000L
         override val prestigeLevel = 4L
-        override fun toString() = "Prestige 4 Name"
+        override fun toString() = "Red Tier"
+        override val badge = "Deal Sealer"
+        override val color = Color(0xFFFA335B)
     }
     data object Prestige5: Prestige() {
         override val maxExp = 50000L
         override val prestigeLevel = 5L
-        override fun toString() = "Prestige 5 Name"
+        override fun toString() = "Blue Tier"
+        override val badge = "Floss Veteran"
+        override val color = Color(0xFF398FFF)
     }
     data object Prestige6: Prestige() {
         override val maxExp = 100000L
         override val prestigeLevel = 6L
-        override fun toString() = "Prestige 6 Name"
+        override fun toString() = "Purple Tier"
+        override val badge = "Crown Bearer"
+        override val color = Color(0xFFAB62FF)
     }
     data object MaxPrestige: Prestige() {
         override val maxExp = 1000000L
         override val prestigeLevel = 7L
-        override fun toString() = "Max Prestige Name"
+        override fun toString() = "Gold Tier"
+        override val badge = "The Apex"
+        override val color = Color(0xFFFFCE06)
     }
 
 }
+
+//Emblem object that defines what prestige it unlocks at, price, name, and image URL
+data class Emblem (
+    val imageUrl: String = "",
+    val name: String = "",
+    var prestige: Long = 0L,
+    val price: Long = 0L,
+    )
+
+//Badge objects that define what prestige they unlock at, will just be a tagline string
+data class Badge (
+    val prestige: Long,
+    val badge: String
+)
+
+
+// Previously used to store emblems locally, opted for Firebase instead
+//Repository to store all emblems for each prestige
+//object EmblemRepo {
+//    private val emblems: Map<Int, List<Emblem>> = mapOf(
+//        0 to listOf(
+//            Emblem(0L, "Shrek", 100L, R.drawable.shrek_emblem),
+//            Emblem(0L, "Toothpick", 500L, R.drawable.toothpick_emblem)
+//        )
+//    )
+//    fun getEmblemsForCurrentPrestige(prestige: Int): List<Emblem> {
+//        return emblems[prestige] ?: emptyList()
+//    }
+//}

@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.start.EventViewModel
+import com.start.pages.EventViewModel
 import com.start.notificationhandlers.NotificationHelper
 import com.start.notificationhandlers.TimerNotificationHandler
 import java.text.SimpleDateFormat

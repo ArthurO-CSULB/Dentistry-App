@@ -1,21 +1,34 @@
 package com.start.pages.profile_pages
 
 import android.util.Log
-import android.util.MutableInt
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,21 +38,28 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.dentalhygiene.R
-import com.google.common.math.DoubleMath.roundToInt
+import com.start.viewmodels.Emblem
 import com.start.viewmodels.PointsProgressionViewModel
 import com.start.viewmodels.Prestige
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                           pointsProgressionViewModel: PointsProgressionViewModel
@@ -58,6 +78,12 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
     // stores objects of prestiges.
     val maxExp: Long = pointsProgressionViewModel.prestiges[prestigeTemp.intValue].maxExp
 
+    // Gets the user's equipped emblem and loads it when the page loads
+    val emblem by pointsProgressionViewModel.equippedEmblem
+    LaunchedEffect(Unit) {
+        pointsProgressionViewModel.loadEquipped()
+    }
+
     // Variable to store the level progress of the progress bar. Will be updated iteratively
     // in a coroutine to display the progress increasing/decreasing. Initialize it with the initial
     // progress calculated by user exp and max exp for their prestige. Will be remembered across all
@@ -69,6 +95,7 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
 
     // Boolean to store if the progress bar is moving or not.
     var progressMoving by remember {mutableStateOf(false)}
+
 
     // Launched effect to update the progress bar reactively to the changes in database.
     LaunchedEffect(exp.value) {
@@ -101,11 +128,34 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
     }
 
     Column (
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize()
-
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary)
     ) {
+        TopAppBar(
+            title =
+            {
+                Text(
+                    text = "Back to Profile Page",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+            navigationIcon = {
+                IconButton(onClick = {navController.popBackStack()}) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back Button",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            colors = TopAppBarDefaults. topAppBarColors(MaterialTheme.colorScheme.secondaryContainer)
+        )
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -114,23 +164,51 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                 //.border(width = 1.dp, color = Color.Black)
         ) {
             // TODO: This image should be an emblem that a user can buy/unlock. Customizable.
+            // Emblem should also be a 512 x 512 png
             // Image for the prestige/user
-            Image(
-                painter = painterResource(id = R.drawable.ic_profile),
-                contentDescription = "Profile Picture",
-                modifier = modifier.size(160.dp)
+            // If the user doesn't have an equipped emblem, shows the default one
+            if (emblem == "" || emblem == null){
+                Image(
+                    painter = painterResource(R.drawable.basicprofilepic),
+                    contentDescription = "Profile Picture",
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier
+                        .size(150.dp)
+                )
+            } else
+            {
+                // Displays the user's equipped emblem
+                AsyncImage(
+                    model = emblem,
+                    contentDescription = "Emblem",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(160.dp)
+                        .padding(8.dp)
+                        //.clip(RoundedCornerShape(8.dp))
+                )
+            }
+            Text(
+                text = prestigeInfo.badge,
+                lineHeight = 1.em,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                fontStyle = FontStyle.Italic,
+                fontFamily = FontFamily.Monospace,
+                color = prestigeInfo.color
             )
             Spacer(modifier = modifier.height(8.dp))
             Text(
                 text = "Current Rank:",
                 lineHeight = 1.5.em,
                 fontWeight = FontWeight.Bold,
-                fontSize = 32.sp
-            )
+                fontSize = 32.sp,
+                )
             Text(
-                text = prestigeInfo.toString(),
+                text = "Prestige ${prestigeInfo.prestigeLevel.toInt()} - $prestigeInfo",
                 fontSize = 24.sp,
-                lineHeight = 1.5.em
+                lineHeight = 1.5.em,
+                color = prestigeInfo.color
             )
             Text(
                 text = "Experience Points:",
@@ -141,7 +219,8 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
             Text(
                 text = exp.value.toString(),
                 lineHeight = 1.5.em,
-                fontSize = 24.sp
+                fontSize = 24.sp,
+                color = Color.White
             )
             // Button to prestige/rank up the user. Only show button if user is not at max prestige.
             if (prestige.value < pointsProgressionViewModel.prestiges.last().prestigeLevel) {
@@ -170,10 +249,29 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                             }
                         }
                     },
-                    enabled = !progressMoving
+                    enabled = !progressMoving,
+                    colors = ButtonColors(
+                        MaterialTheme.colorScheme.onPrimary,
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 ) {
                     Text("Next Level")
                 }
+            }
+            // Navigates to the Emblem Shop page
+            Button(
+                onClick={navController.navigate("emblems")},
+                colors = ButtonColors(
+                    MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+            )
+            {
+                Text(text = "Emblems")
             }
         }
 

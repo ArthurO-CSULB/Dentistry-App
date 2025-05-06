@@ -169,6 +169,19 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
             HygieneTriviaPageFailed(modifier, navController, hygieneTriviaViewModel)
         }
 
+        composable("timer_finish") {
+            TimerPageFinish(modifier, navController, timerViewModel, pointsProgressionViewModel)
+        }
+
+        composable("points_progression") {
+            PointsProgressionPage(modifier, navController, pointsProgressionViewModel)
+        }
+
+        composable("emblems"){
+            EmblemsPage(modifier, navController, pointsProgressionViewModel)
+        }
+
+
         // Monthly Calendar screen.
         composable("calendar"){
             CalendarPage(modifier, navController)
@@ -209,9 +222,40 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
             ClinicSearchPage(modifier, navController)
         }
 
+        // Detail screen
+        composable("clinicDetails/{placeId}") {backStackEntry ->
+            val bookmarksViewModel: BookmarksViewModel = viewModel()
+            ClinicDetailsPage(
+                placeId = backStackEntry.arguments?.getString("placeId"),
+                navController = navController,
+                clinicDetailsViewModel = clinicDetailsViewModel,
+                ratingViewModel = ratingViewModel,
+                bookmarksViewModel = bookmarksViewModel)
+        }
+
+        // clinic ratings page navigation
+        composable("clinicRatings/{placeID},{clinicName}") { backStackEntry ->
+            ClinicRatingsPage(
+                navController = navController,
+                ratingViewModel = ratingViewModel,
+                clinicID = backStackEntry.arguments?.getString("placeID").toString(),
+                clinicName = backStackEntry.arguments?.getString("clinicName").toString()
+            )
+        }
+
+        // rating creation page navigation
+        composable("createRating/{placeID},{clinicName}") { backStackEntry ->
+            CreateRatingPage(
+                navController = navController,
+                ratingViewModel = ratingViewModel,
+                clinicID = backStackEntry.arguments?.getString("placeID").toString(),
+                clinicName = backStackEntry.arguments?.getString("clinicName").toString()
+            )
+        }
+
         // Profile screen.
         composable("profile"){
-            ProfilePage(modifier, navController)
+            ProfilePage(modifier, navController, pointsProgressionViewModel)
         }
 
         // Bookmark screen.

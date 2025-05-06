@@ -10,6 +10,8 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
+import com.google.protobuf.Internal.BooleanList
+import com.start.viewmodels.Emblem
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -25,6 +27,9 @@ class PointsProgressionRepo(context: Context) {
     var userAccount: DocumentReference? = null
     // Initialize a listener to the user's account.
     var userAccountListener: ListenerRegistration? = null
+
+    // Gathers all emblems stored in the database
+    var emblems = db.collection("emblems")
 
     /*
     // Initialize a listener, that when the user logs in, create a reference and listener to the user's account.
@@ -228,6 +233,58 @@ class PointsProgressionRepo(context: Context) {
         // Increment the user's prestige by 1.
         userAccount?.update("prestige", FieldValue.increment(1))
     }
+
+    // Method to retrieve emblems from Firestore based on prestige
+    fun getEmblemsForPrestige(prestige: Long, onResult: (List<Emblem>) -> Unit) {
+        // Only fetches emblems that are below or equal to the user's current prestige
+        emblems.whereLessThanOrEqualTo("prestige", prestige.toInt())
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val emblems = snapshot.documents.mapNotNull { it.toObject(Emblem::class.java) }
+                onResult(emblems)
+                Log.d("Firestore", "${emblems}")
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Failed to fetch emblems", e)
+                onResult(emptyList())
+            }
+    }
+
+    // Method to add the emblem to the user's ownedEmblems list
+    fun buyEmblem(emblemName : String){
+        userAccount?.update("ownedEmblems", FieldValue.arrayUnion(emblemName))
+    }
+
+    // Method to check of the emblem is in the ownedEmblems list
+    fun emblemOwned(emblemName: String, onResult: (Boolean) -> Unit){
+        userAccount?.get()?.addOnSuccessListener { document ->
+            val ownedEmblems = document.get("ownedEmblems") as? List<*>
+            val owned = ownedEmblems?.contains(emblemName) == true
+            onResult(owned)
+        }
+            ?.addOnFailureListener { exception ->
+                Log.e("Firestore", "Failed to check user ownedEmblems", exception)
+                onResult(false)
+            }
+    }
+
+    // Method to add the emblem's image URL to the equippedEmblem field
+    fun equipEmblem(emblemURL: String, onDone: ()->Unit = {}) {
+        userAccount?.update("equippedEmblem", emblemURL)
+            ?.addOnSuccessListener { onDone() }
+            ?.addOnFailureListener { e -> Log.e("Equip Emblem", "Equip Failed", e) }
+    }
+
+    // Method to load the currently equipped emblem
+    fun loadEquippedEmblem(onResult: (String?) -> Unit) {
+        userAccount?.get()
+            ?.addOnSuccessListener { doc ->
+                onResult(doc.getString("equippedEmblem"))
+            }
+            ?.addOnFailureListener { onResult(null) }
+    }
+
+
 
     /*
 
