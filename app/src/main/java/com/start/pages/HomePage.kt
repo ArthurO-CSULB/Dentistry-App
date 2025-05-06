@@ -178,18 +178,6 @@ private fun FeatureRows(
             ) {
                 navController.navigate("calendar")
             },
-            FeatureItem(
-                iconRes = R.drawable.tooth_icon,
-                label = "Toothbrush Replacement",
-                color = Color(0xFF88CEDA),
-                containerSize = ButtonSizes.REGULAR_CONTAINER,
-                iconSize = ButtonSizes.REGULAR_ICON,
-                width = ButtonSizes.REGULAR_WIDTH,
-                shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS),
-            )
-            {
-                navController.navigate("toothbrushTracker")
-            }
         ),
         navController = navController
     )
@@ -264,22 +252,36 @@ private fun FeatureRows(
     Spacer(Modifier.height(24.dp))
 
     // Games row (single button centered)
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        IconButtonWithLabel(
-            iconRes = R.drawable.ic_games,
-            label = "Games",
-            backgroundColor = Color(0xFFfc3523),
-            containerSize = ButtonSizes.REGULAR_CONTAINER,
-            iconSize = ButtonSizes.REGULAR_ICON,
-            width = ButtonSizes.REGULAR_WIDTH,
-            shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
-        ) {
-            navController.navigate("games")
-        }
-    }
+    FeatureRow(
+        features = listOf(
+            FeatureItem(
+                iconRes = R.drawable.ic_games,
+                label = "Games",
+                color = Color(0xFFfc3523),
+                containerSize = ButtonSizes.REGULAR_CONTAINER,
+                iconSize = ButtonSizes.REGULAR_ICON,
+                width = ButtonSizes.REGULAR_WIDTH,
+                shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
+            )
+            {
+                navController.navigate("games")
+            },
+            FeatureItem(
+                iconRes = R.drawable.tooth_icon,
+                label = "Toothbrush Replacement",
+                color = Color(0xFF88CEDA),
+                containerSize = ButtonSizes.REGULAR_CONTAINER,
+                iconSize = ButtonSizes.REGULAR_ICON,
+                width = ButtonSizes.REGULAR_WIDTH,
+                shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS),
+                )
+            {
+                navController.navigate("toothbrushTracker")
+            }
+            ),
+            navController = navController
+        )
+
 }
 
 @Composable
@@ -333,11 +335,6 @@ private fun FeatureRow(
                 shape = feature.shape,
                 onClick = feature.onClick
             )
-        }
-
-        Spacer(Modifier.height(8.dp))
-        Button(onClick = { navController.navigate("userRatings") }) {
-            Text("User Ratings")
         }
     }
 }
