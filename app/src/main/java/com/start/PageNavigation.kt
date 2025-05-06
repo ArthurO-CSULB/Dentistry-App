@@ -15,7 +15,7 @@ import com.start.pages.ChangeUserDetailsPage
 import com.start.pages.ClinicSearchPage
 import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
-import com.start.pages.ProfilePage
+import com.start.pages.profile_pages.ProfilePage
 import com.start.pages.ReauthenticationPage
 import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
@@ -33,8 +33,10 @@ import com.start.pages.CreateRatingPage
 import com.start.pages.BookmarkPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
+import com.start.pages.test_pages.PointsTestPage
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageBegin
 import com.start.pages.SettingsPage
+import com.start.pages.ToothbrushReplacementPage
 import com.start.pages.timer_pages.TimerPageBegin
 import com.start.pages.timer_pages.TimerPageCancel
 import com.start.pages.timer_pages.TimerPageCountingModel
@@ -45,12 +47,17 @@ import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFinished
+import com.start.pages.hygiene_trivia_pages.HygieneTriviaPagePoints
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
+import com.start.pages.profile_pages.PointsProgressionPage
 import com.start.pages.timer_pages.TimerPageCounting
+import com.start.pages.profile_pages.EmblemsPage
 import com.start.pages.timer_pages.TimerPageFinish
 import com.start.viewmodels.HygieneTriviaViewModel
+import com.start.viewmodels.ToothbrushTrackerViewModel
 import com.start.viewmodels.RatingViewModel
 import com.start.viewmodels.BookmarksViewModel
+import com.start.viewmodels.PointsProgressionViewModel
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -61,11 +68,13 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 
-@RequiresApi(Build.VERSION_CODES.S)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
-TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsViewModel: ClinicDetailsViewModel, ratingViewModel: RatingViewModel) {
-
+TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressionViewModel: PointsProgressionViewModel,
+                   clinicDetailsViewModel: ClinicDetailsViewModel, ratingViewModel: RatingViewModel,
+                   toothbrushTrackerViewModel: ToothbrushTrackerViewModel
+) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
     // is consistent throughout the lifecycle of NavHost. This prevents a NavController being
@@ -149,6 +158,10 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
             HygieneTriviaPageFinished(modifier, navController, hygieneTriviaViewModel)
         }
 
+        composable("trivia_points") {
+            HygieneTriviaPagePoints(modifier, navController, hygieneTriviaViewModel, pointsProgressionViewModel)
+        }
+
         composable(
             route = "trivia_fail",
             enterTransition = {
@@ -157,6 +170,19 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         ) {
             HygieneTriviaPageFailed(modifier, navController, hygieneTriviaViewModel)
         }
+
+        composable("timer_finish") {
+            TimerPageFinish(modifier, navController, timerViewModel, pointsProgressionViewModel)
+        }
+
+        composable("points_progression") {
+            PointsProgressionPage(modifier, navController, pointsProgressionViewModel)
+        }
+
+        composable("emblems"){
+            EmblemsPage(modifier, navController, pointsProgressionViewModel)
+        }
+
 
         // Monthly Calendar screen.
         composable("calendar"){
@@ -195,7 +221,7 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
 
         // Search screen.
         composable("search"){
-            ClinicSearchPage(modifier, navController = navController)
+            ClinicSearchPage(modifier, navController)
         }
 
         // Detail screen
@@ -231,12 +257,16 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
 
         // Profile screen.
         composable("profile"){
-            ProfilePage(modifier, navController)
+            ProfilePage(modifier, navController, pointsProgressionViewModel)
         }
 
         // Bookmark screen.
         composable("bookmark"){
             BookmarkPage(modifier, navController)
+        }
+
+        composable("points_progression") {
+            PointsProgressionPage(modifier, navController, pointsProgressionViewModel)
         }
 
         // Verification Screen
@@ -265,15 +295,22 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
             ReauthenticationPage(modifier, navController, authViewModel, "settings")
         }
 
-
         // Change User Details Page
         composable("changeUserDetails"){
             ChangeUserDetailsPage(modifier, navController, authViewModel)
         }
 
+        composable("points_test") {
+            PointsTestPage(modifier, navController, pointsProgressionViewModel)
+        }
+
         // User Ratings Page
         composable("userRatings") {
             UserRatingsPage(navController, ratingViewModel)
+        }
+
+        composable("toothbrushTracker") {
+            ToothbrushReplacementPage(navController, toothbrushTrackerViewModel)
         }
     })
 }

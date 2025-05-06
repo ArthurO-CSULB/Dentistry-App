@@ -1,7 +1,6 @@
 package com.start.pages.hygiene_trivia_pages
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,11 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -25,9 +21,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.start.viewmodels.HygieneTriviaState
 import com.start.viewmodels.HygieneTriviaViewModel
+import com.start.viewmodels.PointsProgressionViewModel
 
 @Composable
-fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController, hygieneTriviaViewModel: HygieneTriviaViewModel) {
+fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController,
+                              hygieneTriviaViewModel: HygieneTriviaViewModel) {
 
     // Use BackHandler to intercept the system back button and navigate to the home screen.
     BackHandler {
@@ -77,7 +75,8 @@ fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController, 
     // When the state of the trivia is changed to begin, navigate to the home screen.
     LaunchedEffect(hygieneTriviaState.value) {
         when(hygieneTriviaState.value) {
-            is HygieneTriviaState.Begin -> navController.navigate("home")
+            is HygieneTriviaState.Points -> navController.navigate("trivia_points")
+            // is HygieneTriviaState.Begin -> navController.navigate("home")
             else -> Unit
         }
     }
@@ -106,12 +105,12 @@ fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController, 
         }
 
         when(resultsIndex.value){
-            // When on the last result, display button to go home.
+            // When on the last result, display button to check the points.
             4 -> {
                 Button(onClick = {
-                    hygieneTriviaViewModel.resetTrivia()
+                    hygieneTriviaViewModel.goToPoints()
                 }) {
-                    Text("Go Home")
+                    Text("View Points")
                 }
             }
             else -> {

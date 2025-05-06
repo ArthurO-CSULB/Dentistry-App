@@ -30,9 +30,7 @@ class HygieneTriviaViewModel(private val hygieneTriviaRepo: HygieneTriviaRepo) :
     // Store the questions that were randomly given by the repository, five random questions. List<HygieneTriviaRepo.DentalTriviaQnA>
     private var _questions = MutableStateFlow<List<HygieneTriviaRepo.DentalTriviaQnA>>(hygieneTriviaRepo.randomQuestions())
     var questions = _questions
-    // Store the answers to the randomly given questions.
-    private val _answers: List<String> = questions.value.map { it.answer }
-    val answers = _answers
+
     // Store the indexes of the user's answers.
     private val _userAnswersIndex = mutableStateListOf<Int>()
     val userAnswersIndex = _userAnswersIndex
@@ -66,6 +64,10 @@ class HygieneTriviaViewModel(private val hygieneTriviaRepo: HygieneTriviaRepo) :
     private fun failTrivia() {
         _hygieneTriviaState.value = HygieneTriviaState.Failed
     }
+    // Method to go to the points screen.
+    fun goToPoints() {
+        _hygieneTriviaState.value = HygieneTriviaState.Points
+    }
 
     // Reset the trivia to beginning state, reset the index, reset the answers list, reset the timer,
     // and get a new set of questions.
@@ -87,13 +89,34 @@ class HygieneTriviaViewModel(private val hygieneTriviaRepo: HygieneTriviaRepo) :
         _resultsIndex.value = 0
     }
 
+    // Method to calculate the number of correct answers that the user got.
+    fun numCorrect(): Int {
+        // Number of correctly answered questions
+        var numCorrect = 0
+        if (hygieneTriviaState.value == HygieneTriviaState.Points) {
+
+            // answers to the randomly given questions.
+            val answers: List<String> = questions.value.map { it.answer }
+            // choices to the randomly given questions.
+            val choices: List<List<String>> = questions.value.map { it.choices }
+            // Loop through the number of questions.
+            for(i in 0 until questions.value.size) {
+                // If the user got the question correct, increment numCorrect.
+                if (answers[i] == choices[i][userAnswersIndex[i]]) {
+                    numCorrect++
+                }
+            }
+        }
+        return numCorrect
+    }
+
     // Function to store the user's index answers.
     fun storeAnswer(index: Int) {
         _userAnswersIndex.add(index)
     }
 
     // Function to start the hygiene trivia timer.
-    fun startTriviaTimer() {
+    private fun startTriviaTimer() {
         // Launch the coroutine to run the timer.
         timerRun = viewModelScope.launch(Dispatchers.Default) {
             // While the timer is not at zero...
@@ -157,4 +180,6 @@ sealed class HygieneTriviaState {
     data object Finished: HygieneTriviaState()
     // State for when the user failed the trivia because they ran out of time.
     data object Failed: HygieneTriviaState()
+    // State for when the user goes to the points screen.
+    data object Points: HygieneTriviaState()
 }

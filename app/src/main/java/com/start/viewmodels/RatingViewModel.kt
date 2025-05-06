@@ -26,15 +26,17 @@ import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.Long
 
-// literal strings to use for document references
-// avoids logical mistakes
-const val CLINICS = "clinics"
-const val CLINIC_RATINGS = "clinicRatings"
-const val ACCOUNTS = "accounts"
-const val USER_RATINGS = "userRatings"
+
 
 // class that handles ratings and updates
 class RatingViewModel: ViewModel() {
+
+    // literal strings to use for document references
+// avoids logical mistakes
+    val clinicString = "clinics"
+    val clinicRatings = "clinicRatings"
+    val userRatings = "userRatings"
+    val accounts = "accounts"
 
     // initialize authentication instance and database instance that viewmodel will utilize
     private val auth = FirebaseAuth.getInstance()
@@ -82,7 +84,7 @@ class RatingViewModel: ViewModel() {
         val userID = auth.currentUser?.uid.toString()
         _ratingID = UUID.randomUUID().toString()
         val createdAt = LocalDateTime.now()
-        val docRef = db.collection(ACCOUNTS).document(userID)
+        val docRef = db.collection(accounts).document(userID)
         var userFirstName by mutableStateOf("firstName")
         var userLastName by mutableStateOf("lastName")
 
@@ -134,8 +136,8 @@ class RatingViewModel: ViewModel() {
             "LikeDislike" to "neutral",
         )
 
-        val userRatingRef = db.collection(ACCOUNTS).document(userID).collection(USER_RATINGS).document(clinicID)
-        val clinicRatingRef = db.collection(CLINICS).document(clinicID).collection(CLINIC_RATINGS).document(userID)
+        val userRatingRef = db.collection(accounts).document(userID).collection(userRatings).document(clinicID)
+        val clinicRatingRef = db.collection(clinicString).document(clinicID).collection(clinicRatings).document(userID)
 
         // handle all of the updates concurrently via the use of a coroutine
         CoroutineScope(Dispatchers.IO).launch {
@@ -171,7 +173,7 @@ class RatingViewModel: ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun getClinicRatings(clinicID: String) {
 
-        val clinicDocRef = db.collection("clinics").document(clinicID)
+        val clinicDocRef = db.collection(clinicString).document(clinicID)
             .collection("clinicRatings")
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -238,7 +240,7 @@ class RatingViewModel: ViewModel() {
 
         // get user ID and document reference for the fetch
         val userID = auth.uid.toString()
-        val userDocRef = db.collection(ACCOUNTS).document(userID).collection(USER_RATINGS)
+        val userDocRef = db.collection(accounts).document(userID).collection(userRatings)
 
         // use a seperate thread for fetching
         CoroutineScope(Dispatchers.IO).launch {
@@ -316,29 +318,12 @@ class RatingViewModel: ViewModel() {
         return LocalDateTime.of(year, monthValue, dayOfMonth, hour, minute, second, nano)
     }
 
-    // function for adding a clinic into the clinic database
-    // maybe replaced in the future as Kevin is also making one
-    // Made a temporary one just for testing, update later
-    // currently not being used since Kevin is implementing a better one
-    fun addClinicToDB(clinicDetails: PlaceDetails?)
-    {
-        var clinicData= hashMapOf(
-            "name" to (clinicDetails?.name.toString()),
-            "address" to clinicDetails?.address.toString(),
-            "phone" to clinicDetails?.phoneNumber.toString()
-        )
-        db.collection("clinics").document(clinicDetails?.placeId.toString()).set(clinicData)
-            .addOnSuccessListener {
-                Log.d("Adding clinic to db", "Clinic successfully added to database")
-            }
-    }
-
     // Outputs the current rating average of a clinic
     fun calculateClinicRatingAverage(clinicID: String?) {
 
         // holder values to make function work properly
         var ratingAverage: Float = 0F // holds ratingAverage that will be appended to rating holder soon
-        val docRef = db.collection(CLINICS).document(clinicID.toString()).collection(CLINIC_RATINGS) // collection reference for the query
+        val docRef = db.collection(clinicString).document(clinicID.toString()).collection(clinicRatings) // collection reference for the query
         val query = docRef.aggregate(AggregateField.average("ratingScore")) // aggregation query for getting the rating average of the clinic
 
         // Use a coroutine to do the process asynchronously
@@ -403,7 +388,7 @@ class RatingViewModel: ViewModel() {
     fun updateLikeDislike(clinicID: String, ratingID: String, userDoesLikeDislike: String) {
         // Gather necessary variables and access to database
         val userID = auth.currentUser?.uid.toString()
-        val clinicRatingsRef = db.collection("clinics").document(clinicID).collection("clinicRatings")
+        val clinicRatingsRef = db.collection("clinicString").document(clinicID).collection("clinicRatings")
 
         // Coroutine to handle asynchronously
         CoroutineScope(Dispatchers.IO).launch {
@@ -494,7 +479,7 @@ class RatingViewModel: ViewModel() {
     fun calculateRatingLikesAverage(clinicID: String?) {
         // holder values to make function work properly
         var likesAverage: Float = 0F // holds likesAverage that will be appended to rating holder soon
-        val docRef = db.collection(CLINICS).document(clinicID.toString()).collection(CLINIC_RATINGS) // collection reference for the query
+        val docRef = db.collection(clinicString).document(clinicID.toString()).collection(clinicRatings) // collection reference for the query
         val query = docRef.aggregate(AggregateField.average("likesScore")) // aggregation query for getting the likes average of the clinic
 
         // Use a coroutine to do the process asynchronously
@@ -553,7 +538,7 @@ class RatingViewModel: ViewModel() {
     fun deleteClinicReview(ratingID: String) {
 
         // create variables for the query
-        val userReviewRef = db.collection(ACCOUNTS).document(auth.uid.toString()).collection(USER_RATINGS)
+        val userReviewRef = db.collection(accounts).document(auth.uid.toString()).collection(userRatings)
         val userReviewQuery = userReviewRef.whereEqualTo("ratingID", ratingID)
         var clinicID: String
 
@@ -571,8 +556,8 @@ class RatingViewModel: ViewModel() {
 
     // Delete a rating a user has made in the user page
     fun deleteUserReview(clinicID: String) {
-        db.collection(ACCOUNTS).document(auth.uid.toString()).collection(USER_RATINGS).document(clinicID).delete()
-        db.collection(CLINICS).document(clinicID).collection(CLINIC_RATINGS).document(auth.uid.toString()).delete()
+        db.collection(accounts).document(auth.uid.toString()).collection(userRatings).document(clinicID).delete()
+        db.collection(clinicString).document(clinicID).collection(clinicRatings).document(auth.uid.toString()).delete()
     }
 
     // Sort ratings based on the specification user choose in the clinic ratings page

@@ -7,6 +7,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -54,13 +63,20 @@ fun HomePage(
     hygieneTriviaViewModel: HygieneTriviaViewModel,
 ) {
     val authState = authViewModel.authState.observeAsState()
+    // We get the timer state.
     val timerState = timerViewModel.timerState.collectAsState()
+    // We get the state of the trivia.
     val hygieneTriviaState = hygieneTriviaViewModel.hygieneTriviaState.collectAsState()
 
+    // We create a launched effect that passes in the value of the authentication state. Upon
+    // the value changing when calling authViewModel methods, the block of code will execute.
     LaunchedEffect(authState.value) {
-        when (authState.value) {
+        when (authState.value){
+            // When the user is unauthenticated by singing out, navigate to the login screen.
             is AuthState.UnAuthenticated -> navController.navigate("login")
+            // When the user is unverified, navigate to verification screen.
             is AuthState.Unverified -> navController.navigate("verification")
+            // Else nothing.
             else -> Unit
         }
     }
@@ -131,7 +147,7 @@ private fun FeatureRows(
     timerState: TimerState,
     hygieneTriviaState: HygieneTriviaState
 ) {
-    // Timer and Calendar
+    // Timer and Calendar and Toothbrush Replacement
     FeatureRow(
         features = listOf(
             FeatureItem(
@@ -161,6 +177,18 @@ private fun FeatureRows(
                 shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
             ) {
                 navController.navigate("calendar")
+            },
+            FeatureItem(
+                iconRes = R.drawable.tooth_icon,
+                label = "Toothbrush Replacement",
+                color = Color(0xFF88CEDA),
+                containerSize = ButtonSizes.REGULAR_CONTAINER,
+                iconSize = ButtonSizes.REGULAR_ICON,
+                width = ButtonSizes.REGULAR_WIDTH,
+                shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS),
+            )
+            {
+                navController.navigate("toothbrushTracker")
             }
         ),
         navController = navController
@@ -306,67 +334,82 @@ private fun FeatureRow(
                 onClick = feature.onClick
             )
         }
-    }
-}
 
-@Composable
-private fun IconButtonWithLabel(
-    iconRes: Int,
-    label: String,
-    backgroundColor: Color,
-    containerSize: Dp,
-    iconSize: Dp,
-    width: Dp,
-    shape: Shape,
-    onClick: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(width)
-    ) {
-        Surface(
-            shape = shape,
-            color = backgroundColor,
-            modifier = Modifier.size(containerSize),
-            shadowElevation = 4.dp
-        ) {
-            IconButton(
-                onClick = onClick,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Image(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = label,
-                    modifier = Modifier.size(iconSize)
-                )
-            }
-        }
         Spacer(Modifier.height(8.dp))
-        Text(label, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+        Button(onClick = { navController.navigate("userRatings") }) {
+            Text("User Ratings")
+        }
     }
 }
 
-@Composable
-private fun SettingsButton(
-    iconRes: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    IconButton(
-        onClick = onClick,
-        modifier = modifier.size(ButtonSizes.SETTINGS_CONTAINER),
-        colors = IconButtonDefaults.iconButtonColors(
-            containerColor = Color(0xFFE6E6FA),
-            contentColor = Color.Black
-        )
+    @Composable
+    private fun IconButtonWithLabel(
+        iconRes: Int,
+        label: String,
+        backgroundColor: Color,
+        containerSize: Dp,
+        iconSize: Dp,
+        width: Dp,
+        shape: Shape,
+        onClick: () -> Unit
     ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = "Settings",
-            modifier = Modifier.size(ButtonSizes.SETTINGS_ICON)
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.width(width)
+        ) {
+            Surface(
+                shape = shape,
+                color = backgroundColor,
+                modifier = Modifier.size(containerSize),
+                shadowElevation = 4.dp
+            ) {
+                IconButton(
+                    onClick = onClick,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Image(
+                        painter = painterResource(id = iconRes),
+                        contentDescription = label,
+                        modifier = Modifier.size(iconSize)
+                    )
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            Text(label, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+        }
+        // Space
+        Spacer(modifier=Modifier.height(8.dp))
+
+        /*
+        // Button to the points test page.
+        Button(onClick={navController.navigate("points_test")}) {
+            Text(text = "Points Test")
+        }
+         */
+
     }
-}
+
+    @Composable
+    private fun SettingsButton(
+        iconRes: Int,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        IconButton(
+            onClick = onClick,
+            modifier = modifier.size(ButtonSizes.SETTINGS_CONTAINER),
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = Color(0xFFE6E6FA),
+                contentColor = Color.Black
+            )
+        ) {
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = "Settings",
+                modifier = Modifier.size(ButtonSizes.SETTINGS_ICON)
+            )
+        }
+    }
 
 
 

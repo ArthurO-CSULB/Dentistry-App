@@ -1,4 +1,4 @@
-package com.start.pages
+package com.start.pages.profile_pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,13 +22,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.dentalhygiene.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.start.viewmodels.PointsProgressionViewModel
 
 /*
 We have a composable profile page which will handle the UI for profile options.
@@ -36,7 +39,7 @@ This will be called in the PageNavigation NavHost, passing in the modifier,
 NavController.
  */
 @Composable
-fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
+fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, pointsProgressionViewModel: PointsProgressionViewModel) {
     // From the passed in AuthViewModel, we get the authState of the authentication and use
     // observeAsState() to subscribe to the live data and track its changes.
     //val authState = authViewModel.authState.observeAsState()
@@ -50,6 +53,12 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
     // Grab user information from database
     val db = FirebaseFirestore.getInstance()
     var user = FirebaseAuth.getInstance().currentUser
+
+    // Gets the user's equipped emblem and loads it when the page loads
+    val emblem by pointsProgressionViewModel.equippedEmblem
+    LaunchedEffect(Unit) {
+        pointsProgressionViewModel.loadEquipped()
+    }
 
     // Fetch user details from Firestore
     LaunchedEffect(user) {
@@ -89,11 +98,26 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         // Space between the title text and user information
         Spacer(modifier = Modifier.height(16.dp))
 
-        Image(
-            painter = painterResource(id = R.drawable.ic_profile),
-            contentDescription = "Profile Picture",
-            modifier = Modifier.size(160.dp)
-        )
+        // If the user doesn't have an emblem equipped, shows the default one instead
+        if (emblem == "" || emblem == null){
+            Image(
+                painter = painterResource(R.drawable.ic_profile),
+                contentDescription = "Profile Picture",
+                modifier = modifier.size(160.dp)
+            )
+        } else
+        {
+            // Displays the user's equipped emblem
+            AsyncImage(
+                model = emblem,
+                contentDescription = "Emblem",
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier
+                    .size(160.dp)
+                    .padding(8.dp)
+                    //.clip(RoundedCornerShape(8.dp))
+            )
+        }
 
         // Button to edit profile NOT IMPLEMENTED.
         Button(onClick={navController.navigate("changeUserDetails")}) {
@@ -106,7 +130,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Text(text = "Name: ")
         Box(
             modifier = Modifier
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .padding(8.dp)
         ){
         Text(text = "$firstName $lastName", fontSize = 20.sp)}
@@ -116,7 +140,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Text(text = "Email: ")
         Box(
             modifier = Modifier
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .padding(8.dp)
         ) {
             Text(text = email, fontSize = 20.sp)
@@ -127,7 +151,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
         Text(text = "Experience Points: ")
         Box(
             modifier = Modifier
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .padding(8.dp)
         ) {
             Text(text = experience, fontSize = 20.sp)
@@ -140,6 +164,19 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
             navController.navigate("bookmark")
         }) {
             Text(text = "Clinic Bookmarks", fontSize = 20.sp)
+        }
+
+        Spacer(Modifier.height(16.dp))
+        Button(onClick = { navController.navigate("userRatings") }) {
+            Text("User Ratings", fontSize = 20.sp)
+        }
+
+
+        // Button to go to points prestige page.
+        TextButton(onClick = {
+            navController.navigate("points_progression")
+        }) {
+            Text(text = "Points and Progression", fontSize = 20.sp)
         }
 
     }

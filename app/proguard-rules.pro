@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep Firebase Firestore callback lambdas
+-keepclassmembers class * {
+    @com.google.firebase.firestore.EventListener <methods>;
+}
+
+-keepclassmembers class * {
+    *** lambda$(...);
+}
+
+-keep class com.google.firebase.** { *; }
+-keepattributes *Annotation*

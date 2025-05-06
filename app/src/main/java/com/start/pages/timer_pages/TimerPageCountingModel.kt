@@ -5,11 +5,14 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,10 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dentalhygiene.R
 
 import com.start.viewmodels.TimerState
 import com.start.viewmodels.TimerModelState
@@ -101,6 +107,34 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         }
     }
 
+    // Image of play/pause button that acts as a button to pause and resume the timer.
+    val pauseResumeImage: @Composable () -> Unit = {
+        // Store the state of the pause button.
+
+        // If paused show play button. Else show pause button.
+        Image(
+            painter = painterResource(id = if (timerState.value == TimerState.Pause) R.drawable.timer_resume else R.drawable.timer_pause),
+            contentDescription = "Pause/Resume Button",
+            modifier = modifier
+                .size(48.dp)
+                .clickable {
+                    // Depending on the timer state...
+                    when (timerState.value) {
+                        // when the timer is counting or resumed, we pause the timer.
+                        TimerState.Counting, TimerState.Resumed -> {
+                            timerViewModel.pauseTimer()
+                        }
+                        // when the timer is paused, we start the timer.
+                        TimerState.Pause -> timerViewModel.startTimer()
+                        // else nothing.
+                        else -> Unit
+                    }
+                }
+        )
+    }
+
+    /*
+
     // Button to pause and resume the timer.
     val pauseResumeButton: @Composable () -> Unit = {
         Button(
@@ -134,6 +168,24 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
             )
         }
     }
+
+     */
+
+    // Image of cancel button, acts as button to cancel the timer.
+    val cancelImage: @Composable () -> Unit = {
+        Image(
+            painter = painterResource(id = R.drawable.timer_cancel),
+            contentDescription = "Cancel Button",
+            modifier = modifier
+                .size(48.dp)
+                .clickable {
+                    timerViewModel.cancelTimer()
+                }
+        )
+    }
+
+    /*
+
     // Button to cancel the timer.
     val cancelButton: @Composable () -> Unit = {
         Button(
@@ -144,6 +196,9 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
             Text(text="Cancel")
         }
     }
+
+     */
+
     // Button to demo the finish.
     val demoFinishButton: @Composable () -> Unit = {
         Button(
@@ -153,6 +208,19 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         }
     }
 
+    val toggleTeethImage: @Composable () -> Unit = {
+        Image(
+            painter = painterResource(id = R.drawable.timer_teeth_toggle),
+            contentDescription = "Toggle Teeth Button",
+            modifier = modifier
+                .size(48.dp)
+                .clickable {
+                    timerViewModel.toggleTeeth()
+                }
+        )
+    }
+
+    /*
     // Button to toggle the teeth.
     val toggleTeethButton: @Composable () -> Unit = {
         Button(
@@ -163,20 +231,25 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
         }
     }
 
+     */
+
     // We create the column for the timer.
     Column(
         modifier = modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
-        // Row for the tooth model text.
-        Row(
+
+        // Row for the tooth model.
+        Column(
             modifier = modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+                .weight(2f)
+                .wrapContentWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
+
             // Display the text for the tooth model to tell the user what to brush.
             // Animate the text.
             AnimatedContent(
@@ -185,20 +258,13 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
                 label="Tooth Model Text Transitions"
             ) {
                 // No matter what the state is we display the text with animation.
-                timerModelStateValue ->
+                    timerModelStateValue ->
                 when(timerModelStateValue) {
                     is TimerModelState.Upper -> timerTextToothModel()
                     else -> timerTextToothModel()
                 }
             }
-        }
-        // Row for the tooth model.
-        Row(
-            modifier = modifier
-                .wrapContentWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+
             // We display the tooth model.
             ToothModelViewerScreen(LocalContext.current, timerViewModel)
             /*
@@ -214,35 +280,28 @@ fun TimerPageCountingModel(modifier: Modifier, navController: NavController, tim
                     .clip(CircleShape)
             )
             */
-        }
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+
             // We display the time counting down right below the tooth model.
             timerTextModel()
+
         }
+
         Row(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
             // We display the time counting down right below the tooth model.
-            // We display the buttons to pause and cancel the timer.
-            pauseResumeButton()
-            demoFinishButton()
+            // We display the buttons to pause and cancel the timer and toggle teeth.
+            pauseResumeImage()
+            toggleTeethImage()
             // Button to cancel the timer.
-            cancelButton()
+            cancelImage()
         }
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Button to toggle teeth.
-            toggleTeethButton()
-        }
+
+        // Button to demo finish
+        demoFinishButton()
+
     }
 }
 
