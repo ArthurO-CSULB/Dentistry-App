@@ -33,6 +33,9 @@ import com.example.dentalhygiene.R
 import com.start.notificationhandlers.TimerNotificationHandler
 import com.start.viewmodels.TimerState
 import com.start.viewmodels.TimerViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 /*
 We have a composable timer page which will handle the UI the toothbrush timer.
@@ -59,15 +62,6 @@ fun TimerPageFinish(modifier: Modifier, navController: NavController, timerViewM
     val timerState = timerViewModel.timerState.collectAsState()
 
     val timerNotifications = TimerNotificationHandler(LocalContext.current)
-
-    // Launched effect when timer state changes to navigate to beginning.
-    LaunchedEffect(timerState.value) {
-        when(timerState.value) {
-            is TimerState.Begin -> navController.navigate("timer_begin")
-            is TimerState.Finished -> timerNotifications.timerFinishedNotification()
-            else -> Unit
-        }
-    }
 
     // We create the column to display the UI when finished.
     Column(

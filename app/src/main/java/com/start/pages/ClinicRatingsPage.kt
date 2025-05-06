@@ -263,7 +263,7 @@ fun ClinicReviewItem(clinicReview: ClinicReview, ratingViewModel: RatingViewMode
 
             // Profile Picture handler
             Image(
-                painter = painterResource(id = R.drawable.basicprofilepic),
+                painter = painterResource(id = R.drawable.ic_profile),
                 contentDescription = "Profile Picture",
                 modifier = Modifier.size(48.dp)
             )

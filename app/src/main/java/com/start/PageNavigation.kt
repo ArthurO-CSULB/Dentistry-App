@@ -40,6 +40,7 @@ import com.start.pages.timer_pages.TimerPageCancel
 import com.start.pages.timer_pages.TimerPageCountingModel
 import com.start.pages.UserRatingsPage
 import com.start.pages.BookmarkPage
+import com.start.pages.FlappyTooth
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
@@ -183,9 +184,9 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         }
 
         // Games screen.
-        composable("games"){
-            GamesPage(modifier, navController)
-        }
+        composable("games") { GamesPage(navController = navController) }
+
+        composable("flappytooth") { FlappyTooth(navController = navController) }
 
         // Glossary screen.
         composable("glossary"){

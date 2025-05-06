@@ -27,8 +27,8 @@ import androidx.compose.runtime.livedata.observeAsState
 
 object ButtonSizes {
     // Regular buttons
-    val REGULAR_CONTAINER = 120.dp
-    val REGULAR_ICON = 72.dp // 60% of container
+    val REGULAR_CONTAINER = 100.dp
+    val REGULAR_ICON = 60.dp // 60% of container
     val REGULAR_WIDTH = 150.dp
     val CORNER_RADIUS = 16.dp
 
@@ -41,8 +41,8 @@ object ButtonSizes {
     val SETTINGS_ICON = 24.dp // 75% of container
 
     // Games button (special)
-    val GAMES_WIDTH = 150.dp
-    val GAMES_HEIGHT = 100.dp
+//    val GAMES_WIDTH = 150.dp
+//    val GAMES_HEIGHT = 100.dp
 }
 
 @Composable
@@ -51,7 +51,7 @@ fun HomePage(
     navController: NavController,
     authViewModel: AuthViewModel,
     timerViewModel: TimerViewModel,
-    hygieneTriviaViewModel: HygieneTriviaViewModel
+    hygieneTriviaViewModel: HygieneTriviaViewModel,
 ) {
     val authState = authViewModel.authState.observeAsState()
     val timerState = timerViewModel.timerState.collectAsState()
@@ -71,8 +71,8 @@ fun HomePage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(32.dp))
-            Text("Prototype Home Page", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(24.dp))
+//            Text("Prototype Home Page", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+//            Spacer(Modifier.height(24.dp))
 
             // Profile (Centered Circle)
             ProfileButton(
@@ -83,7 +83,7 @@ fun HomePage(
                 backgroundColor = Color(0xFFFFB6C1)
             )
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(28.dp))
 
             // Feature Rows
             FeatureRows(
@@ -96,15 +96,21 @@ fun HomePage(
         // Sign Out Button (Bottom Center)
         Box(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            contentAlignment = Alignment.Center
+                .align(Alignment.BottomStart)  // Align to bottom right
+                .padding(16.dp)  // Add some padding
         ) {
-            TextButton(
-                onClick = { authViewModel.signout() }
+            Column(  // Use Column to stack text vertically
+                horizontalAlignment = Alignment.End  // Align text to the right
             ) {
-                Text("Sign Out", fontSize = 20.sp)
+                TextButton(
+                    onClick = { authViewModel.signout() },
+                    modifier = Modifier.wrapContentSize()  // Make button size fit content
+                ) {
+                    Column {  // Stack text vertically inside the button
+                        Text("Sign", fontSize = 20.sp)
+                        Text("Out", fontSize = 20.sp)
+                    }
+                }
             }
         }
 
@@ -148,7 +154,7 @@ private fun FeatureRows(
             FeatureItem(
                 iconRes = R.drawable.ic_calendar,
                 label = "Calendar",
-                color = Color(0xFF87CEFA),
+                color = Color(0xFF6571e5),
                 containerSize = ButtonSizes.REGULAR_CONTAINER,
                 iconSize = ButtonSizes.REGULAR_ICON,
                 width = ButtonSizes.REGULAR_WIDTH,
@@ -157,7 +163,7 @@ private fun FeatureRows(
                 navController.navigate("calendar")
             }
         ),
-        navController = navController  // Moved inside the parentheses
+        navController = navController
     )
 
     Spacer(Modifier.height(24.dp))
@@ -193,12 +199,12 @@ private fun FeatureRows(
                 navController.navigate("glossary")
             }
         ),
-        navController = navController  // Moved inside the parentheses
+        navController = navController
     )
 
     Spacer(Modifier.height(24.dp))
 
-    // Search and Games
+    // Search and User Ratings row
     FeatureRow(
         features = listOf(
             FeatureItem(
@@ -213,19 +219,39 @@ private fun FeatureRows(
                 navController.navigate("search")
             },
             FeatureItem(
-                iconRes = R.drawable.ic_games,
-                label = "Games",
-                color = Color(0xFFD8BFD8),
+                iconRes = R.drawable.ic_ratings,
+                label = "User Ratings",
+                color = Color(0xFFb465e5), // Different color for distinction
                 containerSize = ButtonSizes.REGULAR_CONTAINER,
                 iconSize = ButtonSizes.REGULAR_ICON,
                 width = ButtonSizes.REGULAR_WIDTH,
                 shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
             ) {
-                navController.navigate("games")
+                navController.navigate("userRatings")
             }
         ),
-        navController = navController  // Moved inside the parentheses
+        navController = navController
     )
+
+    Spacer(Modifier.height(24.dp))
+
+    // Games row (single button centered)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        IconButtonWithLabel(
+            iconRes = R.drawable.ic_games,
+            label = "Games",
+            backgroundColor = Color(0xFFfc3523),
+            containerSize = ButtonSizes.REGULAR_CONTAINER,
+            iconSize = ButtonSizes.REGULAR_ICON,
+            width = ButtonSizes.REGULAR_WIDTH,
+            shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
+        ) {
+            navController.navigate("games")
+        }
+    }
 }
 
 @Composable
@@ -279,11 +305,6 @@ private fun FeatureRow(
                 shape = feature.shape,
                 onClick = feature.onClick
             )
-        }
-
-        Spacer(Modifier.height(8.dp))
-        Button(onClick = { navController.navigate("userRatings") }) {
-            Text("User Ratings")
         }
     }
 }
@@ -346,6 +367,8 @@ private fun SettingsButton(
         )
     }
 }
+
+
 
 data class FeatureItem(
     val iconRes: Int,
