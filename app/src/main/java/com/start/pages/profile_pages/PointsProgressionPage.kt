@@ -2,6 +2,7 @@ package com.start.pages.profile_pages
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,10 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,7 +42,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -89,6 +96,7 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
     // Boolean to store if the progress bar is moving or not.
     var progressMoving by remember {mutableStateOf(false)}
 
+
     // Launched effect to update the progress bar reactively to the changes in database.
     LaunchedEffect(exp.value) {
 
@@ -122,8 +130,9 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
     Column (
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize()
-
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary)
     ) {
         TopAppBar(
             title =
@@ -158,11 +167,13 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
             // Emblem should also be a 512 x 512 png
             // Image for the prestige/user
             // If the user doesn't have an equipped emblem, shows the default one
-            if (emblem == null){
+            if (emblem == "" || emblem == null){
                 Image(
                     painter = painterResource(R.drawable.basicprofilepic),
                     contentDescription = "Profile Picture",
-                    modifier = modifier.size(160.dp)
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier
+                        .size(150.dp)
                 )
             } else
             {
@@ -177,17 +188,27 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                         //.clip(RoundedCornerShape(8.dp))
                 )
             }
+            Text(
+                text = prestigeInfo.badge,
+                lineHeight = 1.em,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                fontStyle = FontStyle.Italic,
+                fontFamily = FontFamily.Monospace,
+                color = prestigeInfo.color
+            )
             Spacer(modifier = modifier.height(8.dp))
             Text(
                 text = "Current Rank:",
                 lineHeight = 1.5.em,
                 fontWeight = FontWeight.Bold,
-                fontSize = 32.sp
-            )
+                fontSize = 32.sp,
+                )
             Text(
-                text = "Prestige ${prestigeInfo.prestigeLevel.toInt()} - ${prestigeInfo.toString()}",
+                text = "Prestige ${prestigeInfo.prestigeLevel.toInt()} - $prestigeInfo",
                 fontSize = 24.sp,
-                lineHeight = 1.5.em
+                lineHeight = 1.5.em,
+                color = prestigeInfo.color
             )
             Text(
                 text = "Experience Points:",
@@ -198,7 +219,8 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
             Text(
                 text = exp.value.toString(),
                 lineHeight = 1.5.em,
-                fontSize = 24.sp
+                fontSize = 24.sp,
+                color = Color.White
             )
             // Button to prestige/rank up the user. Only show button if user is not at max prestige.
             if (prestige.value < pointsProgressionViewModel.prestiges.last().prestigeLevel) {
@@ -227,13 +249,28 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                             }
                         }
                     },
-                    enabled = !progressMoving
+                    enabled = !progressMoving,
+                    colors = ButtonColors(
+                        MaterialTheme.colorScheme.onPrimary,
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 ) {
                     Text("Next Level")
                 }
             }
             // Navigates to the Emblem Shop page
-            Button(onClick={navController.navigate("emblems")}) {
+            Button(
+                onClick={navController.navigate("emblems")},
+                colors = ButtonColors(
+                    MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+            )
+            {
                 Text(text = "Emblems")
             }
         }

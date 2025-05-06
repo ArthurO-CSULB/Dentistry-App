@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -193,7 +195,7 @@ fun EmblemsPage(modifier: Modifier, navController: NavController,
         // Adds the EmblemList as the body of the page
         EmblemList(
             emblems = emblems,
-            onEmblemClick = { navController.popBackStack() },
+            //onEmblemClick = { navController.popBackStack() },
             //onButtonClick = {},
             modifier = Modifier.padding(innerPadding),
             pointsProgressionViewModel = pointsProgressionViewModel
@@ -203,7 +205,7 @@ fun EmblemsPage(modifier: Modifier, navController: NavController,
 
 // A composable for the list of emblems that the user can scroll through and choose from based on their prestige level
 @Composable
-fun EmblemList(pointsProgressionViewModel: PointsProgressionViewModel, emblems: List<Emblem>, onEmblemClick: (Emblem) -> Unit, modifier: Modifier = Modifier) {
+fun EmblemList(pointsProgressionViewModel: PointsProgressionViewModel, emblems: List<Emblem>, modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier
             .padding(16.dp)
@@ -219,12 +221,19 @@ fun EmblemList(pointsProgressionViewModel: PointsProgressionViewModel, emblems: 
             }
 
             // Checks if the user already owns the emblem. If they do, the button displays "Equip"
-            // Else if the user has already equipped the emblem, the button displays "Equipped"
+            // Else if the user has already equipped the emblem, the button displays "Unequipped"
             // Else, the user does not own the emblem, so the button displays "Buy"
             val buttonText = when {
-                pointsProgressionViewModel.equippedEmblem.value == emblem.imageUrl -> "Equipped"
-                owned -> "Equip"
+                pointsProgressionViewModel.equippedEmblem.value == emblem.imageUrl -> "Unequip"
+                owned && (pointsProgressionViewModel.equippedEmblem.value != emblem.imageUrl) -> "Equip"
                 else -> "Buy"
+            }
+
+            val buttonColor = when (buttonText) {
+                "Buy"     -> Color(0xFF009900)
+                "Equip"   -> Color(0xFF128DF9)
+                "Unequip" -> Color(0xFFFD6868)
+                else      -> MaterialTheme.colorScheme.primary
             }
 
             Row(
@@ -233,20 +242,33 @@ fun EmblemList(pointsProgressionViewModel: PointsProgressionViewModel, emblems: 
                     .fillMaxWidth()
                     //.padding(vertical = 8.dp)
             ){
-                EmblemCard(emblem = emblem, onClick = { onEmblemClick(emblem) }, pointsProgressionViewModel)
+                EmblemCard(emblem = emblem, pointsProgressionViewModel)
                 Spacer(modifier = Modifier.width(4.dp))
                 Button(
                     onClick = {
                         // When the button says "Buy", pressing it buys the emblem
                         // When the button says "Equip", pressing it equips the emblem
-                        when (buttonText) {
-                            "Buy" -> pointsProgressionViewModel.buyEmblem(emblem)
+                        when (buttonText)
+                        {
+                            "Buy" -> {
+                                pointsProgressionViewModel.buyEmblem(emblem)
+                                owned = true
+                            }
                             "Equip" -> pointsProgressionViewModel.equipEmblem(emblem)
+                            "Unequip" -> pointsProgressionViewModel.unequipEmblem()
                         }
+
                     },
                     // If the button is already equipped, the button is disabled
-                    enabled = buttonText != "Equipped",
+                    //enabled = buttonText != "Equipped",
                     shape = RoundedCornerShape(12.dp),
+                    colors = ButtonColors(
+                        buttonColor,
+                        contentColor = Color.White,
+                        disabledContainerColor = buttonColor,
+                        disabledContentColor = buttonColor
+                    ),
+                    contentPadding = PaddingValues(0.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(86.dp)
@@ -255,7 +277,8 @@ fun EmblemList(pointsProgressionViewModel: PointsProgressionViewModel, emblems: 
                 {
                     Text(
                         text = buttonText,
-                        fontSize = 12.sp
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -266,25 +289,27 @@ fun EmblemList(pointsProgressionViewModel: PointsProgressionViewModel, emblems: 
 
 // Composable for each individual Emblem card that appears in the Emblem List.
 @Composable
-fun EmblemCard(emblem: Emblem, onClick: () -> Unit, pointsProgressionViewModel: PointsProgressionViewModel) {
+fun EmblemCard(emblem: Emblem, pointsProgressionViewModel: PointsProgressionViewModel) {
     // Gathers the user's prestige state
     val prestige = pointsProgressionViewModel.prestige.collectAsState()
     // Gathers the user's current prestige level
     val prestigeInfo: Prestige = pointsProgressionViewModel.prestiges[prestige.value.toInt()]
-    // Changes the color of the prestige information of the emblem based on which Tier it unlocks at.
-    // There are 8 different Tiers for prestige, each with its own color
-    val tierColor = if (prestigeInfo.prestigeLevel == 0L) {Color.White}
-                    else if (prestigeInfo.prestigeLevel == 1L) {Color.Green}
-                    else if (prestigeInfo.prestigeLevel == 2L) {Color.Yellow}
-                    else if (prestigeInfo.prestigeLevel == 3L) {MaterialTheme.colorScheme.tertiaryContainer} // Orange
-                    else if (prestigeInfo.prestigeLevel == 4L) {Color.Red}
-                    else if (prestigeInfo.prestigeLevel == 5L) {Color.Blue}
-                    else if (prestigeInfo.prestigeLevel == 6L) {Color.Magenta} // Purple
-                    else {Color.Black}
+
+    val emblemColor = when (emblem.prestige)
+    {
+        0L -> Color(0xFFFAF9E8)
+        1L -> Color(0xFF24E966)
+        2L -> Color(0xFFFFEE06)
+        3L -> Color(0xFFFD8C0A)
+        4L -> Color(0xFFFA335B)
+        5L -> Color(0xFF398FFF)
+        6L -> Color(0xFFAB62FF)
+        else -> Color(0xFFFFCE06)
+    }
+
     Card(
         modifier = Modifier
-            .fillMaxWidth(fraction = 0.70f)
-            .clickable(onClick = onClick),
+            .fillMaxWidth(fraction = 0.70f),
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardColors(
@@ -328,9 +353,9 @@ fun EmblemCard(emblem: Emblem, onClick: () -> Unit, pointsProgressionViewModel: 
                 )
                 // Displays the emblem's prestige Tier level in the tier's specific color
                 Text(
-                    text = "$prestigeInfo Emblem",
+                    text = "Prestige ${emblem.prestige} Emblem",
                     style = MaterialTheme.typography.bodySmall,
-                    color = tierColor,
+                    color = emblemColor,
                     fontWeight = FontWeight.Bold,
                     //fontSize = 20.sp,
                     modifier = Modifier.align(Alignment.Start)

@@ -99,7 +99,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
         Spacer(modifier = Modifier.height(16.dp))
 
         // If the user doesn't have an emblem equipped, shows the default one instead
-        if (emblem == null){
+        if (emblem == "" || emblem == null){
             Image(
                 painter = painterResource(R.drawable.basicprofilepic),
                 contentDescription = "Profile Picture",

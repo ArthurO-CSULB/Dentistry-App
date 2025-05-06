@@ -4,8 +4,10 @@ import android.content.ContentValues.TAG
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -63,7 +65,7 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
     val emblemList : MutableState<List<Emblem>> = _emblemList
 
     // Stores the user's currently equipped emblem
-    val equippedEmblem = mutableStateOf<String?>(null)
+    var equippedEmblem = mutableStateOf<String?>("")
 
     // A list of prestiges that will be used to access certain info on the prestige.
     // Prestige number will be used to index the prestiges list. Makes sure to convert the prestige
@@ -247,7 +249,11 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
         equippedEmblem.value = emblem.imageUrl
     }
 
-    //
+    // Function to equip the given emblem and add it to the equipped emblem state
+    fun unequipEmblem(){
+        pointsProgressionRepo.equipEmblem("")
+        equippedEmblem.value = ""
+    }
 
     /*
     Not in user since we have a prestige attribute in the view model.
@@ -276,50 +282,69 @@ class PointsProgressionViewModel(private val pointsProgressionRepo: PointsProgre
     }
 }
 
-// Prestige Objects that define types of tiers, each tier is color coded
+// Prestige Objects that define types of tiers, each tier is color coded and has its own badge
 sealed class Prestige {
     abstract val maxExp: Long
     abstract val prestigeLevel: Long
+    abstract val badge: String
+    abstract val color: Color
 
     data object Prestige0: Prestige() {
         override val maxExp = 1000L
         override val prestigeLevel = 0L
         override fun toString() = "White Tier"
+        override val badge = "The Root"
+        override val color = Color(0xFFFAF9E8)
     }
     data object Prestige1: Prestige() {
         override val maxExp = 2500L
         override val prestigeLevel = 1L
         override fun toString() = "Green Tier"
+        override val badge = "Cavity Avoider"
+        override val color = Color(0xFF24E966)
     }
     data object Prestige2: Prestige() {
         override val maxExp = 5000L
         override val prestigeLevel = 2L
         override fun toString() = "Yellow Tier"
+        override val badge = "Tooth Brusher"
+        override val color = Color(0xFFFFEE06)
+
     }
     data object Prestige3: Prestige() {
         override val maxExp = 10000L
         override val prestigeLevel = 3L
         override fun toString() = "Orange Tier"
+        override val badge = "Calculus Destroyer"
+        override val color = Color(0xFFFD8C0A)
     }
     data object Prestige4: Prestige() {
         override val maxExp = 25000L
         override val prestigeLevel = 4L
         override fun toString() = "Red Tier"
+        override val badge = "Deal Sealer"
+        override val color = Color(0xFFFA335B)
     }
     data object Prestige5: Prestige() {
         override val maxExp = 50000L
         override val prestigeLevel = 5L
         override fun toString() = "Blue Tier"
+        override val badge = "Floss Veteran"
+        override val color = Color(0xFF398FFF)
     }
     data object Prestige6: Prestige() {
         override val maxExp = 100000L
         override val prestigeLevel = 6L
         override fun toString() = "Purple Tier"
+        override val badge = "Crown Bearer"
+        override val color = Color(0xFFAB62FF)
     }
     data object MaxPrestige: Prestige() {
         override val maxExp = 1000000L
         override val prestigeLevel = 7L
         override fun toString() = "Gold Tier"
+        override val badge = "The Apex"
+        override val color = Color(0xFFFFCE06)
     }
 
 }
@@ -328,8 +353,8 @@ sealed class Prestige {
 data class Emblem (
     val imageUrl: String = "",
     val name: String = "",
-    var prestige: Long = 0,
-    val price: Long = 0,
+    var prestige: Long = 0L,
+    val price: Long = 0L,
     )
 
 //Badge objects that define what prestige they unlock at, will just be a tagline string
