@@ -17,11 +17,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.start.viewmodels.PointsProgressionViewModel
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 @Composable
-fun GamesPage(modifier: Modifier = Modifier, navController: NavController) {
+fun GamesPage(modifier: Modifier = Modifier, navController: NavController,
+              pointsProgressionViewModel: PointsProgressionViewModel) {
     // Game dimensions
     val screenWidth = 1000f
     val screenHeight = 1600f
@@ -93,6 +95,8 @@ fun GamesPage(modifier: Modifier = Modifier, navController: NavController) {
             }
 
             if (collisionOccurred) {
+                // When collision occurs, add points to the user's account and reset the game. Gabe
+                pointsProgressionViewModel.addFlappyToothPoints(score)
                 continue
             }
 
@@ -151,6 +155,16 @@ fun GamesPage(modifier: Modifier = Modifier, navController: NavController) {
                 color = Color.White,
                 modifier = Modifier.padding(16.dp)
             )
+            // If the game is running and the person scored, display that points were added to their
+            // account. Gabe
+            if (!isGameRunning && score > 0) {
+                Text(
+                    text = "+${score} points!",
+                    fontSize = 24.sp,
+                    color = Color.Green,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
             TextButton(
                 onClick = { navController.navigate("home") },
                 modifier = Modifier.padding(16.dp)

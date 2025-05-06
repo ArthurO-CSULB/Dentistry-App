@@ -68,7 +68,7 @@ Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
 
-@RequiresApi(Build.VERSION_CODES.S)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
 TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressionViewModel: PointsProgressionViewModel,
@@ -134,7 +134,7 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
         }
 
         composable("timer_cancel") {
-            TimerPageCancel(modifier, navController, timerViewModel)
+            TimerPageCancel(modifier, navController, timerViewModel, pointsProgressionViewModel)
         }
 
         composable("timer_finish") {
@@ -211,7 +211,7 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
 
         // Games screen.
         composable("games"){
-            GamesPage(modifier, navController)
+            GamesPage(modifier, navController, pointsProgressionViewModel)
         }
 
         // Glossary screen.
@@ -294,7 +294,6 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
         composable("reauthenticationAccountDeletion"){
             ReauthenticationPage(modifier, navController, authViewModel, "settings")
         }
-
 
         // Change User Details Page
         composable("changeUserDetails"){
