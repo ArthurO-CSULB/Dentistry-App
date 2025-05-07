@@ -263,7 +263,7 @@ private fun FeatureRows(
                 width = ButtonSizes.REGULAR_WIDTH,
                 shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
             ) {
-                navController.navigate("games")
+                navController.navigate("tooth_snake")
             }
         ),
         navController = navController  // Moved inside the parentheses

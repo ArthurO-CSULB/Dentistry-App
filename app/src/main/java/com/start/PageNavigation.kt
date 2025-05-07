@@ -32,6 +32,7 @@ import com.start.pages.ToothbrushReplacementPage
 import com.start.pages.UserRatingsPage
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
+import com.start.pages.ToothSnake
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageBegin
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFinished
@@ -59,7 +60,6 @@ import com.start.viewmodels.PointsProgressionViewModel
 import com.start.viewmodels.RatingViewModel
 import com.start.viewmodels.TimerViewModel
 import com.start.viewmodels.ToothbrushTrackerViewModel
-
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
 navigation flow between different composable screens. We pass in a modifier for UI, as well as the
@@ -277,6 +277,10 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
 
         composable("mouthwash") {
             MouthwashRecs(modifier, navController)
+        }
+
+        composable("tooth_snake") {
+            ToothSnake(modifier, navController)
         }
 
         // Verification Screen
