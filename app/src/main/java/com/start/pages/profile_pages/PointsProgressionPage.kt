@@ -197,12 +197,13 @@ fun PointsProgressionPage(modifier: Modifier, navController: NavController,
                 fontFamily = FontFamily.Monospace,
                 color = prestigeInfo.color
             )
-            Spacer(modifier = modifier.height(8.dp))
+            //Spacer(modifier = modifier.height(8.dp))
             Text(
                 text = "Current Rank:",
                 lineHeight = 1.5.em,
                 fontWeight = FontWeight.Bold,
                 fontSize = 32.sp,
+                modifier = Modifier.padding(top = 12.dp)
                 )
             Text(
                 text = "Prestige ${prestigeInfo.prestigeLevel.toInt()} - $prestigeInfo",

@@ -1,5 +1,6 @@
 package com.start.pages.profile_pages
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -204,6 +205,7 @@ fun EmblemsPage(modifier: Modifier, navController: NavController,
 }
 
 // A composable for the list of emblems that the user can scroll through and choose from based on their prestige level
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun EmblemList(pointsProgressionViewModel: PointsProgressionViewModel, emblems: List<Emblem>, modifier: Modifier = Modifier) {
     LazyColumn(
@@ -250,23 +252,20 @@ fun EmblemList(pointsProgressionViewModel: PointsProgressionViewModel, emblems: 
                         // When the button says "Equip", pressing it equips the emblem
                         when (buttonText)
                         {
-                            "Buy" -> {
-                                pointsProgressionViewModel.buyEmblem(emblem)
-                                owned = true
-                            }
+                            "Buy" -> pointsProgressionViewModel.buyEmblem(emblem)
                             "Equip" -> pointsProgressionViewModel.equipEmblem(emblem)
                             "Unequip" -> pointsProgressionViewModel.unequipEmblem()
                         }
 
                     },
-                    // If the button is already equipped, the button is disabled
-                    //enabled = buttonText != "Equipped",
+                    // Button disabled if it's not bought and out of the user's price range
+                    enabled = (buttonText == "Equip" || buttonText == "Unequip" || pointsProgressionViewModel.experience.value >= emblem.price),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonColors(
                         buttonColor,
                         contentColor = Color.White,
-                        disabledContainerColor = buttonColor,
-                        disabledContentColor = buttonColor
+                        disabledContainerColor = Color.Gray,
+                        disabledContentColor = Color.LightGray
                     ),
                     contentPadding = PaddingValues(0.dp),
                     modifier = Modifier
@@ -346,14 +345,25 @@ fun EmblemCard(emblem: Emblem, pointsProgressionViewModel: PointsProgressionView
                 Text(
                     text = "${emblem.price} PTS",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Magenta,
+                    color = Color.Cyan,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     modifier = Modifier.align(Alignment.Start)
                 )
                 // Displays the emblem's prestige Tier level in the tier's specific color
                 Text(
-                    text = "Prestige ${emblem.prestige} Emblem",
+                    text = when (emblem.prestige)
+                    {
+                        0L -> "${Prestige.Prestige0} Emblem"
+                        1L -> "${Prestige.Prestige1} Emblem"
+                        2L -> "${Prestige.Prestige2} Emblem"
+                        3L -> "${Prestige.Prestige3} Emblem"
+                        4L -> "${Prestige.Prestige4} Emblem"
+                        5L -> "${Prestige.Prestige5} Emblem"
+                        6L -> "${Prestige.Prestige6} Emblem"
+                        7L -> "${Prestige.MaxPrestige} Emblem"
+                        else -> "Emblem"
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = emblemColor,
                     fontWeight = FontWeight.Bold,
@@ -364,73 +374,4 @@ fun EmblemCard(emblem: Emblem, pointsProgressionViewModel: PointsProgressionView
         }
     }
 }
-
-/**
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-fun EmblemPageLayout() {
-    val tooth = Emblem("https://firebasestorage.googleapis.com/v0/b/dentalhygiene-bc3cd.firebasestorage.app/o/emblems%2Fprestige0%2Fcool%20green%20emoji%20toothpick.png?alt=media&token=265319af-69d0-4c09-922f-411529049524", "Toothpick", 0, 100L)
-    val emblems : List<Emblem> = mutableListOf(tooth, tooth, tooth, tooth, tooth, tooth, tooth, tooth)
-
-    val modifier = Modifier
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title =
-                {
-                    Text(
-                        text = "Emblem Shop",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back Button",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults. topAppBarColors(MaterialTheme.colorScheme.secondaryContainer)
-            )
-        },
-        bottomBar = {
-            // Progress Indicator for the points bar.
-            Column(
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            )
-            {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.Top
-                )
-                {
-                    Text("600/1000")
-                }
-                LinearProgressIndicator(
-                    progress = { 0.5F },
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .height(12.dp)
-                        .padding(bottom = 4.dp),
-                    color = Color.Green
-                )
-            }
-        }
-    ) { innerPadding ->
-        EmblemList(
-            emblems = emblems,
-            onEmblemClick = { /* handle click */ },
-            modifier = Modifier.padding(innerPadding),
-            pointsProgressionViewModel = TODO(),
-        )
-    }
-}
-**/
 
