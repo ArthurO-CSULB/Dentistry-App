@@ -252,7 +252,10 @@ fun EmblemList(pointsProgressionViewModel: PointsProgressionViewModel, emblems: 
                         // When the button says "Equip", pressing it equips the emblem
                         when (buttonText)
                         {
-                            "Buy" -> pointsProgressionViewModel.buyEmblem(emblem)
+                            "Buy" -> {
+                                pointsProgressionViewModel.buyEmblem(emblem)
+                                owned = true
+                            }
                             "Equip" -> pointsProgressionViewModel.equipEmblem(emblem)
                             "Unequip" -> pointsProgressionViewModel.unequipEmblem()
                         }
