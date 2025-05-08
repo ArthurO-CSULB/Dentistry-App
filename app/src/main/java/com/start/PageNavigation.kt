@@ -134,17 +134,11 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, pointsProgressio
         }
 
         composable("timer_cancel") {
-            TimerPageCancel(
-                modifier, navController, timerViewModel,
-                pointsProgressionViewModel = TODO()
-            )
+            TimerPageCancel(modifier, navController, timerViewModel, pointsProgressionViewModel)
         }
 
         composable("timer_finish") {
-            TimerPageFinish(
-                modifier, navController, timerViewModel,
-                pointsProgressionViewModel = TODO()
-            )
+            TimerPageFinish(modifier, navController, timerViewModel, pointsProgressionViewModel)
         }
 
         composable("trivia_begin") {
