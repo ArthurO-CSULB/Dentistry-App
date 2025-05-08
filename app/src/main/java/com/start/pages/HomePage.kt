@@ -86,7 +86,7 @@ fun HomePage(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(24.dp))
 //            Text("Prototype Home Page", fontSize = 24.sp, fontWeight = FontWeight.Bold)
 //            Spacer(Modifier.height(24.dp))
 
@@ -99,7 +99,7 @@ fun HomePage(
                 backgroundColor = Color(0xFFFFB6C1)
             )
 
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(12.dp))
 
             // Feature Rows
             FeatureRows(
@@ -169,7 +169,7 @@ private fun FeatureRows(
             },
             FeatureItem(
                 iconRes = R.drawable.ic_calendar,
-                label = "Calendar",
+                label = "⏰ Calendar \uD83D\uDCC5",
                 color = Color(0xFF6571e5),
                 containerSize = ButtonSizes.REGULAR_CONTAINER,
                 iconSize = ButtonSizes.REGULAR_ICON,
@@ -189,7 +189,7 @@ private fun FeatureRows(
         features = listOf(
             FeatureItem(
                 iconRes = R.drawable.ic_trivia,
-                label = "Dental Trivia",
+                label = "? Dental Trivia ?",
                 color = Color(0xFF98FB98),
                 containerSize = ButtonSizes.REGULAR_CONTAINER,
                 iconSize = ButtonSizes.REGULAR_ICON,
@@ -205,7 +205,7 @@ private fun FeatureRows(
             },
             FeatureItem(
                 iconRes = R.drawable.ic_glossary,
-                label = "Glossary",
+                label = "\uD83D\uDCD2 Glossary \uD83D\uDCD2",
                 color = Color(0xFFFFFF99),
                 containerSize = ButtonSizes.REGULAR_CONTAINER,
                 iconSize = ButtonSizes.REGULAR_ICON,
@@ -236,8 +236,8 @@ private fun FeatureRows(
             },
             FeatureItem(
                 iconRes = R.drawable.ic_ratings,
-                label = "User Ratings",
-                color = Color(0xFFb465e5), // Different color for distinction
+                label = "⭐ User Ratings ⭐",
+                color = Color(0xFFA020F0), // Different color for distinction
                 containerSize = ButtonSizes.REGULAR_CONTAINER,
                 iconSize = ButtonSizes.REGULAR_ICON,
                 width = ButtonSizes.REGULAR_WIDTH,
@@ -245,6 +245,7 @@ private fun FeatureRows(
             ) {
                 navController.navigate("userRatings")
             }
+
         ),
         navController = navController
     )
@@ -263,12 +264,13 @@ private fun FeatureRows(
                 width = ButtonSizes.REGULAR_WIDTH,
                 shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
             )
+
             {
                 navController.navigate("games")
             },
             FeatureItem(
                 iconRes = R.drawable.tooth_icon,
-                label = "Toothbrush Replacement",
+                label = "ꨄ Toothbrush Change ꨄ",
                 color = Color(0xFF88CEDA),
                 containerSize = ButtonSizes.REGULAR_CONTAINER,
                 iconSize = ButtonSizes.REGULAR_ICON,
@@ -279,6 +281,7 @@ private fun FeatureRows(
                 navController.navigate("toothbrushTracker")
             }
             ),
+
             navController = navController
         )
 
@@ -316,15 +319,24 @@ private fun ProfileButton(
 }
 
 @Composable
-private fun FeatureRow(
+fun FeatureRow(
     features: List<FeatureItem>,
-    navController: NavController  // Add this parameter
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    horizontalPadding: Dp = 32.dp,  // Adjust this value to control side spacing
+    betweenSpacing: Dp = 24.dp      // Adjust this value to control space between buttons
 ) {
     Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = horizontalPadding),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        features.forEach { feature ->
+        features.forEachIndexed { index, feature ->
+            if (index != 0) {
+                Spacer(modifier = Modifier.width(betweenSpacing))
+            }
             IconButtonWithLabel(
                 iconRes = feature.iconRes,
                 label = feature.label,

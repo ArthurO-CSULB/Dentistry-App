@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
@@ -31,6 +32,9 @@ import coil.compose.AsyncImage
 import com.example.dentalhygiene.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.start.pages.ButtonSizes
+import com.start.pages.FeatureItem
+import com.start.pages.FeatureRow
 import com.start.viewmodels.PointsProgressionViewModel
 
 /*
@@ -92,7 +96,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
 
         // Title of Profile Page
         Text(
-            text = "Prototype Profile Page", fontSize = 32.sp
+            text = "THE Profile Page", fontSize = 32.sp
         )
 
         // Space between the title text and user information
@@ -159,26 +163,68 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
         }
 
         // Button to go to Bookmark page.
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            navController.navigate("bookmark")
-        }) {
-            Text(text = "Clinic Bookmarks", fontSize = 20.sp)
-        }
+//        Spacer(modifier = Modifier.height(16.dp))
+//        Button(onClick = {
+//            navController.navigate("bookmark")
+//        }) {
+//            Text(text = "Clinic Bookmarks", fontSize = 20.sp)
+//        }
+//
+//        Spacer(Modifier.height(16.dp))
+//        Button(onClick = { navController.navigate("userRatings") }) {
+//            Text("User Ratings", fontSize = 20.sp)
+//        }
+        FeatureRow(
+            features = listOf(
+                FeatureItem(
+                    iconRes = R.drawable.bookmark,
+                    label = "Clinic Bookmarks",
+                    color = Color(0xFFFFFF00),
+                    containerSize = ButtonSizes.REGULAR_CONTAINER,
+                    iconSize = ButtonSizes.REGULAR_ICON,
+                    width = ButtonSizes.REGULAR_WIDTH,
+                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
+                )
 
-        Spacer(Modifier.height(16.dp))
-        Button(onClick = { navController.navigate("userRatings") }) {
-            Text("User Ratings", fontSize = 20.sp)
-        }
+                {
+                    navController.navigate("bookmark")
+                },
 
+                FeatureItem(
+                    iconRes = R.drawable.ic_ratings,
+                    label = "User Ratings",
+                    color = Color(0xFFA020F0),
+                    containerSize = ButtonSizes.REGULAR_CONTAINER,
+                    iconSize = ButtonSizes.REGULAR_ICON,
+                    width = ButtonSizes.REGULAR_WIDTH,
+                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS),
+                )
+                {
+                    navController.navigate("userRatings")
+                }
+
+            ),
+
+            navController = navController
+        )
 
         // Button to go to points prestige page.
-        TextButton(onClick = {
-            navController.navigate("points_progression")
-        }) {
-            Text(text = "Points and Progression", fontSize = 20.sp)
-        }
-
+        FeatureRow(
+            features = listOf(
+                FeatureItem(
+                    iconRes = R.drawable.progress, // Your image resource
+                    label = "Points and Progression",
+                    color = Color(0xFFFFFF00),
+                    containerSize = 80.dp, // Adjust height here
+                    iconSize = 40.dp, // Adjust icon size
+                    width = 320.dp,
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    navController.navigate("points_progression")
+                }
+            ),
+            navController = navController
+        )
     }
     Column(
         // We fill the column to the entire screen
