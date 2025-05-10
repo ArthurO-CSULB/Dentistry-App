@@ -270,7 +270,7 @@ private fun FeatureRows(
             },
             FeatureItem(
                 iconRes = R.drawable.tooth_icon,
-                label = "ꨄ Toothbrush Change ꨄ",
+                label = "ꨄ Brush Change ꨄ",
                 color = Color(0xFF88CEDA),
                 containerSize = ButtonSizes.REGULAR_CONTAINER,
                 iconSize = ButtonSizes.REGULAR_ICON,
