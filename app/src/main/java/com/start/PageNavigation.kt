@@ -220,7 +220,8 @@ fun PageNavigation(
         // Games screen.
         composable("games") { GamesPage(navController = navController) }
 
-        composable("flappytooth") { FlappyTooth(navController = navController) }
+        composable("flappytooth") { FlappyTooth(navController = navController,
+            pointsProgressionViewModel = pointsProgressionViewModel) }
 
         // Glossary screen.
         composable("glossary"){
