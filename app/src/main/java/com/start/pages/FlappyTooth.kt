@@ -157,27 +157,33 @@ fun FlappyTooth(modifier: Modifier = Modifier, navController: NavController,
     ) {
         // Header
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = "Score: $score",
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 color = Color.White,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(28.dp)
+                    .weight(1f)
             )
-            // If there is a collision, show the points added.
+
             if (!isGameRunning && score >= 1) {
                 Text(
                     text = "Points Got: $score",
-                    fontSize = 24.sp,
+                    fontSize = 20.sp,
                     color = Color.White,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .padding(28.dp)
+                        .weight(1f)
                 )
+            } else {
+                Spacer(Modifier.weight(1f))
             }
+
             TextButton(
                 onClick = { navController.navigate("home") },
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(12.dp)
             ) {
                 Text("Home", color = Color.White)
             }

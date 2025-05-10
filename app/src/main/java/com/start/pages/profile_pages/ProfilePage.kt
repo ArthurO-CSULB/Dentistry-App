@@ -104,7 +104,8 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
         )
 
         // Space between the title text and user information
-        Spacer(modifier = Modifier.height(16.dp))
+
+        //Spacer(modifier = Modifier.height(4.dp))
 
         // If the user doesn't have an emblem equipped, shows the default one instead
         if (emblem == "" || emblem == null){
@@ -131,7 +132,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
         Button(onClick={navController.navigate("changeUserDetails")}) {
             Text(text = "Edit Profile")
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // User information
         // Name
@@ -194,7 +195,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
                 FeatureItem(
                     iconRes = R.drawable.bookmark,
                     label = "Clinic Bookmarks",
-                    color = Color(0xFFFFFF00),
+                    color = Color(0xFFA020F0),
                     containerSize = ButtonSizes.REGULAR_CONTAINER,
                     iconSize = ButtonSizes.REGULAR_ICON,
                     width = ButtonSizes.REGULAR_WIDTH,
@@ -205,39 +206,48 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
                     navController.navigate("bookmark")
                 },
 
-        Spacer(Modifier.height(16.dp))
-        Button(onClick = { navController.navigate("userRatings") }) {
-            Text("User Ratings", fontSize = 20.sp)
-        }
+                FeatureItem(
+                    iconRes = R.drawable.ic_ratings, // Add an appropriate icon resource
+                    label = "User Ratings",
+                    color = Color(0xFFFFFF00),
+                    containerSize = ButtonSizes.REGULAR_CONTAINER,
+                    iconSize = ButtonSizes.REGULAR_ICON,
+                    width = ButtonSizes.REGULAR_WIDTH,
+                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
+                ) {
+                    navController.navigate("user_Ratings")
+                }
 
             ),
 
             navController = navController
         )
 
-        // Button to go to points prestige page.
-        Button(onClick = {
-            navController.navigate("points_progression")
-        }) {
-            Text(text = "Points and Progression")
-        }
+        Spacer(modifier = Modifier.height(8.dp))
         // Button to go to the leaderboards and stats page.
-        Button(onClick = {
-            navController.navigate("leaderboards_stats")
-        }) {
-            Text(text = "Leaderboards and Stats")
-        }
-
         FeatureRow(
             features = listOf(
                 FeatureItem(
-                    iconRes = R.drawable.progress, // Your image resource
-                    label = "Points and Progression",
+                    iconRes = R.drawable.stats, // Your image resource
+                    label = "Leaderboards " +
+                            "and Stats",
                     color = Color(0xFFFFFF00),
-                    containerSize = 80.dp, // Adjust height here
-                    iconSize = 40.dp, // Adjust icon size
-                    width = 320.dp,
-                    shape = RoundedCornerShape(12.dp)
+                    containerSize = ButtonSizes.REGULAR_CONTAINER,
+                    iconSize = ButtonSizes.REGULAR_ICON,
+                    width = ButtonSizes.REGULAR_WIDTH,
+                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
+                ) {
+                    navController.navigate("leaderboards_stats")
+                },
+        // Button to go to points prestige page.
+                FeatureItem(
+                    iconRes = R.drawable.progress, // Your image resource
+                    label = "Points & Progression",
+                    color = Color(0xFFFF0000),
+                    containerSize = ButtonSizes.REGULAR_CONTAINER,
+                    iconSize = ButtonSizes.REGULAR_ICON,
+                    width = ButtonSizes.REGULAR_WIDTH,
+                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
                 ) {
                     navController.navigate("points_progression")
                 }
