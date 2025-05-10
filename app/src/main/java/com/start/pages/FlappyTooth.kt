@@ -24,9 +24,11 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.FirebaseFirestore
+import com.start.viewmodels.PointsProgressionViewModel
 
 @Composable
-fun FlappyTooth(modifier: Modifier = Modifier, navController: NavController) {
+fun FlappyTooth(modifier: Modifier = Modifier, navController: NavController,
+                pointsProgressionViewModel: PointsProgressionViewModel) {
     // Game dimensions
     val screenWidth = 1000f
     val screenHeight = 1600f
@@ -99,6 +101,8 @@ fun FlappyTooth(modifier: Modifier = Modifier, navController: NavController) {
             }
 
             if (collisionOccurred) {
+                // Add the score to database if collision.
+                pointsProgressionViewModel.addFlappyToothPoints(score)
                 continue
             }
 
@@ -162,6 +166,15 @@ fun FlappyTooth(modifier: Modifier = Modifier, navController: NavController) {
                 color = Color.White,
                 modifier = Modifier.padding(16.dp)
             )
+            // If there is a collision, show the points added.
+            if (!isGameRunning && score >= 1) {
+                Text(
+                    text = "Points Got: $score",
+                    fontSize = 24.sp,
+                    color = Color.White,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
             TextButton(
                 onClick = { navController.navigate("home") },
                 modifier = Modifier.padding(16.dp)

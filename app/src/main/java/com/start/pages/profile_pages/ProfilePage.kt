@@ -205,18 +205,10 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
                     navController.navigate("bookmark")
                 },
 
-                FeatureItem(
-                    iconRes = R.drawable.ic_ratings,
-                    label = "User Ratings",
-                    color = Color(0xFFA020F0),
-                    containerSize = ButtonSizes.REGULAR_CONTAINER,
-                    iconSize = ButtonSizes.REGULAR_ICON,
-                    width = ButtonSizes.REGULAR_WIDTH,
-                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS),
-                )
-                {
-                    navController.navigate("userRatings")
-                }
+        Spacer(Modifier.height(16.dp))
+        Button(onClick = { navController.navigate("userRatings") }) {
+            Text("User Ratings", fontSize = 20.sp)
+        }
 
             ),
 
@@ -224,6 +216,18 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
         )
 
         // Button to go to points prestige page.
+        Button(onClick = {
+            navController.navigate("points_progression")
+        }) {
+            Text(text = "Points and Progression")
+        }
+        // Button to go to the leaderboards and stats page.
+        Button(onClick = {
+            navController.navigate("leaderboards_stats")
+        }) {
+            Text(text = "Leaderboards and Stats")
+        }
+
         FeatureRow(
             features = listOf(
                 FeatureItem(

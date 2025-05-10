@@ -24,6 +24,7 @@ import com.google.android.libraries.places.api.Places
 import com.start.repos.HygieneTriviaRepo
 import com.start.repos.PointsProgressionRepo
 import com.start.viewmodels.HygieneTriviaViewModel
+import com.start.viewmodels.LeaderboardsStatsViewModel
 import com.start.viewmodels.RatingViewModel
 import com.start.viewmodels.ToothbrushTrackerViewModel
 import com.start.viewmodels.PointsProgressionViewModel
@@ -70,6 +71,7 @@ class MainActivity : ComponentActivity(){
             // Use factory to create view model to pass in the fun facts repository
             TimerViewModel.TimerViewModelFactory(funFactsRepo)
         }
+        val leaderboardsStatsViewModel: LeaderboardsStatsViewModel by viewModels()
         val clinicDetailsViewModel : ClinicDetailsViewModel by viewModels()
         val ratingViewModel : RatingViewModel by viewModels()
         val hygieneTriviaViewModel: HygieneTriviaViewModel by viewModels() {
@@ -100,7 +102,9 @@ class MainActivity : ComponentActivity(){
                         clinicDetailsViewModel = clinicDetailsViewModel,
                         ratingViewModel = ratingViewModel,
                         toothbrushTrackerViewModel = toothbrushTrackerViewModel,
-                        pointsProgressionViewModel = pointsProgressionViewModel)
+                        pointsProgressionViewModel = pointsProgressionViewModel,
+                        leaderboardsStatsViewModel = leaderboardsStatsViewModel
+                    )
                 }
             }
         }
