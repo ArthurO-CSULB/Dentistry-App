@@ -171,12 +171,17 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
             Text("User Ratings", fontSize = 20.sp)
         }
 
-
         // Button to go to points prestige page.
-        TextButton(onClick = {
+        Button(onClick = {
             navController.navigate("points_progression")
         }) {
-            Text(text = "Points and Progression", fontSize = 20.sp)
+            Text(text = "Points and Progression")
+        }
+        // Button to go to the leaderboards and stats page.
+        Button(onClick = {
+            navController.navigate("leaderboards_stats")
+        }) {
+            Text(text = "Leaderboards and Stats")
         }
 
     }
