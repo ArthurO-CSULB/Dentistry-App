@@ -250,7 +250,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
                     width = 180.dp,
                     shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
                 ) {
-                    navController.navigate("user_Ratings")
+                    navController.navigate("userRatings")
                 }
             ),
             navController = navController
