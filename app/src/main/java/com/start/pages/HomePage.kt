@@ -42,7 +42,6 @@ import com.start.viewmodels.HygieneTriviaState
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.TimerState
 import com.start.viewmodels.TimerViewModel
-import androidx.compose.runtime.livedata.observeAsState
 
 object ButtonSizes {
     // Regular buttons
