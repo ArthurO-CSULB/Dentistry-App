@@ -8,6 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.runBlocking
 
 
 // Implementation of Dental Routine System to be used by the Dental Routine Page
@@ -25,7 +26,30 @@ class DentalRoutineViewModel: ViewModel() {
     private val _eveningTime = MutableStateFlow<Int?>(null)
     val eveningTime: StateFlow<Int?> get() = _eveningTime
 
-    fun setBrushingTimes(morningTime: Int, afternoonTime: Int, eveningTime: Int) {
+    fun setBrushingTimes(morningTime: Int?, afternoonTime: Int?, eveningTime: Int?) {
+        val userID = auth.currentUser?.uid.toString()
+        runBlocking{
+            db.collection("accounts").document(userID).update(
+                "morningTime", morningTime.toString(),
+                "afternoonTime", afternoonTime.toString(),
+                "eveningTime", afternoonTime.toString())
+        }
+        _morningTime.value = morningTime
+        _afternoonTime.value = afternoonTime
+        _eveningTime.value = eveningTime
+    }
 
+    fun getBrushingTimes() {
+        val userID = auth.currentUser?.uid.toString()
+
+        db.collection("accounts").document(userID).get().addOnSuccessListener { snapshot ->
+            val morningTime = snapshot.get("morningTime") as Int?
+            val afternoonTime = snapshot.get("afternoonTime") as Int?
+            val eveningTime = snapshot.get("eveningTime") as Int?
+
+            if (morningTime!= null) _morningTime.value = morningTime
+            if (afternoonTime != null )_afternoonTime.value = afternoonTime
+            if (eveningTime != null) _eveningTime.value = eveningTime
+        }
     }
 }

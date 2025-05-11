@@ -22,6 +22,7 @@ import com.start.viewmodels.ClinicDetailsViewModel
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
 import com.start.repos.HygieneTriviaRepo
+import com.start.viewmodels.DentalRoutineViewModel
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.RatingViewModel
 import com.start.viewmodels.ToothbrushTrackerViewModel
@@ -75,6 +76,7 @@ class MainActivity : ComponentActivity(){
 
         // Create a toothbrushtrackerviewmodel for app
         val toothbrushTrackerViewModel: ToothbrushTrackerViewModel by viewModels()
+        val dentalRoutineViewModel: DentalRoutineViewModel by viewModels()
 
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
@@ -86,7 +88,8 @@ class MainActivity : ComponentActivity(){
                     // as passing in the ViewModels.
                     PageNavigation(modifier = Modifier.padding(innerPadding),
                         authViewModel = authViewModel, timerViewModel = timerViewModel, hygieneTriviaViewModel = hygieneTriviaViewModel,
-                        clinicDetailsViewModel = clinicDetailsViewModel, ratingViewModel = ratingViewModel, toothbrushTrackerViewModel = toothbrushTrackerViewModel)
+                        clinicDetailsViewModel = clinicDetailsViewModel, ratingViewModel = ratingViewModel, toothbrushTrackerViewModel = toothbrushTrackerViewModel,
+                        dentalRoutineViewModel = dentalRoutineViewModel)
                 }
             }
         }

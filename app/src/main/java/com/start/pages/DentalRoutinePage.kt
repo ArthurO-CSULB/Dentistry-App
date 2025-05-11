@@ -24,6 +24,8 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +43,7 @@ import androidx.navigation.compose.rememberNavController
 import com.start.notificationhandlers.NotificationHelper
 import com.start.ui.theme.Purple80
 import com.start.ui.theme.PurpleGrey40
+import com.start.viewmodels.DentalRoutineViewModel
 import kotlinx.coroutines.runBlocking
 import java.sql.Time
 import java.time.Clock
@@ -49,12 +52,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import androidx.compose.runtime.getValue
 
 // Page that details tips for having better dental care and reminders for brushing teeth now
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DentalRoutinePage(navController: NavController) {
+fun DentalRoutinePage(navController: NavController, dentalRoutineViewModel: DentalRoutineViewModel) {
 
     // data handlers for popup dialogs
     val openInfoDialog = remember {mutableStateOf(false)}
@@ -66,11 +70,10 @@ fun DentalRoutinePage(navController: NavController) {
         is24Hour = false,
     )
 
+    // set notification IDs
     val morningNotifID = "morningNotif"
     val afternoonNotifID = "afternoonNotif"
     val eveningNotifID = "eveningNotif"
-
-
 
     // handlers for time values extracted from time picker
     var selectedTime = timePickerState.hour * 60 + timePickerState.minute
@@ -78,10 +81,21 @@ fun DentalRoutinePage(navController: NavController) {
     var afternoonTimeHandler = remember { mutableStateOf<Int?>(null)}
     var eveningTimeHandler = remember { mutableStateOf<Int?>(null)}
 
+    // times gotten from the database
+    val setMorningTime by dentalRoutineViewModel.morningTime.collectAsState()
+    val setAfternoonTime by dentalRoutineViewModel.afternoonTime.collectAsState()
+    val setEveningTime by dentalRoutineViewModel.eveningTime.collectAsState()
+
     // value that determines where to save the time
     var timeDialogOpener = remember {mutableStateOf("empty")}
 
+    // context to be used for notification creation
     val context = LocalContext.current
+
+    // when launching the page, get the times set by the user beforehand
+    LaunchedEffect(setMorningTime, setAfternoonTime, setEveningTime){
+        dentalRoutineViewModel.getBrushingTimes()
+    }
 
     // Create a Scaffold for the top bar
     Scaffold(
@@ -139,23 +153,27 @@ fun DentalRoutinePage(navController: NavController) {
 
             // Morning time
             Spacer(Modifier.padding(8.dp))
-
             Row() {
+                // if time is clicked, output time picker
                 TextButton(onClick = {
                     timeDialogOpener.value = "Morning"
                     openTimePickerDialog.value = true
                 })
+                // set the dates depending on what is present
                 {
                     if (morningTimeHandler.value == null) {
-                        Text("Morning: Not set")
+                        if (setMorningTime != null) {
+                            Text("Morning: ${minutesToTime(setMorningTime!!)}")
+                        } else Text("Morning: Not Set")
                     }
                     else {
                         Text("Morning: ${minutesToTime(morningTimeHandler.value!!)}")
                     }
                 }
-
+                // if user wants to delete the date
                 if (morningTimeHandler.value != null) {
-                    IconButton(onClick = { morningTimeHandler.value = null}) {
+                    IconButton(onClick = {
+                        morningTimeHandler.value = null}) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Remove Morning Notification Time"
@@ -172,10 +190,12 @@ fun DentalRoutinePage(navController: NavController) {
                 }
                 ) {
                     if (afternoonTimeHandler.value == null) {
-                        Text("Afternoon: Not set")
+                        if (setAfternoonTime != null) {
+                            Text("Morning: ${minutesToTime(setAfternoonTime!!)}")
+                        } else Text("Morning: Not Set")
                     }
                     else {
-                        Text("Afternoon: ${minutesToTime(afternoonTimeHandler.value!!)}")
+                        Text("Morning: ${minutesToTime(afternoonTimeHandler.value!!)}")
                     }
                 }
                 if (afternoonTimeHandler.value != null) {
@@ -196,10 +216,12 @@ fun DentalRoutinePage(navController: NavController) {
                 })
                 {
                     if (eveningTimeHandler.value == null) {
-                        Text("Evening: Not set")
+                        if (setEveningTime != null) {
+                            Text("Morning: ${minutesToTime(setEveningTime!!)}")
+                        } else Text("Morning: Not Set")
                     }
                     else {
-                        Text("Evening: ${minutesToTime(eveningTimeHandler.value!!)}")
+                        Text("Morning: ${minutesToTime(morningTimeHandler.value!!)}")
                     }
                 }
                 if (eveningTimeHandler.value != null) {
@@ -217,6 +239,11 @@ fun DentalRoutinePage(navController: NavController) {
             // Save the times inputted
             Spacer(Modifier.padding(16.dp))
                 Button(onClick = {
+                    dentalRoutineViewModel.setBrushingTimes(
+                        morningTime = morningTimeHandler.value,
+                        afternoonTime = afternoonTimeHandler.value,
+                        eveningTime = eveningTimeHandler.value)
+
                     NotificationHelper(context).cancelScheduledNotification(morningNotifID)
                     NotificationHelper(context).cancelScheduledNotification(afternoonNotifID)
                     NotificationHelper(context).cancelScheduledNotification(eveningNotifID)
@@ -250,6 +277,9 @@ fun DentalRoutinePage(navController: NavController) {
                             title = "Test Brush Reminder",
                             description = "It's time to brush your teeth!")
                     }
+                    morningTimeHandler.value = null
+                    afternoonTimeHandler.value = null
+                    eveningTimeHandler.value = null
                 }) {
                     Text("Save times")
                 }
@@ -335,6 +365,7 @@ fun DentalRoutinePage(navController: NavController) {
 
 }
 
+/*
 // Preview page
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
@@ -342,6 +373,7 @@ fun DentalRoutinePage(navController: NavController) {
 fun TestDentalPage() {
         DentalRoutinePage(rememberNavController())
 }
+ */
 
 // Implementation of Info Dialog, mayh be reused by other pages
 @Composable

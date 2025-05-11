@@ -147,6 +147,11 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
             Text("User Ratings", fontSize = 20.sp)
         }
 
+        Spacer(Modifier.height(16.dp))
+        Button(onClick = { navController.navigate("dentalRoutine") }) {
+            Text("Modify Brushing Times", fontSize = 20.sp)
+        }
+
     }
     Column(
         // We fill the column to the entire screen

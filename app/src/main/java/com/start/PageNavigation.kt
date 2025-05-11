@@ -41,6 +41,7 @@ import com.start.pages.timer_pages.TimerPageCancel
 import com.start.pages.timer_pages.TimerPageCountingModel
 import com.start.pages.UserRatingsPage
 import com.start.pages.BookmarkPage
+import com.start.pages.DentalRoutinePage
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
@@ -52,6 +53,7 @@ import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.ToothbrushTrackerViewModel
 import com.start.viewmodels.RatingViewModel
 import com.start.viewmodels.BookmarksViewModel
+import com.start.viewmodels.DentalRoutineViewModel
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -66,7 +68,7 @@ URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
 @Composable
 fun PageNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, timerViewModel:
 TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsViewModel: ClinicDetailsViewModel,
-                   ratingViewModel: RatingViewModel, toothbrushTrackerViewModel: ToothbrushTrackerViewModel) {
+                   ratingViewModel: RatingViewModel, toothbrushTrackerViewModel: ToothbrushTrackerViewModel, dentalRoutineViewModel: DentalRoutineViewModel) {
 
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
@@ -81,7 +83,7 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         // signup", etc.
 
         // Log in screen.
-        composable("login"){
+        composable("login") {
             LoginPage(modifier, navController, authViewModel)
         }
         // Sign up screen.
@@ -90,12 +92,12 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
             SignUpPage(modifier, navController, authViewModel)
         }
         // Home screen.
-        composable("home"){
+        composable("home") {
             HomePage(modifier, navController, authViewModel, timerViewModel, hygieneTriviaViewModel)
         }
 
         // Timer screen. Not in use
-        composable("timer"){
+        composable("timer") {
             // If the current build is at least API level 33...
             // Timer Page is implemented.
             TimerPage(modifier, navController, timerViewModel)
@@ -114,7 +116,7 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         composable(
             route = "timer_counting_model",
             enterTransition = {
-                fadeIn(animationSpec=tween(1500, 750))
+                fadeIn(animationSpec = tween(1500, 750))
             }
         ) {
             TimerPageCountingModel(modifier, navController, timerViewModel)
@@ -137,9 +139,9 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         }
 
         composable(
-            route ="trivia_finish",
+            route = "trivia_finish",
             enterTransition = {
-                fadeIn(animationSpec=tween(800, 750))
+                fadeIn(animationSpec = tween(800, 750))
             }
         ) {
             HygieneTriviaPageFinished(modifier, navController, hygieneTriviaViewModel)
@@ -148,14 +150,14 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         composable(
             route = "trivia_fail",
             enterTransition = {
-                fadeIn(animationSpec=tween(800, 750))
+                fadeIn(animationSpec = tween(800, 750))
             }
         ) {
             HygieneTriviaPageFailed(modifier, navController, hygieneTriviaViewModel)
         }
 
         // Monthly Calendar screen.
-        composable("calendar"){
+        composable("calendar") {
             CalendarPage(modifier, navController)
         }
 
@@ -163,7 +165,11 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         composable("weeklyCalendar/{startDate}/{endDate}") { backStackEntry ->
             val startDate = backStackEntry.arguments?.getString("startDate") ?: ""
             val endDate = backStackEntry.arguments?.getString("endDate") ?: ""
-            WeeklyCalendarPage(navController = navController, startDate = startDate, endDate = endDate)
+            WeeklyCalendarPage(
+                navController = navController,
+                startDate = startDate,
+                endDate = endDate
+            )
         }
 
         // Add Event screen.
@@ -180,29 +186,30 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         }
 
         // Games screen.
-        composable("games"){
+        composable("games") {
             GamesPage(modifier, navController)
         }
 
         // Glossary screen.
-        composable("glossary"){
+        composable("glossary") {
             GlossaryPage(modifier, navController)
         }
 
         // Search screen.
-        composable("search"){
+        composable("search") {
             ClinicSearchPage(modifier, navController = navController)
         }
 
         // Detail screen
-        composable("clinicDetails/{placeId}") {backStackEntry ->
+        composable("clinicDetails/{placeId}") { backStackEntry ->
             val bookmarksViewModel: BookmarksViewModel = viewModel()
             ClinicDetailsPage(
                 placeId = backStackEntry.arguments?.getString("placeId"),
                 navController = navController,
                 clinicDetailsViewModel = clinicDetailsViewModel,
                 ratingViewModel = ratingViewModel,
-                bookmarksViewModel = bookmarksViewModel)
+                bookmarksViewModel = bookmarksViewModel
+            )
         }
 
         // clinic ratings page navigation
@@ -226,44 +233,44 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         }
 
         // Profile screen.
-        composable("profile"){
+        composable("profile") {
             ProfilePage(modifier, navController)
         }
 
         // Bookmark screen.
-        composable("bookmark"){
+        composable("bookmark") {
             BookmarkPage(modifier, navController)
         }
 
         // Verification Screen
         // Cannot be accessed when user is already verified
-        composable("verification"){
+        composable("verification") {
             VerificationPage(modifier, navController, authViewModel)
         }
 
         // Settings Page
-        composable("settings"){
+        composable("settings") {
             SettingsPage(modifier, navController, authViewModel)
         }
 
         // Change Password Page
-        composable("changePassword"){
+        composable("changePassword") {
             ChangePasswordPage(modifier, navController, authViewModel)
         }
 
         // Reauthentication Page Route for Password Change
-        composable("reauthenticationPasswordChange"){
+        composable("reauthenticationPasswordChange") {
             ReauthenticationPage(modifier, navController, authViewModel, "changePassword")
         }
 
         // Reauthentication Page Route for Account Deletion
-        composable("reauthenticationAccountDeletion"){
+        composable("reauthenticationAccountDeletion") {
             ReauthenticationPage(modifier, navController, authViewModel, "settings")
         }
 
 
         // Change User Details Page
-        composable("changeUserDetails"){
+        composable("changeUserDetails") {
             ChangeUserDetailsPage(modifier, navController, authViewModel)
         }
 
@@ -275,6 +282,11 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         // Toothbrush Replacement page
         composable("toothbrushTracker") {
             ToothbrushReplacementPage(navController, toothbrushTrackerViewModel)
+        }
+
+        // Dental Routine page
+        composable("dentalRoutine") {
+            DentalRoutinePage(navController, dentalRoutineViewModel)
         }
     })
 }
