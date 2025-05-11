@@ -12,8 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import kotlinx.coroutines.delay
-import kotlin.random.Random
 
 @Composable
 fun GamesPage(modifier: Modifier = Modifier, navController: NavController) {

@@ -34,7 +34,6 @@ import androidx.navigation.NavController
 import com.example.dentalhygiene.R
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 //class SnakeGameActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
