@@ -49,7 +49,6 @@ import kotlin.random.Random
 
 enum class Direction { UP, DOWN, LEFT, RIGHT }
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun ToothSnake(modifier: Modifier, navController: NavController) {
     val gridSize = 20
@@ -67,7 +66,7 @@ fun ToothSnake(modifier: Modifier, navController: NavController) {
         coroutineScope.launch {
             while (isActive) {
                 withFrameNanos { }
-                kotlinx.coroutines.delay(300)
+                kotlinx.coroutines.delay(500)
                 if (!isGameOver) {
                     moveSnake(
                         snake,
@@ -75,9 +74,15 @@ fun ToothSnake(modifier: Modifier, navController: NavController) {
                         gridSize,
                         food,
                         onGameOver = { isGameOver = true },
-                        onEatFood = {
-                            snake = it
-                            food = generateFood(gridSize, snake)
+                        onEatFood = { updatedSnake ->
+                            snake = updatedSnake
+                            // Ensure food is generated in a valid position
+                            food = generateFood(gridSize, updatedSnake).also {
+                                if (it.first == -1 && it.second == -1) {
+                                    // Handle case where no valid food position exists
+                                    isGameOver = true
+                                }
+                            }
                         },
                         onUpdate = { snake = it }
                     )
@@ -126,7 +131,7 @@ fun ToothSnake(modifier: Modifier, navController: NavController) {
             }
         )
 
-        if (isGameOver) {
+//if (isGameOver) {
             Spacer(modifier = Modifier.height(20.dp))
             Button(onClick = {
                 snake = initialSnake
@@ -136,11 +141,10 @@ fun ToothSnake(modifier: Modifier, navController: NavController) {
             }) {
                 Text("Restart")
             }
-        }
+        //}
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 fun moveSnake(
     snake: List<Pair<Int, Int>>,
     direction: Direction,
@@ -169,17 +173,28 @@ fun moveSnake(
     if (newHead == food) { // Ate food
         onEatFood(newSnake)
     } else {
-        newSnake.removeLast()
+        newSnake.removeAt(newSnake.size - 1)
         onUpdate(newSnake)
     }
 }
 
 fun generateFood(gridSize: Int, snake: List<Pair<Int, Int>>): Pair<Int, Int> {
-    var newFood: Pair<Int, Int>
-    do {
-        newFood = Pair(Random.nextInt(gridSize), Random.nextInt(gridSize))
-    } while (snake.contains(newFood))
-    return newFood
+    val emptyCells = mutableListOf<Pair<Int, Int>>()
+
+    // Find all empty cells
+    for (x in 0 until gridSize) {
+        for (y in 0 until gridSize) {
+            if (!snake.contains(Pair(x, y))) {
+                emptyCells.add(Pair(x, y))
+            }
+        }
+    }
+
+    return if (emptyCells.isNotEmpty()) {
+        emptyCells.random() // Pick a random empty cell
+    } else {
+        Pair(-1, -1) // Return invalid position if no space left (game won)
+    }
 }
 
 fun isOpposite(current: Direction, new: Direction): Boolean {

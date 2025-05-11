@@ -22,12 +22,8 @@ import com.start.pages.GamesPage
 import com.start.pages.GlossaryPage
 import com.start.pages.profile_pages.ProfilePage
 import com.start.pages.ReauthenticationPage
-import com.start.viewmodels.AuthViewModel
 import com.start.viewmodels.TimerViewModel
-import com.start.viewmodels.ClinicDetailsViewModel
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -76,7 +72,6 @@ import com.start.pages.timer_pages.TimerPageCountingModel
 import com.start.pages.timer_pages.TimerPageFinish
 import com.start.viewmodels.AchievementViewModel
 import com.start.viewmodels.AuthViewModel
-import com.start.viewmodels.BookmarksViewModel
 import com.start.viewmodels.ClinicDetailsViewModel
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.ToothbrushTrackerViewModel
@@ -254,6 +249,10 @@ fun PageNavigation(
         composable("flappytooth") { FlappyTooth(navController = navController,
             pointsProgressionViewModel = pointsProgressionViewModel) }
 
+        composable("tooth_snake") {
+            ToothSnake(modifier, navController)
+        }
+
         // Glossary screen.
         composable("glossary"){
             GlossaryPage(modifier, navController)
@@ -329,10 +328,6 @@ fun PageNavigation(
 
         composable("mouthwash") {
             MouthwashRecs(modifier, navController)
-        }
-
-        composable("tooth_snake") {
-            ToothSnake(modifier, navController)
         }
 
         composable("leaderboards_stats") {

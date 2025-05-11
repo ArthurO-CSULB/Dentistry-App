@@ -31,6 +31,13 @@ fun GamesPage(modifier: Modifier = Modifier, navController: NavController) {
             modifier = Modifier.padding(8.dp)
         ) {
             Text("Play Flappy Tooth")
+
+        }
+        Button(
+            onClick = { navController.navigate("tooth_snake") },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("Play Tooth Snake")
         }
 
         // Add more buttons later
