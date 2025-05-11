@@ -23,6 +23,7 @@ import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
 import com.start.repos.HygieneTriviaRepo
 import com.start.repos.PointsProgressionRepo
+import com.start.viewmodels.AchievementViewModel
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.LeaderboardsStatsViewModel
 import com.start.viewmodels.RatingViewModel
@@ -86,6 +87,9 @@ class MainActivity : ComponentActivity(){
             PointsProgressionViewModel.PointsViewModelFactory(pointsProgressionRepo)
         }
 
+        // create a achievementViewModel for the profile
+        val achievementViewModel: AchievementViewModel by viewModels()
+
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
             DentalHygieneTheme {
@@ -103,7 +107,8 @@ class MainActivity : ComponentActivity(){
                         ratingViewModel = ratingViewModel,
                         toothbrushTrackerViewModel = toothbrushTrackerViewModel,
                         pointsProgressionViewModel = pointsProgressionViewModel,
-                        leaderboardsStatsViewModel = leaderboardsStatsViewModel
+                        leaderboardsStatsViewModel = leaderboardsStatsViewModel,
+                        achievementViewModel = achievementViewModel
                     )
                 }
             }

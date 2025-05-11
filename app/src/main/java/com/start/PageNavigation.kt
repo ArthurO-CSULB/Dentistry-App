@@ -49,11 +49,13 @@ import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFinished
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPagePoints
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
+import com.start.pages.profile_pages.AchievementsPage
 import com.start.pages.profile_pages.LeaderboardsStatsPage
 import com.start.pages.profile_pages.PointsProgressionPage
 import com.start.pages.timer_pages.TimerPageCounting
 import com.start.pages.profile_pages.EmblemsPage
 import com.start.pages.timer_pages.TimerPageFinish
+import com.start.viewmodels.AchievementViewModel
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.ToothbrushTrackerViewModel
 import com.start.viewmodels.RatingViewModel
@@ -81,7 +83,8 @@ fun PageNavigation(
     clinicDetailsViewModel: ClinicDetailsViewModel,
     ratingViewModel: RatingViewModel,
     toothbrushTrackerViewModel: ToothbrushTrackerViewModel,
-    leaderboardsStatsViewModel: LeaderboardsStatsViewModel
+    leaderboardsStatsViewModel: LeaderboardsStatsViewModel,
+    achievementViewModel: AchievementViewModel
 ) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
@@ -191,6 +194,12 @@ fun PageNavigation(
             EmblemsPage(modifier, navController, pointsProgressionViewModel)
         }
 
+        composable("achievements") {
+            AchievementsPage(
+                navController = navController,
+                achievementViewModel = achievementViewModel
+            )
+        }
 
         // Monthly Calendar screen.
         composable("calendar"){

@@ -178,75 +178,43 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
             }
         }
 
-        // Button to go to Bookmark page.
-//        Spacer(modifier = Modifier.height(16.dp))
-//        Button(onClick = {
-//            navController.navigate("bookmark")
-//        }) {
-//            Text(text = "Clinic Bookmarks", fontSize = 20.sp)
-//        }
-//
-//        Spacer(Modifier.height(16.dp))
-//        Button(onClick = { navController.navigate("userRatings") }) {
-//            Text("User Ratings", fontSize = 20.sp)
-//        }
-        FeatureRow(
-            features = listOf(
-                FeatureItem(
-                    iconRes = R.drawable.bookmark,
-                    label = "Clinic Bookmarks",
-                    color = Color(0xFFA020F0),
-                    containerSize = ButtonSizes.REGULAR_CONTAINER,
-                    iconSize = ButtonSizes.REGULAR_ICON,
-                    width = ButtonSizes.REGULAR_WIDTH,
-                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
-                )
 
-                {
-                    navController.navigate("bookmark")
-                },
-
-                FeatureItem(
-                    iconRes = R.drawable.ic_ratings, // Add an appropriate icon resource
-                    label = "User Ratings",
-                    color = Color(0xFFFFFF00),
-                    containerSize = ButtonSizes.REGULAR_CONTAINER,
-                    iconSize = ButtonSizes.REGULAR_ICON,
-                    width = ButtonSizes.REGULAR_WIDTH,
-                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
-                ) {
-                    navController.navigate("user_Ratings")
-                }
-
-            ),
-
-            navController = navController
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
         // Button to go to the leaderboards and stats page.
         FeatureRow(
             features = listOf(
                 FeatureItem(
                     iconRes = R.drawable.stats, // Your image resource
-                    label = "Leaderboards " +
+                    label = "Leaderboards \n" +
                             "and Stats",
                     color = Color(0xFFFFFF00),
                     containerSize = ButtonSizes.REGULAR_CONTAINER,
-                    iconSize = ButtonSizes.REGULAR_ICON,
-                    width = ButtonSizes.REGULAR_WIDTH,
+                    iconSize = 50.dp,
+                    width = 80.dp,
                     shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
                 ) {
                     navController.navigate("leaderboards_stats")
                 },
-        // Button to go to points prestige page.
+                // Achievements row
+                 FeatureItem(
+                     iconRes = R.drawable.trophy, // Add a trophy icon to your drawables
+                     label = "Achievements \n" +
+                             "    🏆         \uD83C\uDFC6   ",
+                     color = Color(0xFFFFD700), // Gold color
+                     containerSize = ButtonSizes.REGULAR_CONTAINER,
+                     iconSize = 60.dp,
+                     width = 115.dp,
+                     shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
+                 ) {
+                     navController.navigate("achievements")
+                   },
+                // Button to go to points prestige page.
                 FeatureItem(
                     iconRes = R.drawable.progress, // Your image resource
                     label = "Points & Progression",
                     color = Color(0xFFFF0000),
                     containerSize = ButtonSizes.REGULAR_CONTAINER,
-                    iconSize = ButtonSizes.REGULAR_ICON,
-                    width = ButtonSizes.REGULAR_WIDTH,
+                    iconSize = 50.dp,
+                    width = 80.dp,
                     shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
                 ) {
                     navController.navigate("points_progression")
@@ -254,7 +222,41 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
             ),
             navController = navController
         )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Button to go to Bookmark page.
+        FeatureRow(
+            features = listOf(
+                FeatureItem(
+                    iconRes = R.drawable.bookmark,
+                    label = "Clinic Bookmarks",
+                    color = Color(0xFFA020F0),
+                    containerSize = 90.dp,
+                    iconSize = 60.dp,
+                    width = 180.dp,
+                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
+                )
+
+                {
+                    navController.navigate("bookmark")
+                },
+            // button to go to ratings page
+                FeatureItem(
+                    iconRes = R.drawable.ic_ratings,
+                    label = "User Ratings",
+                    color = Color(0xFFFFFF00),
+                    containerSize = 90.dp,
+                    iconSize = 60.dp,
+                    width = 180.dp,
+                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
+                ) {
+                    navController.navigate("user_Ratings")
+                }
+            ),
+            navController = navController
+        )
     }
+
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
