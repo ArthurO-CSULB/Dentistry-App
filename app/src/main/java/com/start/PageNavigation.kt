@@ -97,14 +97,8 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
         // Timer screen. Not in use
         composable("timer"){
             // If the current build is at least API level 33...
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                // Timer Page is implemented.
-                TimerPage(modifier, navController, timerViewModel)
-            }
-            else {
-                // Else the timer will display an error page.
-                ErrorPage(modifier, navController)
-            }
+            // Timer Page is implemented.
+            TimerPage(modifier, navController, timerViewModel)
         }
 
         composable("timer_begin") {
@@ -278,6 +272,7 @@ TimerViewModel, hygieneTriviaViewModel: HygieneTriviaViewModel, clinicDetailsVie
             UserRatingsPage(navController, ratingViewModel)
         }
 
+        // Toothbrush Replacement page
         composable("toothbrushTracker") {
             ToothbrushReplacementPage(navController, toothbrushTrackerViewModel)
         }
