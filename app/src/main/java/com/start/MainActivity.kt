@@ -1,5 +1,6 @@
 package com.start
 
+//import com.start.repos.TimerFunFactsRepo
 import android.os.Build
 import android.os.Bundle
 import android.webkit.WebView
@@ -8,27 +9,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
-import com.start.ui.theme.DentalHygieneTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.lifecycle.viewmodel.MutableCreationExtras
-import com.start.repos.TimerFunFactsRepo
-//import com.start.repos.TimerFunFactsRepo
-import com.start.viewmodels.AuthViewModel
-import com.start.viewmodels.TimerViewModel
-import com.start.viewmodels.ClinicDetailsViewModel
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
 import com.example.dentalhygiene.BuildConfig.MAPS_API_KEY
 import com.google.android.libraries.places.api.Places
 import com.start.repos.HygieneTriviaRepo
 import com.start.repos.PointsProgressionRepo
+import com.start.repos.TimerFunFactsRepo
+import com.start.ui.theme.DentalHygieneTheme
 import com.start.viewmodels.AchievementViewModel
+import com.start.viewmodels.AuthViewModel
+import com.start.viewmodels.ClinicDetailsViewModel
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.LeaderboardsStatsViewModel
-import com.start.viewmodels.RatingViewModel
-import com.start.viewmodels.ToothbrushTrackerViewModel
 import com.start.viewmodels.PointsProgressionViewModel
+import com.start.viewmodels.RatingViewModel
+import com.start.viewmodels.ThemeViewModel
+import com.start.viewmodels.TimerViewModel
+import com.start.viewmodels.ToothbrushTrackerViewModel
 
 /*
 We have our main and sole activity where the app will navigate through various composable screens
@@ -90,9 +90,12 @@ class MainActivity : ComponentActivity(){
         // create a achievementViewModel for the profile
         val achievementViewModel: AchievementViewModel by viewModels()
 
+        // Create themeViewModel for dark/light mode
+        val themeViewModel: ThemeViewModel by viewModels()
+
         // We set the content of our activity to the PageNavigation to begin page navigation flow.
         setContent {
-            DentalHygieneTheme {
+            DentalHygieneTheme(darkTheme = themeViewModel.isDarkMode) {
                 // Scaffold for a structured layout that occupies the entire screen
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     // The page navigation is the main content of the scaffold. Modifier assigned
@@ -108,7 +111,8 @@ class MainActivity : ComponentActivity(){
                         toothbrushTrackerViewModel = toothbrushTrackerViewModel,
                         pointsProgressionViewModel = pointsProgressionViewModel,
                         leaderboardsStatsViewModel = leaderboardsStatsViewModel,
-                        achievementViewModel = achievementViewModel
+                        achievementViewModel = achievementViewModel,
+                        themeViewModel = themeViewModel
                     )
                 }
             }

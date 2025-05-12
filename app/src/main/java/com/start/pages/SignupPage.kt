@@ -28,8 +28,6 @@ import androidx.navigation.NavController
 import com.start.viewmodels.AuthState
 import com.start.viewmodels.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -96,7 +94,7 @@ fun SignUpPage(modifier: Modifier = Modifier, navController: NavController, auth
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Create the title of the page.
-        Text(text = "Prototype Signup Page", fontSize = 32.sp)
+        Text(text = "Signup Page", fontSize = 32.sp)
 
         // Space
         Spacer(modifier = Modifier.height(16.dp))

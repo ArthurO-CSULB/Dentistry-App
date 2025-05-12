@@ -10,62 +10,63 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.start.pages.LoginPage
-import com.start.pages.SignUpPage
-import com.start.pages.HomePage
-import com.start.pages.timer_pages.TimerPage
+import com.start.pages.AddEventPage
+import com.start.pages.BookmarkPage
 import com.start.pages.CalendarPage
 import com.start.pages.ChangePasswordPage
 import com.start.pages.ChangeUserDetailsPage
-import com.start.pages.ClinicSearchPage
-import com.start.pages.GamesPage
-import com.start.pages.GlossaryPage
-import com.start.pages.profile_pages.ProfilePage
-import com.start.pages.ReauthenticationPage
-import com.start.viewmodels.TimerViewModel
-import com.start.pages.AddEventPage
 import com.start.pages.ClinicDetailsPage
 import com.start.pages.ClinicRatingsPage
+import com.start.pages.ClinicSearchPage
 import com.start.pages.CreateRatingPage
-import com.start.pages.BookmarkPage
 import com.start.pages.EditEventPage
 import com.start.pages.ErrorPage
-import com.start.pages.test_pages.PointsTestPage
-import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageBegin
-import com.start.pages.SettingsPage
-import com.start.pages.ToothbrushReplacementPage
-import com.start.pages.timer_pages.TimerPageBegin
-import com.start.pages.timer_pages.TimerPageCancel
-import com.start.pages.timer_pages.TimerPageCountingModel
-import com.start.pages.UserRatingsPage
 import com.start.pages.FlappyTooth
+import com.start.pages.GamesPage
+import com.start.pages.GlossaryPage
+import com.start.pages.HomePage
+import com.start.pages.LoginPage
+import com.start.pages.ReauthenticationPage
+import com.start.pages.SettingsPage
+import com.start.pages.SignUpPage
+import com.start.pages.ToothSnake
+import com.start.pages.ToothbrushReplacementPage
+import com.start.pages.UserRatingsPage
 import com.start.pages.VerificationPage
 import com.start.pages.WeeklyCalendarPage
-import com.start.pages.ToothSnake
+import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageBegin
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFailed
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageFinished
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPagePoints
 import com.start.pages.hygiene_trivia_pages.HygieneTriviaPageTrivia
-import com.start.pages.profile_pages.AchievementsPage
-import com.start.pages.profile_pages.LeaderboardsStatsPage
 import com.start.pages.productrecs.FlossRecs
 import com.start.pages.productrecs.MouthwashRecs
 import com.start.pages.productrecs.ProductRecommendations
 import com.start.pages.productrecs.ToothbrushRecs
 import com.start.pages.productrecs.ToothpasteRecs
-import com.start.pages.profile_pages.PointsProgressionPage
-import com.start.pages.timer_pages.TimerPageCounting
+import com.start.pages.profile_pages.AchievementsPage
 import com.start.pages.profile_pages.EmblemsPage
+import com.start.pages.profile_pages.LeaderboardsStatsPage
+import com.start.pages.profile_pages.PointsProgressionPage
+import com.start.pages.profile_pages.ProfilePage
+import com.start.pages.test_pages.PointsTestPage
+import com.start.pages.timer_pages.TimerPage
+import com.start.pages.timer_pages.TimerPageBegin
+import com.start.pages.timer_pages.TimerPageCancel
+import com.start.pages.timer_pages.TimerPageCounting
+import com.start.pages.timer_pages.TimerPageCountingModel
 import com.start.pages.timer_pages.TimerPageFinish
 import com.start.viewmodels.AchievementViewModel
 import com.start.viewmodels.AuthViewModel
+import com.start.viewmodels.BookmarksViewModel
 import com.start.viewmodels.ClinicDetailsViewModel
 import com.start.viewmodels.HygieneTriviaViewModel
-import com.start.viewmodels.ToothbrushTrackerViewModel
-import com.start.viewmodels.RatingViewModel
-import com.start.viewmodels.BookmarksViewModel
 import com.start.viewmodels.LeaderboardsStatsViewModel
 import com.start.viewmodels.PointsProgressionViewModel
+import com.start.viewmodels.RatingViewModel
+import com.start.viewmodels.ThemeViewModel
+import com.start.viewmodels.TimerViewModel
+import com.start.viewmodels.ToothbrushTrackerViewModel
 
 /*
 We define a PageNavigation using Jetpack Compose's Navigation component to manage the app's
@@ -88,7 +89,8 @@ fun PageNavigation(
     ratingViewModel: RatingViewModel,
     toothbrushTrackerViewModel: ToothbrushTrackerViewModel,
     leaderboardsStatsViewModel: LeaderboardsStatsViewModel,
-    achievementViewModel: AchievementViewModel
+    achievementViewModel: AchievementViewModel,
+    themeViewModel: ThemeViewModel
 ) {
     // We create a navController to track the current screen and provide methods to navigate
     // between screens. We use rememberNavController to ensure that the NavController instance
@@ -283,7 +285,7 @@ fun PageNavigation(
 
         // Profile screen.
         composable("profile"){
-            ProfilePage(modifier, navController, pointsProgressionViewModel)
+            ProfilePage(modifier, navController, pointsProgressionViewModel, themeViewModel)
         }
 
         // Bookmark screen.

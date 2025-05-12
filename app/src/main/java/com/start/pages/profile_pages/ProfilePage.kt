@@ -8,22 +8,24 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -40,6 +42,7 @@ import com.start.pages.ButtonSizes
 import com.start.pages.FeatureItem
 import com.start.pages.FeatureRow
 import com.start.viewmodels.PointsProgressionViewModel
+import com.start.viewmodels.ThemeViewModel
 
 /*
 We have a composable profile page which will handle the UI for profile options.
@@ -47,7 +50,8 @@ This will be called in the PageNavigation NavHost, passing in the modifier,
 NavController.
  */
 @Composable
-fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, pointsProgressionViewModel: PointsProgressionViewModel) {
+fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
+                pointsProgressionViewModel: PointsProgressionViewModel, themeViewModel: ThemeViewModel) {
     // From the passed in AuthViewModel, we get the authState of the authentication and use
     // observeAsState() to subscribe to the live data and track its changes.
     //val authState = authViewModel.authState.observeAsState()
@@ -95,6 +99,17 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                onClick = { themeViewModel.toggleTheme() },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(if (themeViewModel.isDarkMode) "Light Mode" else "Dark Mode")
+            }
+        }
         // Space between top of screen and title text
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -136,23 +151,37 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
 
         // User information
         // Name
-        Text(text = "Name: ")
+        Text(
+            text = "Name: ",
+            color = MaterialTheme.colorScheme.onBackground
+        )
         Box(
             modifier = Modifier
-                .background(color = Color.White)
+                .background(color = MaterialTheme.colorScheme.surface)
                 .padding(8.dp)
         ){
-        Text(text = "$firstName $lastName", fontSize = 20.sp)}
+        Text(
+            text = "$firstName $lastName",
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.onSurface
+        )}
         Spacer(modifier = Modifier.height(16.dp))
 
         // Email
-        Text(text = "Email: ")
+        Text(
+            text = "Email: ",
+            color = MaterialTheme.colorScheme.onBackground
+        )
         Box(
             modifier = Modifier
-                .background(color = Color.White)
+                .background(color = MaterialTheme.colorScheme.surface)
                 .padding(8.dp)
         ) {
-            Text(text = email, fontSize = 20.sp)
+            Text(
+                text = email,
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Spacer(modifier = Modifier.height(16.dp))
         }
 
@@ -165,7 +194,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
             Spacer(modifier = Modifier.width(8.dp))
             Box(
                 modifier = Modifier
-                    .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                    .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(4.dp))
                     .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
                     .padding(horizontal = 12.dp, vertical = 4.dp)
             ) {
@@ -173,7 +202,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController, poi
                     text = experience,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

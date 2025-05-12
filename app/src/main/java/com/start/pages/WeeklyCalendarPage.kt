@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,17 +15,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -34,10 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.start.pages.EventViewModel
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import java.text.SimpleDateFormat
 
 
 @Composable
@@ -153,7 +152,7 @@ fun WeeklyCalendarPage(modifier: Modifier = Modifier, navController: NavControll
 
             Column (horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = Modifier.height(18.dp))
-                Text("Selected Date: $formattedSelectedDate", fontSize = 18.sp, color = Color.Black)
+                Text("Selected Date: $formattedSelectedDate", fontSize = 18.sp, color = MaterialTheme.colorScheme.onBackground)
                 Button(onClick = { navController.navigate("addEvent/$formattedSelectedDate") }) {
                     Text("Add Event")
                 }
