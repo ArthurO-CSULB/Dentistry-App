@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import com.start.pages.EventViewModel
 import com.start.notificationhandlers.NotificationHelper
 import com.start.notificationhandlers.TimerNotificationHandler
+import com.start.viewmodels.AchievementViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -132,7 +133,7 @@ fun AddEventPage(navController: NavController, date: String, eventViewModel: Eve
 // Edit event page for when we want to modify previously-made events
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
-fun EditEventPage(navController: NavController, date:String, eventID: String, eventViewModel: EventViewModel = viewModel()) {
+fun EditEventPage(navController: NavController, date:String, eventID: String, eventViewModel: EventViewModel = viewModel(), achievementViewModel: AchievementViewModel) {
     // Retrieve the event from ViewModel using the eventID
     val event = eventViewModel.events.value?.find { it.eventID == eventID }
     var title by remember { mutableStateOf(event?.title ?: "") }

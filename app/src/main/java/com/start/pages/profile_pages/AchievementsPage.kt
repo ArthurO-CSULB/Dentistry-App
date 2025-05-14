@@ -76,6 +76,7 @@ fun AchievementItem(achievement: Achievement) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = if (achievement.earned) Color.White else Color.Black
             )
+            
             if (!achievement.earned && achievement.requiredProgress > 1) {
                 Text(
                     text = "Progress: ${achievement.progress}/${achievement.requiredProgress}",

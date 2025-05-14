@@ -229,14 +229,14 @@ fun PageNavigation(
         composable("editEvent/{eventId}/{date}") { backStackEntry ->
             val eventID = backStackEntry.arguments?.getString("eventId") ?: ""
             val date = backStackEntry.arguments?.getString("date") ?: ""
-            EditEventPage(navController = navController, date = date, eventID = eventID)
+            EditEventPage(navController = navController, date = date, eventID = eventID, achievementViewModel = achievementViewModel)
         }
 
         // Games screen.
         composable("games") { GamesPage(navController = navController) }
 
         composable("flappytooth") { FlappyTooth(navController = navController,
-            pointsProgressionViewModel = pointsProgressionViewModel) }
+            pointsProgressionViewModel = pointsProgressionViewModel, achievementViewModel = achievementViewModel) }
 
         composable("tooth_snake") {
             ToothSnake(modifier, navController)

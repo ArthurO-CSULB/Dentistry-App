@@ -24,11 +24,12 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.FirebaseFirestore
+import com.start.viewmodels.AchievementViewModel
 import com.start.viewmodels.PointsProgressionViewModel
 
 @Composable
 fun FlappyTooth(modifier: Modifier = Modifier, navController: NavController,
-                pointsProgressionViewModel: PointsProgressionViewModel) {
+                pointsProgressionViewModel: PointsProgressionViewModel, achievementViewModel: AchievementViewModel) {
     // Game dimensions
     val screenWidth = 1000f
     val screenHeight = 1600f
@@ -89,6 +90,8 @@ fun FlappyTooth(modifier: Modifier = Modifier, navController: NavController,
                 if (collision) {
                     isGameRunning = false
                     collisionOccurred = true
+                    if (score > 4)
+                        achievementViewModel.incrementAchievement("flappy_tappy")
                     break@stepLoop
                 } else {
                     birdY = newBirdY.coerceIn(

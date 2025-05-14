@@ -102,19 +102,8 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Button(
-                onClick = { themeViewModel.toggleTheme() },
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Text(if (themeViewModel.isDarkMode) "Light Mode" else "Dark Mode")
-            }
-        }
         // Space between top of screen and title text
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Title of Profile Page
         Text(
@@ -146,9 +135,22 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
         }
 
         // Button to edit profile NOT IMPLEMENTED.
-        Button(onClick = { navController.navigate("changeUserDetails") }) {
-            Text(text = "Edit Profile")
+        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                onClick = { themeViewModel.toggleTheme() },
+//                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(if (themeViewModel.isDarkMode) "Light Mode" else "Dark Mode")
+            }
+            Button(
+                onClick = { navController.navigate("changeUserDetails") }) {
+                Text(text = "Edit Profile")
+            }
         }
+
         Spacer(modifier = Modifier.height(8.dp))
 
         // User information
@@ -187,6 +189,29 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
+
+        // Experience
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(text = "Experience Points: ")
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(4.dp))
+                    .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = experience,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Experience
         // Consistent size values

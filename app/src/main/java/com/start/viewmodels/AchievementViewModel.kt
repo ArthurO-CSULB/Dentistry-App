@@ -26,6 +26,18 @@ class AchievementViewModel : ViewModel() {
                 description = "Answered 5 trivia questions correctly",
                 requiredProgress = 5
             ),
+            Achievement(
+                id = "flappy_tappy",
+                title = "Flappy Tappy",
+                description = "Score more than 5 points in Flappy Tooth",
+                requiredProgress = 5
+            ),
+            Achievement(
+                id = "event_sched",
+                title = "Proactive Planner",
+                description = "Schedule your first appointment",
+                requiredProgress = 1
+            ),
             // Add more achievements as needed
         )
     }
