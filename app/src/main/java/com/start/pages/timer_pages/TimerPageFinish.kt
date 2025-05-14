@@ -49,6 +49,7 @@ import kotlin.math.roundToInt
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.start.viewmodels.AchievementViewModel
 
 /*
 We have a composable timer page which will handle the UI the toothbrush timer.
@@ -63,7 +64,8 @@ URL: https://meetpatadia9.medium.com/local-notification-in-android-with-jetpack-
 
 @Composable
 fun TimerPageFinish(modifier: Modifier, navController: NavController, timerViewModel: TimerViewModel,
-                    pointsProgressionViewModel: PointsProgressionViewModel) {
+                    pointsProgressionViewModel: PointsProgressionViewModel, achievementViewModel: AchievementViewModel
+) {
     // Use BackHandler to intercept the system back button and navigate to the home screen.
     BackHandler {
         // Navigate back to the home screen when the system back button is pressed
@@ -135,6 +137,7 @@ fun TimerPageFinish(modifier: Modifier, navController: NavController, timerViewM
     // Launched Effect to add points points when timer is finished.
     LaunchedEffect(Unit) {
         pointsProgressionViewModel.addTimerPoints()
+        achievementViewModel.incrementAchievement("timer_tryer")
     }
 
     // We create the column to display the UI when finished.

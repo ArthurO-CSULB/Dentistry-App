@@ -19,13 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.start.viewmodels.AchievementViewModel
 import com.start.viewmodels.HygieneTriviaState
 import com.start.viewmodels.HygieneTriviaViewModel
 import com.start.viewmodels.PointsProgressionViewModel
 
 @Composable
 fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController,
-                              hygieneTriviaViewModel: HygieneTriviaViewModel) {
+                              hygieneTriviaViewModel: HygieneTriviaViewModel, achievementViewModel: AchievementViewModel) {
 
     // Use BackHandler to intercept the system back button and navigate to the home screen.
     BackHandler {
@@ -79,6 +80,7 @@ fun HygieneTriviaPageFinished(modifier: Modifier, navController: NavController,
             // is HygieneTriviaState.Begin -> navController.navigate("home")
             else -> Unit
         }
+        achievementViewModel.incrementAchievement("trivia_master")
     }
 
 

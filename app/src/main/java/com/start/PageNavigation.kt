@@ -155,7 +155,7 @@ fun PageNavigation(
         }
 
         composable("timer_finish") {
-            TimerPageFinish(modifier, navController, timerViewModel, pointsProgressionViewModel)
+            TimerPageFinish(modifier, navController, timerViewModel, pointsProgressionViewModel, achievementViewModel)
         }
 
         composable("trivia_begin") {
@@ -172,7 +172,7 @@ fun PageNavigation(
                 fadeIn(animationSpec=tween(800, 750))
             }
         ) {
-            HygieneTriviaPageFinished(modifier, navController, hygieneTriviaViewModel)
+            HygieneTriviaPageFinished(modifier, navController, hygieneTriviaViewModel, achievementViewModel)
         }
 
         composable("trivia_points") {
@@ -188,9 +188,9 @@ fun PageNavigation(
             HygieneTriviaPageFailed(modifier, navController, hygieneTriviaViewModel)
         }
 
-        composable("timer_finish") {
-            TimerPageFinish(modifier, navController, timerViewModel, pointsProgressionViewModel)
-        }
+//        composable("timer_finish") {
+//            TimerPageFinish(modifier, navController, timerViewModel, pointsProgressionViewModel)
+//        }
 
         composable("points_progression") {
             PointsProgressionPage(modifier, navController, pointsProgressionViewModel)

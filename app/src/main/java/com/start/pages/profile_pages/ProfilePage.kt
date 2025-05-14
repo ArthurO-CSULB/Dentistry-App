@@ -3,6 +3,7 @@ package com.start.pages.profile_pages
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -123,14 +126,13 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
         //Spacer(modifier = Modifier.height(4.dp))
 
         // If the user doesn't have an emblem equipped, shows the default one instead
-        if (emblem == "" || emblem == null){
+        if (emblem == "" || emblem == null) {
             Image(
                 painter = painterResource(R.drawable.ic_profile),
                 contentDescription = "Profile Picture",
                 modifier = modifier.size(160.dp)
             )
-        } else
-        {
+        } else {
             // Displays the user's equipped emblem
             AsyncImage(
                 model = emblem,
@@ -139,12 +141,12 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
                 modifier = Modifier
                     .size(160.dp)
                     .padding(8.dp)
-                    //.clip(RoundedCornerShape(8.dp))
+                //.clip(RoundedCornerShape(8.dp))
             )
         }
 
         // Button to edit profile NOT IMPLEMENTED.
-        Button(onClick={navController.navigate("changeUserDetails")}) {
+        Button(onClick = { navController.navigate("changeUserDetails") }) {
             Text(text = "Edit Profile")
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -159,12 +161,13 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
             modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.surface)
                 .padding(8.dp)
-        ){
-        Text(
-            text = "$firstName $lastName",
-            fontSize = 20.sp,
-            color = MaterialTheme.colorScheme.onSurface
-        )}
+        ) {
+            Text(
+                text = "$firstName $lastName",
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
         // Email
@@ -186,106 +189,216 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
         }
 
         // Experience
+        // Consistent size values
+        val smallButtonWidth = 110.dp
+        val largeButtonWidth = 180.dp
+        val buttonHeight = 120.dp
+        val iconSize = 50.dp
+        val cornerRadius = ButtonSizes.CORNER_RADIUS
+
+// First Row - Leaderboard, Achievements, Points
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text(text = "Experience Points: ")
-            Spacer(modifier = Modifier.width(8.dp))
+            // Leaderboard Button
             Box(
                 modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(4.dp))
-                    .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                    .width(smallButtonWidth)
+                    .height(buttonHeight)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color.White.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .clickable { navController.navigate("leaderboards_stats") }
             ) {
-                Text(
-                    text = experience,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.stats),
+                        contentDescription = "Leaderboard",
+                        tint = Color(0xFFFFFF00),
+                        modifier = Modifier.size(iconSize)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Leaderboard",
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                }
+            }
+
+            // Achievements Button
+            Box(
+                modifier = Modifier
+                    .width(smallButtonWidth)
+                    .height(buttonHeight)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color.White.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .clickable { navController.navigate("achievements") }
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.trophy),
+                        contentDescription = "Achievements",
+                        tint = Color(0xFFFFD700),
+                        modifier = Modifier.size(iconSize)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Achievements",
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                }
+            }
+
+            // Points Button
+            Box(
+                modifier = Modifier
+                    .width(smallButtonWidth)
+                    .height(buttonHeight)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color.White.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .clickable { navController.navigate("points_progression") }
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.progress),
+                        contentDescription = "Points",
+                        tint = Color(0xFFFF0000),
+                        modifier = Modifier.size(iconSize)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Points",
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                }
             }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Button to go to the leaderboards and stats page.
-        FeatureRow(
-            features = listOf(
-                FeatureItem(
-                    iconRes = R.drawable.stats, // Your image resource
-                    label = "Leaderboards \n" +
-                            "and Stats",
-                    color = Color(0xFFFFFF00),
-                    containerSize = ButtonSizes.REGULAR_CONTAINER,
-                    iconSize = 50.dp,
-                    width = 80.dp,
-                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
+// Second Row - Bookmarks and Ratings
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            // Bookmarks Button
+            Box(
+                modifier = Modifier
+                    .width(largeButtonWidth)
+                    .height(buttonHeight)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color.White.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .clickable { navController.navigate("bookmark") }
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    navController.navigate("leaderboards_stats")
-                },
-                // Achievements row
-                 FeatureItem(
-                     iconRes = R.drawable.trophy, // Add a trophy icon to your drawables
-                     label = "Achievements \n" +
-                             "    🏆         \uD83C\uDFC6   ",
-                     color = Color(0xFFFFD700), // Gold color
-                     containerSize = ButtonSizes.REGULAR_CONTAINER,
-                     iconSize = 60.dp,
-                     width = 115.dp,
-                     shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
-                 ) {
-                     navController.navigate("achievements")
-                   },
-                // Button to go to points prestige page.
-                FeatureItem(
-                    iconRes = R.drawable.progress, // Your image resource
-                    label = "Points & Progression",
-                    color = Color(0xFFFF0000),
-                    containerSize = ButtonSizes.REGULAR_CONTAINER,
-                    iconSize = 50.dp,
-                    width = 80.dp,
-                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
-                ) {
-                    navController.navigate("points_progression")
+                    Icon(
+                        painter = painterResource(R.drawable.bookmark),
+                        contentDescription = "Bookmarks",
+                        tint = Color(0xFFA020F0),
+                        modifier = Modifier.size(iconSize)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Clinic Bookmarks",
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
                 }
-            ),
-            navController = navController
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+            }
 
-        // Button to go to Bookmark page.
-        FeatureRow(
-            features = listOf(
-                FeatureItem(
-                    iconRes = R.drawable.bookmark,
-                    label = "Clinic Bookmarks",
-                    color = Color(0xFFA020F0),
-                    containerSize = 90.dp,
-                    iconSize = 60.dp,
-                    width = 180.dp,
-                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
-                )
-
-                {
-                    navController.navigate("bookmark")
-                },
-            // button to go to ratings page
-                FeatureItem(
-                    iconRes = R.drawable.ic_ratings,
-                    label = "User Ratings",
-                    color = Color(0xFFFFFF00),
-                    containerSize = 90.dp,
-                    iconSize = 60.dp,
-                    width = 180.dp,
-                    shape = RoundedCornerShape(ButtonSizes.CORNER_RADIUS)
+            // Ratings Button
+            Box(
+                modifier = Modifier
+                    .width(largeButtonWidth)
+                    .height(buttonHeight)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color.White.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .clickable { navController.navigate("userRatings") }
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    navController.navigate("userRatings")
+                    Icon(
+                        painter = painterResource(R.drawable.ic_ratings),
+                        contentDescription = "Ratings",
+                        tint = Color(0xFFFFFF00),
+                        modifier = Modifier.size(iconSize)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "User Ratings",
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
                 }
-            ),
-            navController = navController
-        )
+            }
+        }
     }
-
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),

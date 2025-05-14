@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -338,8 +339,8 @@ fun FeatureRow(
     features: List<FeatureItem>,
     navController: NavController,
     modifier: Modifier = Modifier,
-    horizontalPadding: Dp = 32.dp,  // Adjust this value to control side spacing
-    betweenSpacing: Dp = 24.dp      // Adjust this value to control space between buttons
+    horizontalPadding: Dp = 28.dp,  // Adjust this value to control side spacing
+    betweenSpacing: Dp = 20.dp      // Adjust this value to control space between buttons
 ) {
     Row(
         modifier = modifier
@@ -355,6 +356,7 @@ fun FeatureRow(
             IconButtonWithLabel(
                 iconRes = feature.iconRes,
                 label = feature.label,
+                fontSize = feature.textSize,
                 backgroundColor = feature.color,
                 containerSize = feature.containerSize,
                 iconSize = feature.iconSize,
@@ -375,7 +377,8 @@ fun FeatureRow(
         iconSize: Dp,
         width: Dp,
         shape: Shape,
-        onClick: () -> Unit
+        onClick: () -> Unit,
+        fontSize: TextUnit
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -445,5 +448,6 @@ data class FeatureItem(
     val iconSize: Dp,
     val width: Dp,
     val shape: Shape,
+    val textSize: TextUnit = 10.sp,
     val onClick: () -> Unit
 )
