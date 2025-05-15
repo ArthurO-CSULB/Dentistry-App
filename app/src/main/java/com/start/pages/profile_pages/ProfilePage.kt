@@ -35,22 +35,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.dentalhygiene.BuildConfig
 import com.example.dentalhygiene.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.start.pages.ButtonSizes
-import com.start.pages.FeatureItem
-import com.start.pages.FeatureRow
 import com.start.viewmodels.PointsProgressionViewModel
 import com.start.viewmodels.ThemeViewModel
 
@@ -73,7 +68,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var experience by remember { mutableStateOf("") }
-    var streak = 1
+    val streak = 1
     // Grab user information from database
     val db = FirebaseFirestore.getInstance()
     var user = FirebaseAuth.getInstance().currentUser

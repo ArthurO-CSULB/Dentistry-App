@@ -28,7 +28,6 @@ import com.start.viewmodels.PointsProgressionViewModel
 fun TeethTapper(
     modifier: Modifier = Modifier,
     navController: NavController,
-    pointsProgressionViewModel: PointsProgressionViewModel,
     achievementViewModel: AchievementViewModel
 ) {
     // Game dimensions
