@@ -38,6 +38,7 @@ class AchievementViewModel : ViewModel() {
                 description = "Schedule your first appointment",
                 requiredProgress = 1
             ),
+
             // Add more achievements as needed
         )
     }

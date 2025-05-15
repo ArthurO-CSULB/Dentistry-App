@@ -1,5 +1,8 @@
 package com.start.pages.profile_pages
 
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,13 +35,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.dentalhygiene.BuildConfig
 import com.example.dentalhygiene.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -52,19 +59,21 @@ We have a composable profile page which will handle the UI for profile options.
 This will be called in the PageNavigation NavHost, passing in the modifier,
 NavController.
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
-                pointsProgressionViewModel: PointsProgressionViewModel, themeViewModel: ThemeViewModel) {
+                pointsProgressionViewModel: PointsProgressionViewModel,
+                themeViewModel: ThemeViewModel) {
     // From the passed in AuthViewModel, we get the authState of the authentication and use
     // observeAsState() to subscribe to the live data and track its changes.
     //val authState = authViewModel.authState.observeAsState()
 
     // Grab user information whose profile will be displayed
-    var firstName by remember {mutableStateOf("")}
-    var lastName by remember {mutableStateOf("")}
-    var email by remember {mutableStateOf("")}
-    var experience by remember {mutableStateOf("")}
-
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var experience by remember { mutableStateOf("") }
+    var streak = 1
     // Grab user information from database
     val db = FirebaseFirestore.getInstance()
     var user = FirebaseAuth.getInstance().currentUser
@@ -199,7 +208,10 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
             Spacer(modifier = Modifier.width(8.dp))
             Box(
                 modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(4.dp))
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(4.dp)
+                    )
                     .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
                     .padding(horizontal = 12.dp, vertical = 4.dp)
             ) {
@@ -342,7 +354,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
 
         Spacer(modifier = Modifier.height(16.dp))
 
-// Second Row - Bookmarks and Ratings
+// Second Row - Bookmarks, Streaks, and Ratings
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -352,7 +364,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
             // Bookmarks Button
             Box(
                 modifier = Modifier
-                    .width(largeButtonWidth)
+                    .width(smallButtonWidth)
                     .height(buttonHeight)
                     .background(
                         color = Color.Black.copy(alpha = 0.3f),
@@ -378,8 +390,44 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Clinic Bookmarks",
-                        fontSize = 16.sp,
+                        text = "Bookmarks",
+                        fontSize = 14.sp,  // Changed from 16.sp to match first row
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                }
+            }
+
+            // Streak Display
+            Box(
+                modifier = Modifier
+                    .width(smallButtonWidth)
+                    .height(buttonHeight)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color.White.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(cornerRadius)
+                    )
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.flame),
+                        contentDescription = "Streak",
+                        tint = if (streak > 0) Color.Red else Color.Gray,
+                        modifier = Modifier.size(iconSize)  // Changed to use iconSize
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "${streak} days",
+                        fontSize = 14.sp,
                         textAlign = TextAlign.Center,
                         color = Color.White
                     )
@@ -389,7 +437,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
             // Ratings Button
             Box(
                 modifier = Modifier
-                    .width(largeButtonWidth)
+                    .width(smallButtonWidth)
                     .height(buttonHeight)
                     .background(
                         color = Color.Black.copy(alpha = 0.3f),
@@ -415,22 +463,23 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "User Ratings",
-                        fontSize = 16.sp,
+                        text = "Ratings",
+                        fontSize = 14.sp,  // Changed from 16.sp to match first row
                         textAlign = TextAlign.Center,
                         color = Color.White
                     )
                 }
             }
         }
-    }
+
+}
     Column(
         // We fill the column to the entire screen
         modifier = modifier.fillMaxSize(),
         // We center the components of the column.
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         // Button to go back home.
         TextButton(onClick = {
             navController.navigate("home")

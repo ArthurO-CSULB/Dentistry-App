@@ -29,6 +29,7 @@ import com.start.pages.LoginPage
 import com.start.pages.ReauthenticationPage
 import com.start.pages.SettingsPage
 import com.start.pages.SignUpPage
+import com.start.pages.TeethTapper
 import com.start.pages.ToothSnake
 import com.start.pages.ToothbrushReplacementPage
 import com.start.pages.UserRatingsPage
@@ -241,6 +242,9 @@ fun PageNavigation(
         composable("tooth_snake") {
             ToothSnake(modifier, navController)
         }
+
+        composable("teeth_tapper") { TeethTapper(navController = navController,
+            pointsProgressionViewModel = pointsProgressionViewModel, achievementViewModel = achievementViewModel) }
 
         // Glossary screen.
         composable("glossary"){

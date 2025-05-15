@@ -1,6 +1,8 @@
 package com.start.pages
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +34,9 @@ import androidx.navigation.NavController
 import com.example.dentalhygiene.R
 import com.start.viewmodels.AuthState
 import com.start.viewmodels.AuthViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import java.time.LocalDate
 
 /*
 We have a composable login page which will handle the UI for login integrated with
@@ -41,6 +46,7 @@ NavController, and AuthViewModel.
 Author Referenced: EasyTuto
 URL: https://www.youtube.com/watch?v=KOnLpNZ4AFc&t=778s
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
@@ -62,20 +68,62 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
     // We create a launched effect that passes in the value of the authentication state. Upon
     // the value changing when calling authViewModel methods, the block of code will execute.
     LaunchedEffect(authState.value) {
-        // Whenever the authState is a certain authentication state...
-        when (authState.value){
-            // When the user is unverified via email, navigate to verification page
-            is AuthState.Unverified -> navController.navigate("verification")
-            // When the user is authenticated by login, navigate to the home page.
-            is AuthState.Authenticated -> navController.navigate("home")
-            // When the user inputs incorrectly, we create a Toast message of the error.
-            is AuthState.Error -> Toast.makeText(context,
-                (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
-            // Else do nothing.
-            else -> Unit
+        when (authState.value) {
+            is AuthState.Authenticated -> {
+                // Add this block
+                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                userId?.let { uid ->
+                    FirebaseFirestore.getInstance()
+                        .collection("accounts")
+                        .document(uid)
+                        .collection("streaks")
+                        .document("currentStreak")
+                        .get()
+                        .addOnSuccessListener { doc ->
+                            val today = LocalDate.now().toString()
+                            if (!doc.exists()) {
+                                // Initialize streak if new user
+                                doc.reference.set(
+                                    mapOf(
+                                        "lastLoginDate" to today,
+                                        "currentCount" to 1,
+                                        "longestCount" to 1
+                                    )
+                                )
+                            } else {
+                                // Update existing streak
+                                val lastDate = LocalDate.parse(doc.getString("lastLoginDate")!!)
+                                val current = doc.getLong("currentCount") ?: 0
+                                val longest = doc.getLong("longestCount") ?: 0
+
+                                val newCount =
+                                    if (lastDate.isBefore(LocalDate.now().minusDays(1))) {
+                                        1 // Reset if broken
+                                    } else {
+                                        current + 1
+                                    }
+
+                                doc.reference.update(
+                                    mapOf(
+                                        "lastLoginDate" to today,
+                                        "currentCount" to newCount,
+                                        "longestCount" to maxOf(longest, newCount)
+                                    )
+                                )
+                            }
+                        }
+                }
+
+                navController.navigate("home") // Keep this last
+            }
+
+            is AuthState.Error -> TODO()
+            AuthState.Loading -> TODO()
+            AuthState.UnAuthenticated -> TODO()
+            AuthState.Unverified -> TODO()
+            null -> TODO()
         }
     }
-
     // Login Page UI Text
     // We create a Column to arrange the UI components
     // ToDo: 2/1/2025 Improve UI of Login Page

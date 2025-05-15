@@ -42,7 +42,13 @@ fun GamesPage(modifier: Modifier = Modifier, navController: NavController) {
         ) {
             Text("Play Tooth Snake")
         }
+        Button(
+            onClick = { navController.navigate("teeth_tapper") },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("Play Teeth Tapper")
 
+        }
         // Add more buttons later
         // Button to go back home, placed inside the scrollable column
         TextButton(
