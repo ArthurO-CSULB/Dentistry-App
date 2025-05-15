@@ -243,8 +243,7 @@ fun PageNavigation(
             ToothSnake(modifier, navController)
         }
 
-        composable("teeth_tapper") { TeethTapper(navController = navController,
-            pointsProgressionViewModel = pointsProgressionViewModel, achievementViewModel = achievementViewModel) }
+        composable("teeth_tapper") { TeethTapper(navController = navController) }
 
         // Glossary screen.
         composable("glossary"){
