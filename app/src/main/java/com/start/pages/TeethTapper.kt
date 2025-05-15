@@ -28,7 +28,6 @@ import com.start.viewmodels.PointsProgressionViewModel
 fun TeethTapper(
     modifier: Modifier = Modifier,
     navController: NavController,
-    achievementViewModel: AchievementViewModel
 ) {
     // Game dimensions
     val screenWidth = 1000f
