@@ -1,6 +1,7 @@
 package com.start.pages
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -114,11 +115,15 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
                 navController.navigate("home") // Keep this last
             }
 
-            is AuthState.Error -> TODO()
-            AuthState.Loading -> TODO()
-            AuthState.UnAuthenticated -> TODO()
-            AuthState.Unverified -> TODO()
-            null -> TODO()
+            // When the user is unverified via email, navigate to verification page
+            is AuthState.Unverified -> navController.navigate("verification")
+            // When the user is authenticated by login, navigate to the home page.
+            is AuthState.Authenticated -> navController.navigate("home")
+            // When the user inputs incorrectly, we create a Toast message of the error.
+            is AuthState.Error -> Toast.makeText(context,
+                (authState.value as AuthState.Error).message, Toast.LENGTH_SHORT).show()
+            // Else do nothing.
+            else -> Unit
         }
     }
     // Login Page UI Text
