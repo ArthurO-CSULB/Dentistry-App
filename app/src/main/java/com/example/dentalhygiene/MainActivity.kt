@@ -9,15 +9,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.start.ui.theme.DentalHygieneTheme
-
 import com.google.firebase.firestore.FirebaseFirestore
+//import com.start.notificationhandlers.InactivityNotificationHelper
 
 // JUST A TESTING ACTIVITY
 class MainActivity : ComponentActivity() {
     // Initialize database connection.
     private val db = FirebaseFirestore.getInstance()
+    //private lateinit var inactivityHelper: InactivityNotificationHelper // Declare the helper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize the inactivity helper
+        //inactivityHelper = InactivityNotificationHelper(this)
 
         setContent {
             DentalHygieneTheme {
@@ -26,12 +31,20 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        // Check for inactivity when app starts
+        //inactivityHelper.checkInactivityAndNotify()
+
         // Write to database
         writeData()
 
         // Read from database
         readData()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        // Record user activity whenever the app comes to foreground
+        //inactivityHelper.recordUserActivity()
     }
 
     // Method to write data
@@ -67,13 +80,11 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
-            text = "Hello $name!",
-            modifier = modifier
+        text = "Hello $name!",
+        modifier = modifier
     )
 }
 

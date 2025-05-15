@@ -70,7 +70,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavController, authV
     LaunchedEffect(authState.value) {
         when (authState.value) {
             is AuthState.Authenticated -> {
-                // Add this block
+
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                 userId?.let { uid ->
                     FirebaseFirestore.getInstance()

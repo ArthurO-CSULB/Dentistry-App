@@ -46,7 +46,16 @@
             android:value="@integer/google_play_services_version" />
 
         <!-- Receiver -->
-        <receiver android:name="com.start.notificationhandlers.NotificationReceiver" android:enabled="true" android:exported="false"/>
+        <receiver
+            android:name="com.start.notificationhandlers.NotificationReceiver"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <receiver
+            android:name="com.start.notificationhandlers.InactivityNotificationReceiver"
+            android:enabled="true"
+            android:exported="false"/>
+
         <activity
             android:name="com.start.MainActivity"
             android:exported="true"

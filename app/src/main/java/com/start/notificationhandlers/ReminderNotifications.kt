@@ -19,6 +19,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.app.Activity
 import androidx.core.app.ActivityCompat
+import android.content.SharedPreferences
 
 class NotificationHelper(private val context: Context) {
 
@@ -123,5 +124,94 @@ class NotificationReceiver : BroadcastReceiver() {
 
         val notificationManager = context.getSystemService(NotificationManager::class.java)
         notificationManager.notify(title.hashCode(), notification)
+    }
+}
+
+class InactivityNotificationHelper(private val context: Context) {
+    companion object {
+        private const val PREF_NAME = "InactivityPrefs"
+        private const val LAST_ACTIVE_TIME = "last_active_time"
+        private const val INACTIVITY_THRESHOLD = 3 * 24 * 60 * 60 * 1000L // 3 days in milliseconds
+        private const val INACTIVITY_NOTIFICATION_ID = 9999
+        private const val REQUEST_CODE = 1001
+    }
+
+    private val sharedPref: SharedPreferences =
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+
+    // Call this when user performs any activity in the app
+    fun recordUserActivity() {
+        sharedPref.edit().putLong(LAST_ACTIVE_TIME, System.currentTimeMillis()).apply()
+        cancelInactivityNotification() // Cancel any pending notification since user is active
+    }
+
+    // Check if user has been inactive and schedule notification if needed
+    fun checkInactivityAndNotify() {
+        val lastActiveTime = sharedPref.getLong(LAST_ACTIVE_TIME, System.currentTimeMillis())
+        val currentTime = System.currentTimeMillis()
+
+        if (currentTime - lastActiveTime > INACTIVITY_THRESHOLD) {
+            showInactivityNotification()
+        } else {
+            // Schedule notification for when the threshold will be reached
+            scheduleInactivityNotification(lastActiveTime + INACTIVITY_THRESHOLD)
+        }
+    }
+
+    private fun scheduleInactivityNotification(triggerTime: Long) {
+        val intent = Intent(context, InactivityNotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExact(
+            AlarmManager.RTC_WAKEUP,
+            triggerTime,
+            pendingIntent
+        )
+    }
+
+    // Changed from private to public
+    fun showInactivityNotification() {
+        val notification = NotificationCompat.Builder(context, "EVENT_NOTIFICATION_CHANNEL")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("We miss you!")
+            .setContentText("It's been a while since you used our app. Come back and check what's new!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+            .build()
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        notificationManager.notify(INACTIVITY_NOTIFICATION_ID, notification)
+    }
+
+    private fun cancelInactivityNotification() {
+        val intent = Intent(context, InactivityNotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        if (pendingIntent != null) {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.cancel(pendingIntent)
+            pendingIntent.cancel()
+        }
+
+        // Also cancel any shown notification
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        notificationManager.cancel(INACTIVITY_NOTIFICATION_ID)
+    }
+}
+
+class InactivityNotificationReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        InactivityNotificationHelper(context.applicationContext).showInactivityNotification()
     }
 }
