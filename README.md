@@ -6,7 +6,7 @@ a toothbrush timer, games, and awards. Users must make an account to utilize the
 
 ## Instructions for Fei Hoffman to run the app.
 1. Use android studio to run the app. Clone the repository as such.
-![Clone Screenshot](./Screenshots/screenshot_clone_repo.PNG)]
+![Clone Screenshot](./Screenshots/screenshot_clone_repo.PNG)
 2. We have emailed you a file called 'google-services.json' which you will need to run the app.
 ![Email Screenshot](./Screenshots/screenshot_email.PNG)
 3. Change how you view the project directory to 'Project'. Afterwards, copy/move the file into
